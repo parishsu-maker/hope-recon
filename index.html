@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOPE 對帳系統</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0eeea;
+    --border: #e0ddd6;
+    --text: #1a1916;
+    --text2: #6b6860;
+    --text3: #a09d98;
+    --accent: #2d5a3d;
+    --accent-light: #e8f0eb;
+    --green: #2d5a3d;
+    --green-bg: #e8f0eb;
+    --red: #8b2020;
+    --red-bg: #f5e8e8;
+    --amber: #7a5200;
+    --amber-bg: #fdf3e0;
+    --blue: #1a3a5c;
+    --blue-bg: #e8eef5;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ===== Login screen ===== */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .login-logo {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+  .login-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .login-subtitle {
+    font-size: 13px;
+    color: var(--text3);
+    margin-bottom: 28px;
+  }
+  .login-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    text-align: left;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .login-select, .login-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    margin-bottom: 16px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .login-select:focus, .login-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45,90,61,0.08);
+  }
+  .login-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 12px;
+  }
+  .login-btn:hover { background: #234a32; }
+  .login-or {
+    font-size: 12px;
+    color: var(--text3);
+    margin: 4px 0 12px;
+    position: relative;
+  }
+  .login-or::before, .login-or::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 38%;
+    height: 1px;
+    background: var(--border);
+  }
+  .login-or::before { left: 0; }
+  .login-or::after { right: 0; }
+  .login-admin-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .login-admin-btn:hover { background: var(--border); color: var(--text); }
+  #admin-pw-wrap { display: none; margin-top: 12px; }
+
+  /* ===== App ===== */
+  #app { display: none; }
+
+  .header {
+    background: var(--accent);
+    color: white;
+    padding: 0 32px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-brand { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
+  .header-brand span { opacity: 0.6; font-weight: 300; margin-left: 8px; font-size: 13px; }
+  .header-user { font-size: 13px; color: rgba(255,255,255,0.8); display: flex; align-items: center; gap: 10px; }
+  .logout-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
+  .tab-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    padding: 0 32px;
+  }
+  .tab-btn {
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    color: var(--text2);
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  .page { display: none; padding: 28px 32px; max-width: 960px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 12px; font-weight: 500; color: var(--text2); letter-spacing: 0.3px; }
+  input, select, textarea {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color 0.15s;
+    outline: none;
+    width: 100%;
+  }
+  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08); }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 7px;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #234a32; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid #e0b0b0; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+  }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: var(--accent-light); }
+  .upload-zone input { display: none; }
+  .upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .upload-text { font-size: 14px; color: var(--text2); }
+  .upload-text strong { color: var(--accent); }
+  .upload-hint { font-size: 12px; color: var(--text3); margin-top: 4px; }
+  .upload-success { background: var(--green-bg); border-color: #a8c8b0; }
+  .upload-success .upload-text { color: var(--green); font-weight: 500; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); }
+  .badge-gray { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+  .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--surface2); padding: 10px 14px; text-align: left; font-weight: 600; font-size: 12px; color: var(--text2); letter-spacing: 0.3px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
+  .stat-label { font-size: 12px; color: var(--text2); font-weight: 500; margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 700; font-family: 'DM Mono', monospace; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--red); }
+  .stat-value.amber { color: var(--amber); }
+
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+
+  .alert { padding: 12px 16px; border-radius: var(--radius); font-size: 13px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
+  .alert-info { background: var(--blue-bg); color: var(--blue); border: 1px solid #c0d0e0; }
+  .alert-success { background: var(--green-bg); color: var(--green); border: 1px solid #a8c8b0; }
+  .alert-warn { background: var(--amber-bg); color: var(--amber); border: 1px solid #e0c880; }
+
+  .submission-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
+  .submission-item:last-child { border-bottom: none; }
+  .submission-main { flex: 1; min-width: 0; }
+  .submission-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+  .submission-detail { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; }
+
+  .inner-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .inner-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); color: var(--text2); font-size: 13px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .inner-tab.active { background: var(--accent); color: white; border-color: var(--accent); font-weight: 500; }
+
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--text3); }
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--text);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 9999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    max-width: 320px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Config banner */
+  #config-banner {
+    background: #fff3cd;
+    border-bottom: 1px solid #ffc107;
+    padding: 10px 32px;
+    font-size: 13px;
+    color: #856404;
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 16px; }
+    .tab-nav { padding: 0 12px; overflow-x: auto; }
+    .header { padding: 0 16px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr; }
+    .stat-value { font-size: 22px; }
+    .login-card { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== 登入畫面 ===== -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">⛳</div>
+    <div class="login-title">HOPE Golf</div>
+    <div class="login-subtitle">對帳回報系統</div>
+
+    <label class="login-label">我是教練</label>
+    <select class="login-select" id="login-coach-select">
+      <option value="">— 請選擇你的名字 —</option>
+    </select>
+    <button class="login-btn" onclick="loginAsCoach()">進入教練回報頁</button>
+
+    <div class="login-or">或</div>
+    <button class="login-admin-btn" onclick="toggleAdminLogin()">🔐 管理員登入</button>
+    <div id="admin-pw-wrap">
+      <input type="password" class="login-input" id="admin-pw" placeholder="輸入管理員密碼" style="margin-top:10px;" onkeydown="if(event.key==='Enter')loginAsAdmin()">
+      <button class="login-btn" onclick="loginAsAdmin()" style="margin-top:4px;">進入管理員後台</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 主應用 ===== -->
+<div id="app">
+  <div class="header">
+    <div class="header-brand">HOPE Golf <span>對帳系統</span></div>
+    <div class="header-user">
+      <span id="header-username"></span>
+      <button class="logout-btn" onclick="logout()">登出</button>
+    </div>
+  </div>
+
+  <div id="config-banner">
+    ⚠️ 尚未設定 Google Sheets 連結，教練回報資料將只存在本機。請管理員到「系統設定」頁面完成設定。
+  </div>
+
+  <nav class="tab-nav" id="main-nav">
+    <!-- 動態產生 -->
+  </nav>
+
+  <!-- 教練回報頁 -->
+  <div class="page" id="page-coach">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>匯款回報</div>
+      <div class="alert alert-info">
+        <span>ℹ️</span>
+        <span>學員匯款後，請填寫以下資訊送出。若有多筆請分別填寫。</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>教練姓名</label>
+          <input type="text" id="c-coach" readonly style="background:var(--surface2);color:var(--text2);">
+        </div>
+        <div class="form-group">
+          <label>學員姓名 *</label>
+          <input type="text" id="c-student" placeholder="例：梁力仁">
+        </div>
+        <div class="form-group">
+          <label>匯款後五碼 *</label>
+          <input type="text" id="c-last5" placeholder="例：07079" maxlength="5" style="font-family:'DM Mono',monospace;letter-spacing:2px;">
+        </div>
+        <div class="form-group">
+          <label>匯款金額（元）*</label>
+          <input type="number" id="c-amount" placeholder="例：17000">
+        </div>
+        <div class="form-group">
+          <label>匯款日期 *</label>
+          <input type="date" id="c-date">
+        </div>
+        <div class="form-group">
+          <label>付款方式</label>
+          <select id="c-method">
+            <option value="transfer">匯款轉帳</option>
+            <option value="cash">現金 Cash</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>課程名稱（選填）</label>
+          <input type="text" id="c-course" placeholder="例：初階個人E十堂">
+        </div>
+      </div>
+
+      <div style="background:var(--amber-bg);border:1px solid #e8d090;border-radius:8px;padding:16px 18px;margin-top:14px;">
+        <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:12px;">🧾 需要開發票才填寫</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>發票抬頭</label>
+            <input type="text" id="c-invoice-title" placeholder="例：元木運動行銷有限公司" style="background:white;">
+          </div>
+          <div class="form-group">
+            <label>統一編號</label>
+            <input type="text" id="c-invoice-tax" placeholder="例：12345678" maxlength="8" style="font-family:'DM Mono',monospace;letter-spacing:2px;background:white;">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid" style="margin-top:14px;">
+        <div class="form-group full">
+          <label>備註（選填）</label>
+          <input type="text" id="c-note" placeholder="其他補充說明">
+        </div>
+      </div>
+      <div style="margin-top:18px;display:flex;gap:10px;">
+        <button class="btn btn-primary" id="submit-btn" onclick="submitCoach()">✓ 送出回報</button>
+        <button class="btn btn-secondary" onclick="clearCoachForm()">清除</button>
+      </div>
+    </div>
+
+    <!-- 本期已回報清單 -->
+    <div class="card">
+      <div class="section-header">
+        <div class="card-title" style="margin-bottom:0"><span class="dot"></span>我的回報紀錄</div>
+      </div>
+      <div id="submission-list">
+        <div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 管理員：教練回報總覽 -->
+  <div class="page" id="page-reports">
+    <div class="card">
+      <div class="section-header">
+        <div class="card-title" style="margin-bottom:0"><span class="dot"></span>所有教練回報</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="loadAllReports()">↺ 重新載入</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportReports()">⬇ 匯出 Excel</button>
+        </div>
+      </div>
+      <div id="reports-list">
+        <div class="empty-state"><div class="empty-icon">📊</div><p>按「重新載入」取得最新資料</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 管理員：對帳後台 -->
+  <div class="page" id="page-admin">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>上傳訂單明細 Excel</div>
+      <div class="alert alert-info"><span>ℹ️</span><span>請上傳從系統匯出的訂單 Excel（欄位：消費者、課程、費用、備註、訂單日期）</span></div>
+      <div class="upload-zone" id="zone-order" onclick="document.getElementById('file-order').click()"
+           ondragover="handleDrag(event,'zone-order')" ondragleave="handleDragLeave(event,'zone-order')"
+           ondrop="handleDrop(event,'zone-order','order')">
+        <input type="file" id="file-order" accept=".xlsx,.xls,.csv" onchange="handleFileChange(event,'order')">
+        <div class="upload-icon">📂</div>
+        <div class="upload-text">點擊或拖曳 <strong>訂單明細 Excel</strong> 至此</div>
+        <div class="upload-hint">.xlsx / .xls / .csv</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>上傳銀行對帳單 Excel</div>
+      <div class="alert alert-info"><span>ℹ️</span><span>請從網銀下載 Excel 格式的存款明細</span></div>
+      <div class="upload-zone" id="zone-bank" onclick="document.getElementById('file-bank').click()"
+           ondragover="handleDrag(event,'zone-bank')" ondragleave="handleDragLeave(event,'zone-bank')"
+           ondrop="handleDrop(event,'zone-bank','bank')">
+        <input type="file" id="file-bank" accept=".xlsx,.xls,.csv" onchange="handleFileChange(event,'bank')">
+        <div class="upload-icon">🏦</div>
+        <div class="upload-text">點擊或拖曳 <strong>銀行對帳單 Excel</strong> 至此</div>
+        <div class="upload-hint">.xlsx / .xls / .csv</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="runReconciliation()" style="font-size:15px;padding:13px 28px;">⚡ 開始自動對帳</button>
+      <button class="btn btn-secondary" onclick="switchTab('result')">查看結果 →</button>
+    </div>
+  </div>
+
+  <!-- 對帳結果 -->
+  <div class="page" id="page-result">
+    <div id="result-empty" class="card">
+      <div class="empty-state"><div class="empty-icon">⚡</div><p>請先在管理員後台上傳資料並執行對帳</p></div>
+    </div>
+    <div id="result-content" style="display:none;">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">✅ 已確認收款</div><div class="stat-value green" id="stat-confirmed">0</div></div>
+        <div class="stat-card"><div class="stat-label">❌ 未收款</div><div class="stat-value red" id="stat-missing">0</div></div>
+        <div class="stat-card"><div class="stat-label">⚠️ 待確認</div><div class="stat-value amber" id="stat-pending">0</div></div>
+      </div>
+      <div class="card">
+        <div class="section-header">
+          <div class="inner-tabs">
+            <button class="inner-tab active" onclick="showResultTab('all',this)">全部</button>
+            <button class="inner-tab" onclick="showResultTab('confirmed',this)">✅ 已收款</button>
+            <button class="inner-tab" onclick="showResultTab('missing',this)">❌ 未收款</button>
+            <button class="inner-tab" onclick="showResultTab('pending',this)">⚠️ 待確認</button>
+            <button class="inner-tab" onclick="showResultTab('cash',this)">💵 現金</button>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="exportResult()">⬇ 匯出 Excel</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>狀態</th><th>學員</th><th>課程（教練）</th><th>金額</th><th>後五碼</th><th>銀行核對</th><th>匯款日期</th><th>發票</th></tr></thead>
+            <tbody id="result-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 系統設定（管理員） -->
+  <div class="page" id="page-settings">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Google Sheets 連結設定</div>
+      <div class="alert alert-warn">
+        <span>⚠️</span>
+        <span>請先完成 Google Apps Script 部署，再把取得的網址貼到下方。</span>
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>Apps Script 網址（Web App URL）</label>
+        <input type="text" id="sheets-url" placeholder="https://script.google.com/macros/s/...../exec" style="font-family:'DM Mono',monospace;font-size:12px;">
+      </div>
+      <button class="btn btn-primary" onclick="saveSheetUrl()">儲存連結</button>
+      <button class="btn btn-secondary" onclick="testSheetUrl()" style="margin-left:8px;">測試連線</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>教練名單管理</div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <input type="text" id="new-coach-input" placeholder="輸入教練姓名，例：Allen 張瀚元" style="flex:1;min-width:200px;" onkeydown="if(event.key==='Enter')addCoach()">
+        <button class="btn btn-primary" onclick="addCoach()">＋ 新增教練</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th style="width:50px">#</th><th>教練姓名</th><th style="width:80px">操作</th></tr></thead>
+          <tbody id="coach-list-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>管理員密碼</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>新密碼</label>
+          <input type="password" id="new-pw" placeholder="輸入新密碼">
+        </div>
+        <div class="form-group">
+          <label>確認密碼</label>
+          <input type="password" id="confirm-pw" placeholder="再次輸入">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="changePassword()" style="margin-top:14px;">更新密碼</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ===== Config =====
+// 【重要】管理員第一次使用後，到「系統設定」更改密碼
+const DEFAULT_ADMIN_PW = 'hope2025';
+
+// ===== State =====
+let currentUser = null; // { role: 'coach'|'admin', name: string }
+let coaches = JSON.parse(localStorage.getItem('hope_coaches') || '[]');
+let adminPw = localStorage.getItem('hope_admin_pw') || DEFAULT_ADMIN_PW;
+let sheetsUrl = localStorage.getItem('hope_sheets_url') || '';
+let submissions = JSON.parse(localStorage.getItem('hope_submissions') || '[]');
+let allReports = [];
+let orderData = [];
+let bankData = [];
+let resultRows = [];
+
+// ===== Init =====
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('c-date').valueAsDate = new Date();
+  renderLoginCoachSelect();
+});
+
+// ===== Login =====
+function renderLoginCoachSelect() {
+  const sel = document.getElementById('login-coach-select');
+  sel.innerHTML = '<option value="">— 請選擇你的名字 —</option>';
+  coaches.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name;
+    sel.appendChild(opt);
+  });
+}
+
+function loginAsCoach() {
+  const name = document.getElementById('login-coach-select').value;
+  if (!name) { showToast('請選擇你的名字'); return; }
+  currentUser = { role: 'coach', name };
+  enterApp();
+}
+
+function toggleAdminLogin() {
+  const wrap = document.getElementById('admin-pw-wrap');
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+  if (wrap.style.display === 'block') document.getElementById('admin-pw').focus();
+}
+
+function loginAsAdmin() {
+  const pw = document.getElementById('admin-pw').value;
+  if (pw !== adminPw) { showToast('密碼錯誤'); return; }
+  currentUser = { role: 'admin', name: '管理員' };
+  enterApp();
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-pw').value = '';
+  document.getElementById('admin-pw-wrap').style.display = 'none';
+  renderLoginCoachSelect();
+}
+
+function enterApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('header-username').textContent = currentUser.name;
+
+  // 建立導航
+  const nav = document.getElementById('main-nav');
+  if (currentUser.role === 'coach') {
+    nav.innerHTML = `<button class="tab-btn active" onclick="switchTab('coach')">📱 回報匯款</button>`;
+    document.getElementById('c-coach').value = currentUser.name;
+    renderMySubmissions();
+  } else {
+    nav.innerHTML = `
+      <button class="tab-btn active" onclick="switchTab('reports')">📋 教練回報</button>
+      <button class="tab-btn" onclick="switchTab('admin')">🏠 對帳後台</button>
+      <button class="tab-btn" onclick="switchTab('result')">📊 對帳結果</button>
+      <button class="tab-btn" onclick="switchTab('settings')">⚙️ 系統設定</button>
+    `;
+    if (!sheetsUrl) document.getElementById('config-banner').style.display = 'block';
+    document.getElementById('sheets-url').value = sheetsUrl;
+    renderCoachList();
+    loadAllReports();
+  }
+  switchTab(currentUser.role === 'coach' ? 'coach' : 'reports');
+}
+
+// ===== Tab =====
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`);
+  if (btn) btn.classList.add('active');
+  const page = document.getElementById('page-' + tab);
+  if (page) page.classList.add('active');
+}
+
+// ===== Coach submit =====
+async function submitCoach() {
+  const coach = document.getElementById('c-coach').value.trim();
+  const student = document.getElementById('c-student').value.trim();
+  const last5 = document.getElementById('c-last5').value.trim();
+  const amount = document.getElementById('c-amount').value.trim();
+  const date = document.getElementById('c-date').value;
+  const method = document.getElementById('c-method').value;
+  const course = document.getElementById('c-course').value.trim();
+  const invoiceTitle = document.getElementById('c-invoice-title').value.trim();
+  const invoiceTax = document.getElementById('c-invoice-tax').value.trim();
+  const note = document.getElementById('c-note').value.trim();
+
+  if (!student) { showToast('請填寫學員姓名'); return; }
+  if (method !== 'cash' && !last5) { showToast('請填寫匯款後五碼'); return; }
+  if (!amount) { showToast('請填寫匯款金額'); return; }
+  if (!date) { showToast('請選擇匯款日期'); return; }
+  if (method !== 'cash' && !/^\d{5}$/.test(last5)) { showToast('後五碼請填寫5位數字'); return; }
+
+  const entry = {
+    id: Date.now(), coach, student,
+    last5: method === 'cash' ? 'CASH' : last5,
+    amount: parseInt(amount), date, method, course, invoiceTitle, invoiceTax, note,
+    ts: new Date().toISOString()
+  };
+
+  // 儲存本機
+  submissions.unshift(entry);
+  localStorage.setItem('hope_submissions', JSON.stringify(submissions));
+
+  // 送到 Google Sheets
+  if (sheetsUrl) {
+    const btn = document.getElementById('submit-btn');
+    btn.innerHTML = '<span class="spinner"></span> 送出中...';
+    btn.disabled = true;
+    try {
+      await fetch(sheetsUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry)
+      });
+      showToast('✓ 回報成功！已同步到雲端');
+    } catch(e) {
+      showToast('✓ 已儲存本機（網路異常，請稍後重試）');
+    }
+    btn.innerHTML = '✓ 送出回報';
+    btn.disabled = false;
+  } else {
+    showToast('✓ 回報成功！');
+  }
+
+  clearCoachForm();
+  renderMySubmissions();
+}
+
+function clearCoachForm() {
+  ['c-student','c-last5','c-amount','c-course','c-invoice-title','c-invoice-tax','c-note'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('c-date').valueAsDate = new Date();
+  document.getElementById('c-method').value = 'transfer';
+}
+
+function renderMySubmissions() {
+  const myRecords = submissions.filter(s => s.coach === currentUser?.name);
+  const el = document.getElementById('submission-list');
+  if (!myRecords.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>`;
+    return;
+  }
+  el.innerHTML = myRecords.map(s => `
+    <div class="submission-item">
+      <div class="submission-main">
+        <div class="submission-name">${s.student}</div>
+        <div class="submission-detail">
+          ${s.method === 'cash' ? '💵 現金' : `後五碼：${s.last5}`} ｜ $${s.amount.toLocaleString()} ｜ ${s.date}
+          ${s.course ? ` ｜ ${s.course}` : ''}
+          ${s.invoiceTitle ? ` ｜ 🧾 ${s.invoiceTitle}${s.invoiceTax ? '（'+s.invoiceTax+'）' : ''}` : ''}
+        </div>
+      </div>
+      <span class="badge ${s.method==='cash' ? 'badge-blue' : 'badge-green'}">${s.method==='cash' ? '現金' : '轉帳'}</span>
+    </div>
+  `).join('');
+}
+
+// ===== Admin: load all reports =====
+async function loadAllReports() {
+  const el = document.getElementById('reports-list');
+  el.innerHTML = `<div class="empty-state"><div class="empty-icon">⏳</div><p>載入中...</p></div>`;
+
+  if (!sheetsUrl) {
+    // 沒設定 Sheets，顯示本機資料
+    allReports = submissions;
+    renderReportsList();
+    return;
+  }
+
+  try {
+    const res = await fetch(sheetsUrl + '?t=' + Date.now());
+    const json = await res.json();
+    if (json.status === 'ok') {
+      allReports = json.data.map(row => ({
+        coach: row['教練姓名'] || '',
+        student: row['學員姓名'] || '',
+        last5: row['後五碼'] || '',
+        amount: parseFloat(String(row['金額']).replace(/,/g,'')) || 0,
+        date: row['匯款日期'] || '',
+        method: row['付款方式'] === '現金' ? 'cash' : 'transfer',
+        course: row['課程名稱'] || '',
+        invoiceTitle: row['發票抬頭'] || '',
+        invoiceTax: row['統一編號'] || '',
+        note: row['備註'] || '',
+        ts: row['送出時間'] || ''
+      }));
+      renderReportsList();
+      showToast(`✓ 已載入 ${allReports.length} 筆回報`);
+    }
+  } catch(e) {
+    allReports = submissions;
+    renderReportsList();
+    showToast('無法連線，顯示本機資料');
+  }
+}
+
+function renderReportsList() {
+  const el = document.getElementById('reports-list');
+  if (!allReports.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>尚無教練回報資料</p></div>`;
+    return;
+  }
+
+  // 依教練分組
+  const byCoach = {};
+  allReports.forEach(r => {
+    if (!byCoach[r.coach]) byCoach[r.coach] = [];
+    byCoach[r.coach].push(r);
+  });
+
+  el.innerHTML = Object.entries(byCoach).map(([coach, records]) => `
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;padding:0 4px;">
+        ${coach} <span style="font-weight:400;color:var(--text3)">（${records.length} 筆）</span>
+      </div>
+      ${records.map(s => `
+        <div class="submission-item" style="padding:10px 12px;">
+          <div class="submission-main">
+            <div class="submission-name" style="font-size:13px;">${s.student}</div>
+            <div class="submission-detail">
+              ${s.method==='cash' ? '💵 現金' : `後五碼：${s.last5}`} ｜ $${s.amount.toLocaleString()} ｜ ${s.date}
+              ${s.course ? ` ｜ ${s.course}` : ''}
+              ${s.invoiceTitle ? ` ｜ 🧾 ${s.invoiceTitle}` : ''}
+            </div>
+          </div>
+          <span class="badge ${s.method==='cash' ? 'badge-blue' : 'badge-green'}" style="font-size:11px;">${s.method==='cash' ? '現金' : '轉帳'}</span>
+        </div>
+      `).join('')}
+    </div>
+  `).join('<hr style="border:none;border-top:1px solid var(--border);margin:4px 0 20px;">');
+}
+
+function exportReports() {
+  if (!allReports.length) { showToast('沒有資料可匯出'); return; }
+  const data = allReports.map(r => ({
+    '教練': r.coach, '學員': r.student, '後五碼': r.last5,
+    '金額': r.amount, '匯款日期': r.date, '付款方式': r.method === 'cash' ? '現金' : '轉帳',
+    '課程': r.course, '發票抬頭': r.invoiceTitle, '統一編號': r.invoiceTax, '備註': r.note
+  }));
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '教練回報');
+  XLSX.writeFile(wb, `教練回報_${new Date().toLocaleDateString('zh-TW').replace(/\//g,'-')}.xlsx`);
+}
+
+// ===== File upload =====
+function handleDrag(e, zoneId) { e.preventDefault(); document.getElementById(zoneId).classList.add('dragover'); }
+function handleDragLeave(e, zoneId) { document.getElementById(zoneId).classList.remove('dragover'); }
+function handleDrop(e, zoneId, type) {
+  e.preventDefault(); document.getElementById(zoneId).classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file, type);
+}
+function handleFileChange(e, type) { const file = e.target.files[0]; if (file) processFile(file, type); }
+
+function processFile(file, type) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const wb = XLSX.read(e.target.result, { type: 'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const raw = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false });
+    if (type === 'order') {
+      orderData = parseOrderData(raw);
+      showUploadSuccess('zone-order', `訂單明細：已載入 ${orderData.length} 筆`);
+    } else {
+      bankData = parseBankData(raw);
+      showUploadSuccess('zone-bank', `銀行對帳單：已載入 ${bankData.length} 筆入帳`);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function showUploadSuccess(zoneId, msg) {
+  const zone = document.getElementById(zoneId);
+  zone.classList.add('upload-success');
+  zone.querySelector('.upload-icon').textContent = '✅';
+  zone.querySelector('.upload-text').innerHTML = msg;
+  zone.querySelector('.upload-hint').textContent = '點擊重新上傳';
+}
+
+function parseOrderData(raw) {
+  if (!raw.length) return [];
+  let headerRow = 0;
+  for (let i = 0; i < Math.min(5, raw.length); i++) {
+    const row = raw[i].map(c => String(c||''));
+    if (row.some(c => c.includes('消費者') || c.includes('課程'))) { headerRow = i; break; }
+  }
+  const headers = raw[headerRow].map(c => String(c||'').trim());
+  const rows = [];
+  for (let i = headerRow + 1; i < raw.length; i++) {
+    const row = raw[i];
+    if (!row || row.every(c => !c)) continue;
+    const obj = {};
+    headers.forEach((h, idx) => obj[h] = String(row[idx]||'').trim());
+    const note = obj['備註'] || '';
+    const last5Match = note.match(/(\d{5})/);
+    const last5 = last5Match ? last5Match[1] : '';
+    const isCash = note.toLowerCase().includes('cash');
+    const fee = parseFloat(obj['費用'] || '0') || 0;
+    let dateStr = '';
+    const rawDate = obj['訂單日期'] || '';
+    if (/^\d{4,5}$/.test(rawDate)) {
+      const d = new Date(Math.round((parseFloat(rawDate) - 25569) * 86400 * 1000));
+      dateStr = d.toLocaleDateString('zh-TW');
+    } else { dateStr = rawDate; }
+    const student = obj['消費者'] || '';
+    const course = obj['課程'] || '';
+    if (!student && !course) continue;
+    if (fee === 0 && !last5 && !isCash) continue;
+    rows.push({ student, course, fee, note, last5, isCash, dateStr, status: '', matchedBank: '', matchedDate: '', invoiceTitle: '', invoiceTax: '' });
+  }
+  return rows;
+}
+
+function parseBankData(raw) {
+  let headerRow = -1;
+  for (let i = 0; i < Math.min(15, raw.length); i++) {
+    const rowStr = (raw[i] || []).join('|');
+    if (rowStr.includes('存入') || rowStr.includes('交易日期')) { headerRow = i; break; }
+  }
+  if (headerRow < 0) headerRow = 0;
+  const headers = (raw[headerRow] || []).map(c => String(c||'').trim());
+  const rows = [];
+  for (let i = headerRow + 1; i < raw.length; i++) {
+    const row = raw[i];
+    if (!row || row.every(c => !c)) continue;
+    const obj = {};
+    headers.forEach((h, idx) => obj[h] = String(row[idx]||'').trim());
+    const amountKeys = ['存入', '存入金額', '入帳'];
+    let amount = 0;
+    for (const k of amountKeys) {
+      const n = parseFloat((obj[k]||'').replace(/,/g,''));
+      if (!isNaN(n) && n > 0) { amount = n; break; }
+    }
+    if (amount <= 0) continue;
+    const codeKeys = ['存款人代號', '存款人', '帳號'];
+    let last5 = '';
+    for (const k of codeKeys) {
+      const val = (obj[k]||'').replace(/\*/g,'').replace(/\s/g,'');
+      if (val.length >= 5) { last5 = val.slice(-5); break; }
+    }
+    const dateKeys = ['交易日期', '日期'];
+    let dateStr = '';
+    for (const k of dateKeys) { if (obj[k]) { dateStr = obj[k]; break; } }
+    rows.push({ dateStr, amount, last5, remark: obj['收付款說明'] || obj['備註'] || '' });
+  }
+  return rows;
+}
+
+// ===== Reconciliation =====
+function runReconciliation() {
+  if (!orderData.length) { showToast('請先上傳訂單明細！'); return; }
+
+  // 合併：Google Sheets 回報 + 本機
+  const paymentSource = allReports.length ? allReports : submissions;
+  const subMap = {};
+  paymentSource.forEach(s => {
+    if (s.last5 && s.last5 !== 'CASH') subMap[s.last5] = s;
+  });
+
+  const bankMap = {};
+  bankData.forEach(b => {
+    if (!b.last5) return;
+    if (!bankMap[b.last5]) bankMap[b.last5] = [];
+    bankMap[b.last5].push(b);
+  });
+
+  resultRows = orderData.map(order => {
+    const row = { ...order };
+    let last5 = order.last5;
+    let subInfo = subMap[last5];
+    if (!last5) {
+      const sub = paymentSource.find(s => s.student && order.student && order.student.includes(s.student.split(' ')[0]));
+      if (sub) { last5 = sub.last5; subInfo = sub; }
+    }
+    // 帶入發票資訊
+    if (subInfo) { row.invoiceTitle = subInfo.invoiceTitle || ''; row.invoiceTax = subInfo.invoiceTax || ''; }
+
+    if (order.isCash) {
+      row.status = 'cash'; row.matchedBank = '現金收款';
+    } else if (last5 === 'CASH') {
+      row.status = 'cash'; row.matchedBank = '現金收款';
+    } else if (!last5) {
+      row.status = 'pending'; row.matchedBank = '—';
+    } else {
+      const bankMatches = bankMap[last5];
+      if (bankMatches?.length) {
+        const best = bankMatches.find(b => Math.abs(b.amount - order.fee) < 500) || bankMatches[0];
+        row.status = 'confirmed'; row.matchedBank = `$${best.amount.toLocaleString()}`; row.matchedDate = best.dateStr; row.last5 = last5;
+      } else if (!bankData.length && subInfo) {
+        row.status = 'coach_reported'; row.matchedBank = '教練已回報（待對帳）'; row.last5 = last5;
+      } else {
+        row.status = 'missing'; row.matchedBank = bankData.length ? '銀行找不到' : '—'; row.last5 = last5;
+      }
+    }
+    return row;
+  });
+
+  renderResult();
+  switchTab('result');
+  showToast('✅ 對帳完成！');
+}
+
+function renderResult(filter = 'all') {
+  const confirmed = resultRows.filter(r => r.status === 'confirmed' || r.status === 'cash');
+  const missing = resultRows.filter(r => r.status === 'missing');
+  const pending = resultRows.filter(r => r.status === 'pending' || r.status === 'coach_reported');
+  document.getElementById('stat-confirmed').textContent = confirmed.length;
+  document.getElementById('stat-missing').textContent = missing.length;
+  document.getElementById('stat-pending').textContent = pending.length;
+
+  let rows = resultRows;
+  if (filter === 'confirmed') rows = confirmed;
+  if (filter === 'missing') rows = missing;
+  if (filter === 'pending') rows = pending;
+  if (filter === 'cash') rows = resultRows.filter(r => r.status === 'cash');
+
+  const badgeMap = {
+    confirmed: '<span class="badge badge-green">✅ 已收款</span>',
+    cash: '<span class="badge badge-blue">💵 現金</span>',
+    missing: '<span class="badge badge-red">❌ 未收款</span>',
+    pending: '<span class="badge badge-amber">⚠️ 待確認</span>',
+    coach_reported: '<span class="badge badge-amber">📋 教練已回報</span>',
+  };
+  const tbody = document.getElementById('result-tbody');
+  tbody.innerHTML = rows.length ? rows.map(r => `<tr>
+    <td>${badgeMap[r.status]||''}</td>
+    <td style="font-weight:500">${r.student}</td>
+    <td style="color:var(--text2);font-size:12px">${r.course.length>28?r.course.slice(0,28)+'…':r.course}</td>
+    <td class="mono">$${r.fee?r.fee.toLocaleString():'—'}</td>
+    <td class="mono">${r.last5||'—'}</td>
+    <td style="font-size:12px">${r.matchedBank||'—'}</td>
+    <td style="font-size:12px;color:var(--text2)">${r.matchedDate||r.dateStr||'—'}</td>
+    <td style="font-size:12px">${r.invoiceTitle ? `🧾 ${r.invoiceTitle}` : '—'}</td>
+  </tr>`).join('') : `<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:32px">無資料</td></tr>`;
+
+  document.getElementById('result-empty').style.display = 'none';
+  document.getElementById('result-content').style.display = 'block';
+}
+
+function showResultTab(filter, el) {
+  document.querySelectorAll('.inner-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderResult(filter);
+}
+
+function exportResult() {
+  if (!resultRows.length) { showToast('沒有對帳結果可匯出'); return; }
+  const statusMap = { confirmed:'已收款', cash:'現金', missing:'未收款', pending:'待確認', coach_reported:'教練已回報' };
+  const data = resultRows.map(r => ({
+    '狀態': statusMap[r.status]||'',
+    '學員': r.student, '課程': r.course, '費用': r.fee,
+    '後五碼': r.last5||'', '銀行核對金額': r.matchedBank||'',
+    '匯款日期': r.matchedDate||'', '訂單日期': r.dateStr,
+    '發票抬頭': r.invoiceTitle||'', '統一編號': r.invoiceTax||'', '備註': r.note||''
+  }));
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '對帳結果');
+  XLSX.writeFile(wb, `HOPE對帳_${new Date().toLocaleDateString('zh-TW').replace(/\//g,'-')}.xlsx`);
+  showToast('✅ 已匯出 Excel');
+}
+
+// ===== Settings =====
+function saveSheetUrl() {
+  const url = document.getElementById('sheets-url').value.trim();
+  if (!url) { showToast('請輸入網址'); return; }
+  sheetsUrl = url;
+  localStorage.setItem('hope_sheets_url', url);
+  document.getElementById('config-banner').style.display = 'none';
+  showToast('✅ 已儲存連結');
+}
+
+async function testSheetUrl() {
+  const url = document.getElementById('sheets-url').value.trim();
+  if (!url) { showToast('請先輸入網址'); return; }
+  try {
+    const res = await fetch(url + '?t=' + Date.now());
+    const json = await res.json();
+    if (json.status === 'ok') showToast(`✅ 連線成功！目前有 ${json.data.length} 筆資料`);
+    else showToast('⚠️ 連線有誤：' + json.message);
+  } catch(e) {
+    showToast('❌ 連線失敗，請確認網址是否正確');
+  }
+}
+
+function addCoach() {
+  const input = document.getElementById('new-coach-input');
+  const name = input.value.trim();
+  if (!name) { showToast('請輸入教練姓名'); return; }
+  if (coaches.includes(name)) { showToast('此教練已存在'); return; }
+  coaches.push(name);
+  localStorage.setItem('hope_coaches', JSON.stringify(coaches));
+  input.value = '';
+  renderCoachList();
+  showToast(`✓ 已新增：${name}`);
+}
+
+function deleteCoach(idx) {
+  coaches.splice(idx, 1);
+  localStorage.setItem('hope_coaches', JSON.stringify(coaches));
+  renderCoachList();
+}
+
+function renderCoachList() {
+  const tbody = document.getElementById('coach-list-tbody');
+  if (!coaches.length) {
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:20px">尚未新增任何教練</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = coaches.map((name, i) => `
+    <tr>
+      <td style="color:var(--text3)">${i+1}</td>
+      <td style="font-weight:500">${name}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteCoach(${i})">刪除</button></td>
+    </tr>
+  `).join('');
+}
+
+function changePassword() {
+  const np = document.getElementById('new-pw').value;
+  const cp = document.getElementById('confirm-pw').value;
+  if (!np) { showToast('請輸入新密碼'); return; }
+  if (np !== cp) { showToast('兩次密碼不一致'); return; }
+  if (np.length < 4) { showToast('密碼至少 4 個字元'); return; }
+  adminPw = np;
+  localStorage.setItem('hope_admin_pw', np);
+  document.getElementById('new-pw').value = '';
+  document.getElementById('confirm-pw').value = '';
+  showToast('✅ 密碼已更新');
+}
+
+// ===== Toast =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
