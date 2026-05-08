@@ -644,7 +644,7 @@ let coaches = JSON.parse(localStorage.getItem('hope_coaches') || JSON.stringify(
   '●行政：Elaine'
 ]));
 let adminPw = localStorage.getItem('hope_admin_pw') || DEFAULT_ADMIN_PW;
-let sheetsUrl = localStorage.getItem('hope_sheets_url') || '';
+let sheetsUrl = localStorage.getItem('hope_sheets_url') || 'https://script.google.com/macros/s/AKfycbyWoxzmtfNyZcFchTZDlKgH0JWBNH5bkjkGo_3D4E7EPH4ph1QsgBiAxJeE64wOfOlkug/exec';
 let submissions = JSON.parse(localStorage.getItem('hope_submissions') || '[]');
 let allReports = [];
 let orderData = [];
@@ -731,7 +731,7 @@ function enterApp() {
       <button class="tab-btn" onclick="switchTab('result')">📊 對帳結果</button>
       <button class="tab-btn" onclick="switchTab('settings')">⚙️ 系統設定</button>
     `;
-    if (!sheetsUrl) document.getElementById('config-banner').style.display = 'block';
+    
     document.getElementById('sheets-url').value = sheetsUrl;
     renderCoachList();
     loadAllReports();
