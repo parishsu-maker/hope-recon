@@ -647,10 +647,26 @@ let bankData = [];
 let resultRows = [];
 
 // ===== Init =====
-document.addEventListener('DOMContentLoaded', () => {
+// ===== Init =====
+document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('c-date').valueAsDate = new Date();
+  await loadCoachesFromSheets();
   renderLoginCoachSelect();
 });
+
+async function loadCoachesFromSheets() {
+  if (!sheetsUrl) return;
+  try {
+    const res = await fetch(sheetsUrl + '?type=coaches&t=' + Date.now());
+    const json = await res.json();
+    if (json.status === 'ok' && json.coaches.length > 0) {
+      coaches = json.coaches;
+      localStorage.setItem('hope_coaches', JSON.stringify(coaches));
+    }
+  } catch(e) {
+    // 網路失敗就用本機快取
+  }
+}
 
 // ===== Login =====
 function renderLoginCoachSelect() {
@@ -768,7 +784,7 @@ async function submitCoach() {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(entry)
+        body: JSON.stringify({...entry, type: 'report'})
       });
       showToast('✓ 回報成功！已同步到雲端');
     } catch(e) {
@@ -1141,22 +1157,35 @@ async function testSheetUrl() {
   }
 }
 
-function addCoach() {
+async function addCoach() {
   const input = document.getElementById('new-coach-input');
   const name = input.value.trim();
   if (!name) { showToast('請輸入教練姓名'); return; }
   if (coaches.includes(name)) { showToast('此教練已存在'); return; }
   coaches.push(name);
-  localStorage.setItem('hope_coaches', JSON.stringify(coaches));
+  await syncCoachesToSheets();
   input.value = '';
   renderCoachList();
   showToast(`✓ 已新增：${name}`);
 }
 
-function deleteCoach(idx) {
+async function deleteCoach(idx) {
   coaches.splice(idx, 1);
-  localStorage.setItem('hope_coaches', JSON.stringify(coaches));
+  await syncCoachesToSheets();
   renderCoachList();
+}
+
+async function syncCoachesToSheets() {
+  localStorage.setItem('hope_coaches', JSON.stringify(coaches));
+  if (!sheetsUrl) return;
+  try {
+    await fetch(sheetsUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'coaches', coaches })
+    });
+  } catch(e) {}
 }
 
 function renderCoachList() {
