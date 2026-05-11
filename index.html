@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HOPE 對帳系統</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
 
@@ -531,15 +532,15 @@
     </div>
 
     <div class="card">
-      <div class="card-title"><span class="dot"></span>上傳銀行對帳單 Excel</div>
-      <div class="alert alert-info"><span>ℹ️</span><span>請從網銀下載 Excel 格式的存款明細</span></div>
+      <div class="card-title"><span class="dot"></span>上傳銀行對帳單</div>
+      <div class="alert alert-info"><span>ℹ️</span><span>請從網銀下載存款明細，支援 PDF 或 Excel 格式（華南銀行格式）</span></div>
       <div class="upload-zone" id="zone-bank" onclick="document.getElementById('file-bank').click()"
            ondragover="handleDrag(event,'zone-bank')" ondragleave="handleDragLeave(event,'zone-bank')"
            ondrop="handleDrop(event,'zone-bank','bank')">
-        <input type="file" id="file-bank" accept=".xlsx,.xls,.csv" onchange="handleFileChange(event,'bank')">
+        <input type="file" id="file-bank" accept=".xlsx,.xls,.csv,.pdf" onchange="handleFileChange(event,'bank')">
         <div class="upload-icon">🏦</div>
-        <div class="upload-text">點擊或拖曳 <strong>銀行對帳單 Excel</strong> 至此</div>
-        <div class="upload-hint">.xlsx / .xls / .csv</div>
+        <div class="upload-text">點擊或拖曳 <strong>銀行對帳單</strong> 至此</div>
+        <div class="upload-hint">.pdf / .xlsx / .xls / .csv</div>
       </div>
     </div>
 
@@ -967,6 +968,10 @@ function handleDrop(e, zoneId, type) {
 function handleFileChange(e, type) { const file = e.target.files[0]; if (file) processFile(file, type); }
 
 function processFile(file, type) {
+  if (type === 'bank' && file.name.toLowerCase().endsWith('.pdf')) {
+    processBankPDF(file);
+    return;
+  }
   const reader = new FileReader();
   reader.onload = function(e) {
     const wb = XLSX.read(e.target.result, { type: 'array' });
@@ -981,6 +986,89 @@ function processFile(file, type) {
     }
   };
   reader.readAsArrayBuffer(file);
+}
+
+async function processBankPDF(file) {
+  showUploadSuccess('zone-bank', '⏳ 解析 PDF 中...');
+  try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let allText = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      // 依 y 座標分行，再依 x 排序
+      const items = content.items.map(it => ({ x: Math.round(it.transform[4]), y: Math.round(it.transform[5]), str: it.str }));
+      const lineMap = {};
+      items.forEach(it => {
+        if (!lineMap[it.y]) lineMap[it.y] = [];
+        lineMap[it.y].push(it);
+      });
+      const lines = Object.keys(lineMap).sort((a,b) => b-a).map(y =>
+        lineMap[y].sort((a,b) => a.x - b.x).map(it => it.str).join(' ')
+      );
+      allText += lines.join('\n') + '\n';
+    }
+    bankData = parseBankPDFText(allText);
+    showUploadSuccess('zone-bank', `銀行對帳單（PDF）：已載入 ${bankData.length} 筆入帳`);
+  } catch(e) {
+    showUploadSuccess('zone-bank', '❌ PDF 解析失敗，請改用 Excel 格式');
+    console.error(e);
+  }
+}
+
+function parseBankPDFText(text) {
+  const rows = [];
+  const lines = text.split('\n');
+  // 華南銀行格式：日期開頭 0115/MM/DD 或 YYYY/MM/DD，找存入金額列
+  // 每筆交易格式：日期 序號 時間 摘要 [支出] 存入 餘額 存款人代號 ...
+  const datePattern = /(\d{3,4}\/\d{2}\/\d{2})/;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!datePattern.test(line)) continue;
+    
+    // 找所有數字（去除逗號）
+    const nums = line.match(/[\d,]+\.\d{2}/g) || [];
+    const amounts = nums.map(n => parseFloat(n.replace(/,/g,'')));
+    
+    // 華南銀行：有3個以上金額才是交易列（支出或空、存入、餘額）
+    if (amounts.length < 2) continue;
+    
+    // 判斷存入金額：餘額通常最大，存入是第二大或倒數第二
+    // 更可靠的方式：找「ATM轉」或「網路轉」且有存入
+    const isDeposit = line.includes('ATM轉') || line.includes('網路轉') || line.includes('匯入');
+    if (!isDeposit && amounts.length < 3) continue;
+    
+    // 存入金額：通常是倒數第二個（餘額是最後一個）
+    let depositAmount = 0;
+    if (amounts.length >= 2) {
+      // 如果有支出欄，餘額會比前面的數大；存入是讓餘額增加的那個
+      depositAmount = amounts[amounts.length - 2];
+    }
+    if (depositAmount <= 0) continue;
+    
+    // 取日期
+    const dateMatch = line.match(datePattern);
+    let dateStr = dateMatch ? dateMatch[1] : '';
+    // 民國年轉西元
+    if (dateStr && parseInt(dateStr.split('/')[0]) < 200) {
+      const parts = dateStr.split('/');
+      dateStr = (parseInt(parts[0]) + 1911) + '/' + parts[1] + '/' + parts[2];
+    }
+    
+    // 找後五碼：從存款人代號（長數字串）
+    const codeMatch = line.match(/(\d{15,})/);
+    let last5 = '';
+    if (codeMatch) last5 = codeMatch[1].slice(-5);
+    
+    // 備註
+    const remark = line.replace(datePattern, '').replace(/[\d,]+\.\d{2}/g, '').replace(/\s+/g,' ').trim();
+    
+    rows.push({ dateStr, amount: depositAmount, last5, remark });
+  }
+  return rows;
 }
 
 function showUploadSuccess(zoneId, msg) {
