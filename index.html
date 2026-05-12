@@ -1063,9 +1063,9 @@ function parseBankPDFText(text) {
     const codes = digitBlocks.map(b => b.replace(/\s/g, '')).filter(b => b.length >= 10);
     const last5 = codes.length > 0 ? codes[0].slice(-5) : '';
 
-    // 把前後幾行也合併進來（PDF.js 可能把中文備註拆到不同行）
-    const contextLines = allLines.slice(Math.max(0, i-2), Math.min(allLines.length, i+3));
-    const rawLine = contextLines.join('').replace(/\s/g, '');
+    // 把當前行和下一行合併（PDF.js 可能把中文備註拆到下一行）
+    const nextLine = i + 1 < allLines.length ? allLines[i + 1] : '';
+    const rawLine = (line + ' ' + nextLine).replace(/\s/g, '');
     rows.push({ dateStr, amount: txAmount, last5, remark: rawLine, rawLine });
   }
   return rows;
@@ -1198,7 +1198,9 @@ function runReconciliation() {
         // 同時搜尋 remark 欄位和原始文字
         const remarkMatch = bankData.find(b => {
           const searchIn = (b.remark || '') + ' ' + (b.rawLine || '');
-          return nameToSearch && searchIn.replace(/\s/g, '').includes(nameToSearch.replace(/\s/g, ''));
+          const nameFound = nameToSearch && searchIn.replace(/\s/g, '').includes(nameToSearch.replace(/\s/g, ''));
+          const amountClose = Math.abs(b.amount - order.fee) < 2000; // 金額誤差在 2000 以內
+          return nameFound && amountClose;
         });
         if (remarkMatch) {
           row.status = 'suspected';
