@@ -1020,21 +1020,26 @@ async function processBankPDF(file) {
 
 function parseBankPDFText(text) {
   const rows = [];
-  const lines = text.split('\n');
-  const datePattern = /^(0\d{2,3}\/\d{2}\/\d{2})\s+\d{6}\s+\d{2}:\d{2}:\d{2}/;
+  const allLines = text.split('\n');
+  // PDF.js 輸出格式：每筆交易的日期+金額+代號在同一行
+  // 格式：0115/04/10 085303 19,000.001,453,333.00001300000195663457501150413 TWD...
+  const datePattern = /^(0\d{2,3}\/\d{2}\/\d{2})\s+\d{6}/;
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+  for (let i = 0; i < allLines.length; i++) {
+    const line = allLines[i];
     if (!datePattern.test(line)) continue;
 
+    // 找所有金額
     const amountMatches = line.match(/[\d,]+\.\d{2}/g) || [];
     if (amountMatches.length < 2) continue;
     const nums = amountMatches.map(n => parseFloat(n.replace(/,/g, '')));
 
+    // 餘額增加 = 存入（最後一個是餘額，倒數第二是交易金額）
     const balance = nums[nums.length - 1];
     const txAmount = nums[nums.length - 2];
     if (balance <= txAmount) continue;
 
+    // 日期（民國年轉西元）
     const dateMatch = line.match(/^(0\d{2,3}\/\d{2}\/\d{2})/);
     let dateStr = '';
     if (dateMatch) {
@@ -1042,19 +1047,12 @@ function parseBankPDFText(text) {
       dateStr = (parseInt(parts[0]) + 1911) + '/' + parts[1] + '/' + parts[2];
     }
 
-    // 先去掉金額（含逗號的小數），再找存款人代號
+    // 先去掉金額再找存款人代號（避免金額數字干擾）
     const lineNoAmounts = line.replace(/[\d,]+\.\d{2}/g, '');
     const codeMatch = lineNoAmounts.match(/(\d{10,})/);
     const last5 = codeMatch ? codeMatch[1].slice(-5) : '';
 
-    const remark = line
-      .replace(/^\S+\s+\d{6}\s+\d{2}:\d{2}:\d{2}/, '')
-      .replace(/[\d,]+\.\d{2}/g, '')
-      .replace(/\d{10,}/g, '')
-      .replace(/TWD[\d\s\-]+/, '')
-      .replace(/\s+/g, ' ').trim();
-
-    rows.push({ dateStr, amount: txAmount, last5, remark });
+    rows.push({ dateStr, amount: txAmount, last5, remark: '' });
   }
   return rows;
 }
