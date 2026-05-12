@@ -1025,36 +1025,43 @@ async function processBankPDF(file) {
 function parseBankPDFText(text) {
   const rows = [];
   const allLines = text.split('\n');
-  // PDF.js 輸出格式：每筆交易的日期+金額+代號在同一行
-  // 格式：0115/04/10 085303 19,000.001,453,333.00001300000195663457501150413 TWD...
-  const datePattern = /^(0\d{2,3}\/\d{2}\/\d{2})\s+\d{6}/;
 
   for (let i = 0; i < allLines.length; i++) {
-    const line = allLines[i];
-    if (!datePattern.test(line)) continue;
+    const line = allLines[i].trim();
+
+    // 必須包含民國年日期格式
+    if (!/0\d{2,3}\/\d{2}\/\d{2}/.test(line)) continue;
 
     // 找所有金額
     const amountMatches = line.match(/[\d,]+\.\d{2}/g) || [];
     if (amountMatches.length < 2) continue;
     const nums = amountMatches.map(n => parseFloat(n.replace(/,/g, '')));
 
-    // 餘額增加 = 存入（最後一個是餘額，倒數第二是交易金額）
+    // 餘額增加 = 存入
     const balance = nums[nums.length - 1];
     const txAmount = nums[nums.length - 2];
     if (balance <= txAmount) continue;
 
     // 日期（民國年轉西元）
-    const dateMatch = line.match(/^(0\d{2,3}\/\d{2}\/\d{2})/);
+    const dateMatch = line.match(/(0\d{2,3}\/\d{2}\/\d{2})/);
     let dateStr = '';
     if (dateMatch) {
       const parts = dateMatch[1].split('/');
       dateStr = (parseInt(parts[0]) + 1911) + '/' + parts[1] + '/' + parts[2];
     }
 
-    // 先去掉金額再找存款人代號（避免金額數字干擾）
-    const lineNoAmounts = line.replace(/[\d,]+\.\d{2}/g, '');
-    const codeMatch = lineNoAmounts.match(/(\d{10,})/);
-    const last5 = codeMatch ? codeMatch[1].slice(-5) : '';
+    // 找後五碼：去掉金額、日期、序號時間、補摺日期、TWD後再找長數字串
+    let cleaned = line;
+    cleaned = cleaned.replace(/[\d,]+\.\d{2}/g, ' ');       // 去金額
+    cleaned = cleaned.replace(/0\d{2,3}\/\d{2}\/\d{2}/g, ' '); // 去民國日期
+    cleaned = cleaned.replace(/\d{6}\s+\d{2}:\d{2}:\d{2}/g, ' '); // 去序號+時間
+    cleaned = cleaned.replace(/\b115\d{4}\b/g, ' ');         // 去補摺日期
+    cleaned = cleaned.replace(/TWD.*/g, '');                    // 去TWD後面
+
+    // 找所有連續數字群（允許中間有空格），合併後取 >= 10 碼的
+    const digitBlocks = cleaned.match(/\d+(?:\s+\d+)*/g) || [];
+    const codes = digitBlocks.map(b => b.replace(/\s/g, '')).filter(b => b.length >= 10);
+    const last5 = codes.length > 0 ? codes[0].slice(-5) : '';
 
     rows.push({ dateStr, amount: txAmount, last5, remark: '' });
   }
