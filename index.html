@@ -1183,7 +1183,9 @@ function runReconciliation() {
       const bankMatches = bankMap[last5];
       if (bankMatches?.length) {
         const best = bankMatches.find(b => Math.abs(b.amount - order.fee) < 500) || bankMatches[0];
-        row.status = 'confirmed'; row.matchedBank = `$${best.amount.toLocaleString()}`; row.matchedDate = best.dateStr; row.last5 = last5;
+        const amountMismatch = Math.abs(best.amount - order.fee) >= 1;
+        row.status = amountMismatch ? 'mismatch' : 'confirmed';
+        row.matchedBank = `$${best.amount.toLocaleString()}`; row.matchedDate = best.dateStr; row.last5 = last5;
       } else if (!bankData.length && subInfo) {
         row.status = 'coach_reported'; row.matchedBank = '教練已回報（待對帳）'; row.last5 = last5;
       } else {
@@ -1200,7 +1202,7 @@ function runReconciliation() {
 
 function renderResult(filter = 'all') {
   const confirmed = resultRows.filter(r => r.status === 'confirmed' || r.status === 'cash');
-  const missing = resultRows.filter(r => r.status === 'missing');
+  const missing = resultRows.filter(r => r.status === 'missing' || r.status === 'mismatch');
   const pending = resultRows.filter(r => r.status === 'pending' || r.status === 'coach_reported');
   document.getElementById('stat-confirmed').textContent = confirmed.length;
   document.getElementById('stat-missing').textContent = missing.length;
@@ -1208,12 +1210,13 @@ function renderResult(filter = 'all') {
 
   let rows = resultRows;
   if (filter === 'confirmed') rows = confirmed;
-  if (filter === 'missing') rows = missing;
+  if (filter === 'missing') rows = resultRows.filter(r => r.status === 'missing' || r.status === 'mismatch');
   if (filter === 'pending') rows = pending;
   if (filter === 'cash') rows = resultRows.filter(r => r.status === 'cash');
 
   const badgeMap = {
     confirmed: '<span class="badge badge-green">✅ 已收款</span>',
+    mismatch: '<span class="badge badge-red">⚠️ 金額異常</span>',
     cash: '<span class="badge badge-blue">💵 現金</span>',
     missing: '<span class="badge badge-red">❌ 未收款</span>',
     pending: '<span class="badge badge-amber">⚠️ 待確認</span>',
@@ -1243,7 +1246,7 @@ function showResultTab(filter, el) {
 
 function exportResult() {
   if (!resultRows.length) { showToast('沒有對帳結果可匯出'); return; }
-  const statusMap = { confirmed:'已收款', cash:'現金', missing:'未收款', pending:'待確認', coach_reported:'教練已回報' };
+  const statusMap = { confirmed:'已收款', mismatch:'金額異常', cash:'現金', missing:'未收款', pending:'待確認', coach_reported:'教練已回報' };
   const data = resultRows.map(r => ({
     '狀態': statusMap[r.status]||'',
     '學員': r.student, '課程': r.course, '費用': r.fee,
