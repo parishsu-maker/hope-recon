@@ -1021,56 +1021,41 @@ async function processBankPDF(file) {
 function parseBankPDFText(text) {
   const rows = [];
   const lines = text.split('\n');
-  // 華南銀行格式：日期開頭 0115/MM/DD 或 YYYY/MM/DD，找存入金額列
-  // 每筆交易格式：日期 序號 時間 摘要 [支出] 存入 餘額 存款人代號 ...
-  const datePattern = /(\d{3,4}\/\d{2}\/\d{2})/;
-  
+  const datePattern = /^(0\d{2,3}\/\d{2}\/\d{2})\s+\d{6}\s+\d{2}:\d{2}:\d{2}/;
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (!datePattern.test(line)) continue;
-    
-    // 找所有數字（去除逗號）
-    const nums = line.match(/[\d,]+\.\d{2}/g) || [];
-    const amounts = nums.map(n => parseFloat(n.replace(/,/g,'')));
-    
-    // 華南銀行：有3個以上金額才是交易列（支出或空、存入、餘額）
-    if (amounts.length < 2) continue;
-    
-    // 判斷存入金額：餘額通常最大，存入是第二大或倒數第二
-    // 更可靠的方式：找「ATM轉」或「網路轉」且有存入
-    const isDeposit = line.includes('ATM轉') || line.includes('網路轉') || line.includes('匯入');
-    if (!isDeposit && amounts.length < 3) continue;
-    
-    // 存入金額：通常是倒數第二個（餘額是最後一個）
-    let depositAmount = 0;
-    if (amounts.length >= 2) {
-      // 如果有支出欄，餘額會比前面的數大；存入是讓餘額增加的那個
-      depositAmount = amounts[amounts.length - 2];
-    }
-    if (depositAmount <= 0) continue;
-    
-    // 取日期
-    const dateMatch = line.match(datePattern);
-    let dateStr = dateMatch ? dateMatch[1] : '';
-    // 民國年轉西元
-    if (dateStr && parseInt(dateStr.split('/')[0]) < 200) {
-      const parts = dateStr.split('/');
+
+    const amountMatches = line.match(/[\d,]+\.\d{2}/g) || [];
+    if (amountMatches.length < 2) continue;
+    const nums = amountMatches.map(n => parseFloat(n.replace(/,/g, '')));
+
+    const balance = nums[nums.length - 1];
+    const txAmount = nums[nums.length - 2];
+    if (balance <= txAmount) continue;
+
+    const dateMatch = line.match(/^(0\d{2,3}\/\d{2}\/\d{2})/);
+    let dateStr = '';
+    if (dateMatch) {
+      const parts = dateMatch[1].split('/');
       dateStr = (parseInt(parts[0]) + 1911) + '/' + parts[1] + '/' + parts[2];
     }
-    
-    // 找後五碼：從存款人代號（長數字串）
-    const codeMatch = line.match(/(\d{15,})/);
-    let last5 = '';
-    if (codeMatch) last5 = codeMatch[1].slice(-5);
-    
-    // 備註
-    const remark = line.replace(datePattern, '').replace(/[\d,]+\.\d{2}/g, '').replace(/\s+/g,' ').trim();
-    
-    rows.push({ dateStr, amount: depositAmount, last5, remark });
+
+    const codeMatch = line.match(/(\d{15,})/);
+    const last5 = codeMatch ? codeMatch[1].slice(-5) : '';
+
+    const remark = line
+      .replace(/^\S+\s+\d{6}\s+\d{2}:\d{2}:\d{2}/, '')
+      .replace(/[\d,]+\.\d{2}/g, '')
+      .replace(/\d{10,}/g, '')
+      .replace(/TWD[\d\s\-]+/, '')
+      .replace(/\s+/g, ' ').trim();
+
+    rows.push({ dateStr, amount: txAmount, last5, remark });
   }
   return rows;
 }
-
 function showUploadSuccess(zoneId, msg) {
   const zone = document.getElementById(zoneId);
   zone.classList.add('upload-success');
