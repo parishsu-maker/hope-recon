@@ -1042,7 +1042,9 @@ function parseBankPDFText(text) {
       dateStr = (parseInt(parts[0]) + 1911) + '/' + parts[1] + '/' + parts[2];
     }
 
-    const codeMatch = line.match(/(\d{15,})/);
+    // 先去掉金額（含逗號的小數），再找存款人代號
+    const lineNoAmounts = line.replace(/[\d,]+\.\d{2}/g, '');
+    const codeMatch = lineNoAmounts.match(/(\d{10,})/);
     const last5 = codeMatch ? codeMatch[1].slice(-5) : '';
 
     const remark = line
