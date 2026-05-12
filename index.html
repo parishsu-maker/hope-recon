@@ -1063,9 +1063,10 @@ function parseBankPDFText(text) {
     const codes = digitBlocks.map(b => b.replace(/\s/g, '')).filter(b => b.length >= 10);
     const last5 = codes.length > 0 ? codes[0].slice(-5) : '';
 
-    // 保留備註（去掉數字、日期、TWD後剩下的中文文字）
-    const remarkText = cleaned.replace(/[\d\s\-\/:.]+/g, ' ').replace(/ATM|TWD|轉|存|匯|路|網|跨電/g, '').replace(/\s+/g, ' ').trim();
-    rows.push({ dateStr, amount: txAmount, last5, remark: remarkText });
+    // 把前後幾行也合併進來（PDF.js 可能把中文備註拆到不同行）
+    const contextLines = allLines.slice(Math.max(0, i-2), Math.min(allLines.length, i+3));
+    const rawLine = contextLines.join('').replace(/\s/g, '');
+    rows.push({ dateStr, amount: txAmount, last5, remark: rawLine, rawLine });
   }
   return rows;
 }
@@ -1192,9 +1193,13 @@ function runReconciliation() {
         row.status = 'coach_reported'; row.matchedBank = '教練已回報（待對帳）'; row.last5 = last5;
       } else {
         // 後五碼找不到，嘗試從銀行備註找學員姓名
-        const studentName = order.student.replace(/[a-zA-Z\s]/g, '').trim(); // 取中文部分
+        const studentName = order.student.replace(/[a-zA-Z\s]/g, '').trim();
         const nameToSearch = studentName.length >= 2 ? studentName.slice(0, 2) : order.student.slice(0, 2);
-        const remarkMatch = bankData.find(b => b.remark && nameToSearch && b.remark.includes(nameToSearch));
+        // 同時搜尋 remark 欄位和原始文字
+        const remarkMatch = bankData.find(b => {
+          const searchIn = (b.remark || '') + ' ' + (b.rawLine || '');
+          return nameToSearch && searchIn.replace(/\s/g, '').includes(nameToSearch.replace(/\s/g, ''));
+        });
         if (remarkMatch) {
           row.status = 'suspected';
           row.matchedBank = `📌 備註含「${nameToSearch}」`;
