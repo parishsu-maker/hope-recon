@@ -1010,6 +1010,10 @@ async function processBankPDF(file) {
       );
       allText += lines.join('\n') + '\n';
     }
+    // DEBUG: 顯示前20行讓我們看格式
+    const debugLines = allText.split('\n').slice(0, 40);
+    console.log('=== PDF.js 讀到的內容 ===');
+    debugLines.forEach((l, i) => console.log(i + ': ' + JSON.stringify(l)));
     bankData = parseBankPDFText(allText);
     showUploadSuccess('zone-bank', `銀行對帳單（PDF）：已載入 ${bankData.length} 筆入帳`);
   } catch(e) {
