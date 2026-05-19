@@ -890,7 +890,7 @@ async function loadAllReports() {
       allReports = json.data.map(row => ({
         coach: row['教練姓名'] || '',
         student: row['學員姓名'] || '',
-        last5: row['後五碼'] || '',
+        last5: String(row['後五碼'] || '').replace(/^'+/, '').padStart(5, '0'),
         amount: parseFloat(String(row['金額']).replace(/,/g,'')) || 0,
         date: row['匯款日期'] || '',
         method: row['付款方式'] === '現金' ? 'cash' : 'transfer',
@@ -1063,8 +1063,10 @@ function parseBankPDFText(text) {
 
     // 找所有連續數字群（允許中間有空格），合併後取 >= 10 碼的
     const digitBlocks = cleaned.match(/\d+(?:\s+\d+)*/g) || [];
-    const codes = digitBlocks.map(b => b.replace(/\s/g, '')).filter(b => b.length >= 10);
-    const last5 = codes.length > 0 ? codes[0].slice(-5) : '';
+    const codes = digitBlocks.map(b => b.replace(/\s/g, '')).filter(b => b.length >= 8);
+    // 取最長的存款人代號
+    const longestCode = codes.length > 0 ? codes.reduce((a, b) => a.length >= b.length ? a : b) : '';
+    const last5 = longestCode ? longestCode.slice(-5) : '';
 
     // 把當前行和下一行合併（PDF.js 可能把中文備註拆到下一行）
     const nextLine = i + 1 < allLines.length ? allLines[i + 1] : '';
@@ -1168,6 +1170,12 @@ function runReconciliation() {
     bankMap[b.last5].push(b);
   });
 
+  // 深拷貝 bankMap，讓每筆銀行紀錄只能被使用一次
+  const bankMapUsed = {};
+  Object.keys(bankMap).forEach(k => {
+    bankMapUsed[k] = [...bankMap[k]];
+  });
+
   resultRows = orderData.map(order => {
     const row = { ...order };
     let last5 = order.last5;
@@ -1186,11 +1194,33 @@ function runReconciliation() {
     } else if (!last5) {
       row.status = 'pending'; row.matchedBank = '—';
     } else {
-      const bankMatches = bankMap[last5];
+      const bankMatches = bankMapUsed[last5];
       if (bankMatches?.length) {
-        const best = bankMatches.find(b => Math.abs(b.amount - order.fee) < 500) || bankMatches[0];
+        // 優先找金額完全一致的，用完就移除（每筆銀行紀錄只能對一筆訂單）
+        const exactIdx = bankMatches.findIndex(b => Math.abs(b.amount - order.fee) < 1);
+        const bestIdx = exactIdx >= 0 ? exactIdx : 0;
+        const best = bankMatches[bestIdx];
+        bankMapUsed[last5].splice(bestIdx, 1);
         const amountMismatch = Math.abs(best.amount - order.fee) >= 1;
-        row.status = amountMismatch ? 'mismatch' : 'confirmed';
+        // 日期比對：教練填的匯款日期 vs 銀行交易日期，差距超過 5 天視為可疑
+        let dateMismatch = false;
+        if (order.date && best.dateStr) {
+          const coachDate = new Date(order.date);
+          const bankDate = new Date(best.dateStr);
+          if (!isNaN(coachDate) && !isNaN(bankDate)) {
+            const diffDays = Math.abs((coachDate - bankDate) / (1000 * 60 * 60 * 24));
+            if (diffDays > 5) dateMismatch = true;
+          }
+        }
+        if (amountMismatch) {
+          row.status = 'mismatch';
+          row.mismatchReason = `金額不符（銀行$${best.amount.toLocaleString()}）`;
+        } else if (dateMismatch) {
+          row.status = 'mismatch';
+          row.mismatchReason = `日期可疑（銀行${best.dateStr}，教練填${order.date}）`;
+        } else {
+          row.status = 'confirmed';
+        }
         row.matchedBank = `$${best.amount.toLocaleString()}`; row.matchedDate = best.dateStr; row.last5 = last5;
       } else if (!bankData.length && subInfo) {
         row.status = 'coach_reported'; row.matchedBank = '教練已回報（待對帳）'; row.last5 = last5;
@@ -1255,7 +1285,11 @@ function renderResult(filter = 'all') {
     <td style="color:var(--text2);font-size:12px">${r.course.length>28?r.course.slice(0,28)+'…':r.course}</td>
     <td class="mono">$${r.fee?r.fee.toLocaleString():'—'}</td>
     <td class="mono">${r.last5||'—'}</td>
-    <td style="font-size:12px">${r.status === 'suspected' ? `${r.matchedBank}（$${r.suspectedAmount?.toLocaleString()}，後五碼${r.suspectedLast5}）` : r.matchedBank||'—'}</td>
+    <td style="font-size:12px">${
+      r.status === 'suspected' ? `${r.matchedBank}（$${r.suspectedAmount?.toLocaleString()}，後五碼${r.suspectedLast5}）` :
+      r.status === 'mismatch' && r.mismatchReason ? `⚠️ ${r.mismatchReason}` :
+      r.matchedBank||'—'
+    }</td>
     <td style="font-size:12px;color:var(--text2)">${r.matchedDate||r.dateStr||'—'}</td>
     <td style="font-size:12px">${r.invoiceTitle ? `🧾 ${r.invoiceTitle}` : '—'}</td>
   </tr>`).join('') : `<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:32px">無資料</td></tr>`;
@@ -1276,7 +1310,7 @@ function exportResult() {
   const data = resultRows.map(r => ({
     '狀態': statusMap[r.status]||'',
     '學員': r.student, '課程': r.course, '費用': r.fee,
-    '後五碼': r.last5||'', '銀行核對金額': r.matchedBank||'',
+    '後五碼': r.last5||'', '銀行核對金額': r.matchedBank||'', '異常原因': r.mismatchReason||'',
     '匯款日期': r.matchedDate||'', '訂單日期': r.dateStr,
     '發票抬頭': r.invoiceTitle||'', '統一編號': r.invoiceTax||'', '備註': r.note||''
   }));
