@@ -1209,10 +1209,10 @@ function runReconciliation() {
 
     if (!matches.length) return null;
 
-    // 優先找金額最接近的
-    const best = matches.find(s => s.method === 'cash') ||
-                 matches.find(s => Math.abs((s.amount || 0) - order.fee) < 1) ||
-                 matches[0];
+    // 優先找金額完全一致的轉帳，其次找現金，最後取第一筆
+    const exactMatch = matches.find(s => s.method !== 'cash' && Math.abs((s.amount || 0) - order.fee) < 1);
+    const cashMatch = matches.find(s => s.method === 'cash');
+    const best = exactMatch || cashMatch || matches[0];
 
     return best ? { last5: best.last5, method: best.method, source: best } : null;
   }
@@ -1320,7 +1320,7 @@ function runReconciliation() {
     }
     return row;
   });
-
+  renderResult();
   switchTab('result');
   showToast('✅ 對帳完成！');
 }
