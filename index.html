@@ -694,6 +694,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('c-date').valueAsDate = new Date();
   await loadCoachesFromSheets();
   renderLoginCoachSelect();
+
+  // 檢查是否有儲存的登入狀態
+  const savedUser = localStorage.getItem('hope_current_user');
+  if (savedUser) {
+    try {
+      currentUser = JSON.parse(savedUser);
+      enterApp();
+      return;
+    } catch(e) {
+      localStorage.removeItem('hope_current_user');
+    }
+  }
 });
 
 async function loadCoachesFromSheets() {
@@ -743,6 +755,7 @@ function loginAsAdmin() {
 
 function logout() {
   currentUser = null;
+  localStorage.removeItem('hope_current_user');
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('admin-pw').value = '';
@@ -751,6 +764,8 @@ function logout() {
 }
 
 function enterApp() {
+  // 儲存登入狀態
+  localStorage.setItem('hope_current_user', JSON.stringify(currentUser));
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('header-username').textContent = currentUser.name;
