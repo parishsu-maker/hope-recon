@@ -1171,13 +1171,9 @@ function parseBankData(raw) {
 function runReconciliation() {
   if (!orderData.length) { showToast('請先上傳訂單明細！'); return; }
 
-  // 合併：Google Sheets 回報 + 本機
   const paymentSource = allReports.length ? allReports : submissions;
-  const subMap = {};
-  paymentSource.forEach(s => {
-    if (s.last5 && s.last5 !== 'CASH') subMap[s.last5] = s;
-  });
 
+  // 建立銀行後五碼 Map（每個後五碼可能有多筆）
   const bankMap = {};
   bankData.forEach(b => {
     if (!b.last5) return;
@@ -1185,92 +1181,108 @@ function runReconciliation() {
     bankMap[b.last5].push(b);
   });
 
-  // 深拷貝 bankMap，讓每筆銀行紀錄只能被使用一次
+  // 深拷貝 bankMap，每筆只能被使用一次
   const bankMapUsed = {};
   Object.keys(bankMap).forEach(k => {
     bankMapUsed[k] = [...bankMap[k]];
   });
 
-  // 第一階段：先把金額完全一致的訂單配對好（避免金額不符的訂單搶走正確的銀行紀錄）
-  const preMatched = {}; // key: orderIndex, value: bankRecord
+  // 幫每筆訂單找對應的教練回報（用學員名模糊比對）
+  function findPayment(order) {
+    // 先從訂單備註取後五碼
+    if (order.last5 && order.last5 !== 'CASH') return { last5: order.last5, method: 'transfer', source: null };
+    if (order.isCash) return { last5: 'CASH', method: 'cash', source: null };
+
+    // 取學員名的中文部分（去掉英文）
+    const studentCN = order.student.replace(/[a-zA-Z\s]/g, '').trim();
+    const studentKey = studentCN.length >= 2 ? studentCN : order.student.trim();
+
+    // 在教練回報裡找學員名相符的
+    const matches = paymentSource.filter(s => {
+      if (!s.student) return false;
+      const sCN = s.student.replace(/[a-zA-Z\s]/g, '').trim();
+      const sKey = sCN.length >= 2 ? sCN : s.student.trim();
+      return studentKey && sKey && (
+        studentKey.includes(sKey.slice(0, 2)) || sKey.includes(studentKey.slice(0, 2))
+      );
+    });
+
+    if (!matches.length) return null;
+
+    // 優先找金額最接近的
+    const best = matches.find(s => s.method === 'cash') ||
+                 matches.find(s => Math.abs((s.amount || 0) - order.fee) < 1) ||
+                 matches[0];
+
+    return best ? { last5: best.last5, method: best.method, source: best } : null;
+  }
+
+  // 第一階段：預配對（金額完全一致的先配對，避免被其他訂單搶走）
+  const preMatched = {};
   orderData.forEach((order, idx) => {
-    let last5 = order.last5;
-    if (!last5 || last5 === 'CASH' || order.isCash) return;
-    const paymentSource = allReports.length ? allReports : submissions;
-    if (!last5) {
-      const sub = paymentSource.find(s => s.student && order.student && order.student.includes(s.student.split(' ')[0]));
-      if (sub) last5 = sub.last5;
-    }
-    if (!last5 || last5 === 'CASH') return;
-    const matches = bankMapUsed[last5];
+    if (order.isCash) return;
+    const payment = findPayment(order);
+    if (!payment || payment.method === 'cash' || !payment.last5 || payment.last5 === 'CASH') return;
+    const matches = bankMapUsed[payment.last5];
     if (!matches?.length) return;
     const exactIdx = matches.findIndex(b => Math.abs(b.amount - order.fee) < 1);
     if (exactIdx >= 0) {
-      preMatched[idx] = matches[exactIdx];
+      preMatched[idx] = { bank: matches[exactIdx], payment };
       matches.splice(exactIdx, 1);
     }
   });
 
-  resultRows = orderData.map((order, orderIdx) => { // orderIdx 用於查找預配對結果
+  // 第二階段：正式對帳
+  resultRows = orderData.map((order, orderIdx) => {
     const row = { ...order };
-    let last5 = order.last5;
-    let subInfo = subMap[last5];
-    if (!last5) {
-      const sub = paymentSource.find(s => s.student && order.student && order.student.includes(s.student.split(' ')[0]));
-      if (sub) { last5 = sub.last5; subInfo = sub; }
-    }
+    const payment = findPayment(order);
+    const subInfo = payment?.source;
+
     // 帶入發票資訊
     if (subInfo) { row.invoiceTitle = subInfo.invoiceTitle || ''; row.invoiceTax = subInfo.invoiceTax || ''; }
 
-    // 判斷現金：訂單備註有cash、後五碼是CASH、或教練回報為現金
-    const isCashOrder = order.isCash || last5 === 'CASH' || (subInfo && subInfo.method === 'cash');
+    // 現金判斷
+    const isCashOrder = order.isCash || (payment?.method === 'cash') || (payment?.last5 === 'CASH');
     if (isCashOrder) {
       row.status = 'cash'; row.matchedBank = '現金收款'; row.last5 = '';
-    } else if (!last5) {
+      return row;
+    }
+
+    const last5 = payment?.last5;
+    row.last5 = last5 || order.last5 || '';
+
+    if (!last5) {
       row.status = 'pending'; row.matchedBank = '—';
-    } else {
-      // 優先使用第一階段預配對的結果
-      const preMatch = preMatched[orderIdx];
-      const bankMatches = bankMapUsed[last5];
-      if (preMatch || bankMatches?.length) {
-        let best, bestIdx;
-        if (preMatch) {
-          best = preMatch; // 已在第一階段配對好，直接使用
-        } else {
-          bestIdx = 0;
-          best = bankMatches[bestIdx];
-          bankMapUsed[last5].splice(bestIdx, 1);
-        }
+      return row;
+    }
 
-        const amountMismatch = Math.abs(best.amount - order.fee) >= 1;
+    // 使用預配對結果或從剩餘銀行紀錄找
+    const pre = preMatched[orderIdx];
+    const bankMatches = bankMapUsed[last5];
 
-        if (amountMismatch) {
-          // 金額不符 → 異常
-          row.status = 'mismatch';
-          row.mismatchReason = `金額不符（銀行$${best.amount.toLocaleString()}）`;
-        } else {
-          // 金額相符 → 已收款，日期只是顯示備註，不影響狀態
-          row.status = 'confirmed';
-          // 日期差距超過 5 天，加備註提醒
-          if (order.date && best.dateStr) {
-            const coachDate = new Date(order.date);
-            const bankDate = new Date(best.dateStr);
-            if (!isNaN(coachDate) && !isNaN(bankDate)) {
-              const diffDays = Math.abs((coachDate - bankDate) / (1000 * 60 * 60 * 24));
-              if (diffDays > 5) row.mismatchReason = `日期差${Math.round(diffDays)}天（銀行${best.dateStr}）`;
-            }
-          }
-        }
-        row.matchedBank = `$${best.amount.toLocaleString()}`; row.matchedDate = best.dateStr; row.last5 = last5;
+    let best = null;
+    if (pre) {
+      best = pre.bank;
+    } else if (bankMatches?.length) {
+      // 找金額最接近的
+      const exactIdx = bankMatches.findIndex(b => Math.abs(b.amount - order.fee) < 1);
+      const bestIdx = exactIdx >= 0 ? exactIdx : 0;
+      best = bankMatches[bestIdx];
+      bankMapUsed[last5].splice(bestIdx, 1);
+    }
+
+    if (!best) {
+      if (!bankData.length && payment) {
+        // 沒上傳銀行資料，教練有回報
+        row.status = 'coach_reported'; row.matchedBank = '教練已回報（待對帳）';
       } else {
-        // 後五碼找不到，嘗試從銀行備註找學員姓名
-        const studentName = order.student.replace(/[a-zA-Z\s]/g, '').trim();
-        const nameToSearch = studentName.length >= 2 ? studentName.slice(0, 2) : order.student.slice(0, 2);
-        // 同時搜尋 remark 欄位和原始文字
+        // 後五碼找不到，試從備註找學員名
+        const studentCN = order.student.replace(/[a-zA-Z\s]/g, '').trim();
+        const nameToSearch = studentCN.length >= 2 ? studentCN.slice(0, 2) : order.student.slice(0, 2);
         const remarkMatch = bankData.find(b => {
           const searchIn = (b.remark || '') + ' ' + (b.rawLine || '');
           const nameFound = nameToSearch && searchIn.replace(/\s/g, '').includes(nameToSearch.replace(/\s/g, ''));
-          const amountClose = Math.abs(b.amount - order.fee) < 2000; // 金額誤差在 2000 以內
+          const amountClose = Math.abs(b.amount - order.fee) < 2000;
           return nameFound && amountClose;
         });
         if (remarkMatch) {
@@ -1282,13 +1294,33 @@ function runReconciliation() {
         } else {
           row.status = 'missing'; row.matchedBank = bankData.length ? '銀行找不到' : '—';
         }
-        row.last5 = last5;
+      }
+      return row;
+    }
+
+    // 有找到銀行紀錄，比對金額
+    const amountMismatch = Math.abs(best.amount - order.fee) >= 1;
+    row.matchedBank = `$${best.amount.toLocaleString()}`;
+    row.matchedDate = best.dateStr;
+
+    if (amountMismatch) {
+      row.status = 'mismatch';
+      row.mismatchReason = `金額不符（銀行$${best.amount.toLocaleString()}）`;
+    } else {
+      row.status = 'confirmed';
+      // 日期差超過5天，加備註提醒
+      if (order.date && best.dateStr) {
+        const coachDate = new Date(order.date);
+        const bankDate = new Date(best.dateStr);
+        if (!isNaN(coachDate) && !isNaN(bankDate)) {
+          const diffDays = Math.abs((coachDate - bankDate) / (1000 * 60 * 60 * 24));
+          if (diffDays > 5) row.mismatchReason = `日期差${Math.round(diffDays)}天（銀行${best.dateStr}）`;
+        }
       }
     }
     return row;
   });
 
-  renderResult();
   switchTab('result');
   showToast('✅ 對帳完成！');
 }
