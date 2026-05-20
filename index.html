@@ -1211,33 +1211,33 @@ function runReconciliation() {
     } else {
       const bankMatches = bankMapUsed[last5];
       if (bankMatches?.length) {
-        // 優先找金額完全一致的，用完就移除（每筆銀行紀錄只能對一筆訂單）
-        const exactIdx = bankMatches.findIndex(b => Math.abs(b.amount - order.fee) < 1);
-        const bestIdx = exactIdx >= 0 ? exactIdx : 0;
+        // 1. 優先找金額完全一致的
+        let bestIdx = bankMatches.findIndex(b => Math.abs(b.amount - order.fee) < 1);
+        // 2. 如果找不到金額一致的，取第一筆
+        if (bestIdx < 0) bestIdx = 0;
         const best = bankMatches[bestIdx];
         bankMapUsed[last5].splice(bestIdx, 1);
+
         const amountMismatch = Math.abs(best.amount - order.fee) >= 1;
-        // 日期比對：教練填的匯款日期 vs 銀行交易日期，差距超過 5 天視為可疑
-        let dateMismatch = false;
-        if (order.date && best.dateStr) {
-          const coachDate = new Date(order.date);
-          const bankDate = new Date(best.dateStr);
-          if (!isNaN(coachDate) && !isNaN(bankDate)) {
-            const diffDays = Math.abs((coachDate - bankDate) / (1000 * 60 * 60 * 24));
-            if (diffDays > 5) dateMismatch = true;
-          }
-        }
+
         if (amountMismatch) {
+          // 金額不符 → 異常
           row.status = 'mismatch';
           row.mismatchReason = `金額不符（銀行$${best.amount.toLocaleString()}）`;
-        } else if (dateMismatch) {
-          row.status = 'mismatch';
-          row.mismatchReason = `日期可疑（銀行${best.dateStr}，教練填${order.date}）`;
         } else {
+          // 金額相符 → 已收款，日期只是顯示備註，不影響狀態
           row.status = 'confirmed';
+          // 日期差距超過 5 天，加備註提醒
+          if (order.date && best.dateStr) {
+            const coachDate = new Date(order.date);
+            const bankDate = new Date(best.dateStr);
+            if (!isNaN(coachDate) && !isNaN(bankDate)) {
+              const diffDays = Math.abs((coachDate - bankDate) / (1000 * 60 * 60 * 24));
+              if (diffDays > 5) row.mismatchReason = `日期差${Math.round(diffDays)}天（銀行${best.dateStr}）`;
+            }
+          }
         }
         row.matchedBank = `$${best.amount.toLocaleString()}`; row.matchedDate = best.dateStr; row.last5 = last5;
-      } else if (!bankData.length && subInfo) {
         row.status = 'coach_reported'; row.matchedBank = '教練已回報（待對帳）'; row.last5 = last5;
       } else {
         // 後五碼找不到，嘗試從銀行備註找學員姓名
@@ -1299,7 +1299,7 @@ function renderResult(filter = 'all') {
     <td style="font-weight:500">${r.student}</td>
     <td style="color:var(--text2);font-size:12px">${r.course.length>28?r.course.slice(0,28)+'…':r.course}</td>
     <td class="mono">$${r.fee?r.fee.toLocaleString():'—'}</td>
-    <td class="mono">${r.last5||'—'}</td>
+    <td class="mono">${r.status==='cash' ? '—' : r.last5||'—'}</td>
     <td style="font-size:12px">${
       r.status === 'suspected' ? `${r.matchedBank}（$${r.suspectedAmount?.toLocaleString()}，後五碼${r.suspectedLast5}）` :
       r.status === 'mismatch' && r.mismatchReason ? `⚠️ ${r.mismatchReason}` :
