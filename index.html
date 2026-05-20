@@ -1202,10 +1202,10 @@ function runReconciliation() {
     // 帶入發票資訊
     if (subInfo) { row.invoiceTitle = subInfo.invoiceTitle || ''; row.invoiceTax = subInfo.invoiceTax || ''; }
 
-    if (order.isCash) {
-      row.status = 'cash'; row.matchedBank = '現金收款';
-    } else if (last5 === 'CASH') {
-      row.status = 'cash'; row.matchedBank = '現金收款';
+    // 判斷現金：訂單備註有cash、後五碼是CASH、或教練回報為現金
+    const isCashOrder = order.isCash || last5 === 'CASH' || (subInfo && subInfo.method === 'cash');
+    if (isCashOrder) {
+      row.status = 'cash'; row.matchedBank = '現金收款'; row.last5 = '';
     } else if (!last5) {
       row.status = 'pending'; row.matchedBank = '—';
     } else {
@@ -1238,7 +1238,6 @@ function runReconciliation() {
           }
         }
         row.matchedBank = `$${best.amount.toLocaleString()}`; row.matchedDate = best.dateStr; row.last5 = last5;
-        row.status = 'coach_reported'; row.matchedBank = '教練已回報（待對帳）'; row.last5 = last5;
       } else {
         // 後五碼找不到，嘗試從銀行備註找學員姓名
         const studentName = order.student.replace(/[a-zA-Z\s]/g, '').trim();
