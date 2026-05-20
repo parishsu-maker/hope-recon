@@ -1191,7 +1191,27 @@ function runReconciliation() {
     bankMapUsed[k] = [...bankMap[k]];
   });
 
-  resultRows = orderData.map(order => {
+  // 第一階段：先把金額完全一致的訂單配對好（避免金額不符的訂單搶走正確的銀行紀錄）
+  const preMatched = {}; // key: orderIndex, value: bankRecord
+  orderData.forEach((order, idx) => {
+    let last5 = order.last5;
+    if (!last5 || last5 === 'CASH' || order.isCash) return;
+    const paymentSource = allReports.length ? allReports : submissions;
+    if (!last5) {
+      const sub = paymentSource.find(s => s.student && order.student && order.student.includes(s.student.split(' ')[0]));
+      if (sub) last5 = sub.last5;
+    }
+    if (!last5 || last5 === 'CASH') return;
+    const matches = bankMapUsed[last5];
+    if (!matches?.length) return;
+    const exactIdx = matches.findIndex(b => Math.abs(b.amount - order.fee) < 1);
+    if (exactIdx >= 0) {
+      preMatched[idx] = matches[exactIdx];
+      matches.splice(exactIdx, 1);
+    }
+  });
+
+  resultRows = orderData.map((order, orderIdx) => { // orderIdx 用於查找預配對結果
     const row = { ...order };
     let last5 = order.last5;
     let subInfo = subMap[last5];
@@ -1209,14 +1229,18 @@ function runReconciliation() {
     } else if (!last5) {
       row.status = 'pending'; row.matchedBank = '—';
     } else {
+      // 優先使用第一階段預配對的結果
+      const preMatch = preMatched[orderIdx];
       const bankMatches = bankMapUsed[last5];
-      if (bankMatches?.length) {
-        // 1. 優先找金額完全一致的
-        let bestIdx = bankMatches.findIndex(b => Math.abs(b.amount - order.fee) < 1);
-        // 2. 如果找不到金額一致的，取第一筆
-        if (bestIdx < 0) bestIdx = 0;
-        const best = bankMatches[bestIdx];
-        bankMapUsed[last5].splice(bestIdx, 1);
+      if (preMatch || bankMatches?.length) {
+        let best, bestIdx;
+        if (preMatch) {
+          best = preMatch; // 已在第一階段配對好，直接使用
+        } else {
+          bestIdx = 0;
+          best = bankMatches[bestIdx];
+          bankMapUsed[last5].splice(bestIdx, 1);
+        }
 
         const amountMismatch = Math.abs(best.amount - order.fee) >= 1;
 
