@@ -495,7 +495,7 @@
     <!-- 本期已回報清單 -->
     <div class="card">
       <div class="section-header">
-        <div class="card-title" style="margin-bottom:0"><span class="dot"></span>我的回報紀錄</div>
+        <div class="card-title" style="margin-bottom:0"><span class="dot"></span>我的回報紀錄 <span id="coach-period-label" style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px;"></span></div>
       </div>
       <div id="submission-list">
         <div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>
@@ -776,6 +776,7 @@ function enterApp() {
     nav.innerHTML = `<button class="tab-btn active" onclick="switchTab('coach')">📱 回報匯款</button>`;
     document.getElementById('c-coach').value = currentUser.name;
     renderMySubmissions();
+    setTimeout(() => { const el = document.getElementById('coach-period-label'); if(el) el.textContent = getPeriodLabel(); }, 100);
   } else {
     nav.innerHTML = `
       <button class="tab-btn active" onclick="switchTab('reports')">📋 教練回報</button>
