@@ -496,6 +496,10 @@
     <div class="card">
       <div class="section-header">
         <div class="card-title" style="margin-bottom:0"><span class="dot"></span>我的回報紀錄 <span id="coach-period-label" style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px;"></span></div>
+        <div style="display:flex;gap:6px;">
+          <button class="inner-tab active" id="coach-filter-period" onclick="setCoachFilter('period',this)">本期</button>
+          <button class="inner-tab" id="coach-filter-all" onclick="setCoachFilter('all',this)">全部</button>
+        </div>
       </div>
       <div id="submission-list">
         <div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>
@@ -508,6 +512,10 @@
     <div class="card">
       <div class="section-header">
         <div class="card-title" style="margin-bottom:0"><span class="dot"></span>所有教練回報 <span id="period-label" style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px;"></span></div>
+        <div style="display:flex;gap:6px;">
+          <button class="inner-tab active" id="reports-filter-period" onclick="setReportsFilter('period',this)">本期</button>
+          <button class="inner-tab" id="reports-filter-all" onclick="setReportsFilter('all',this)">全部</button>
+        </div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-secondary btn-sm" onclick="loadAllReports()">↺ 重新載入</button>
           <button class="btn btn-secondary btn-sm" onclick="exportReports()">⬇ 匯出 Excel</button>
@@ -654,6 +662,23 @@ let allReports = [];
 let orderData = [];
 let bankData = [];
 let resultRows = [];
+
+let coachFilterMode = 'period'; // 'period' | 'all'
+let reportsFilterMode = 'period'; // 'period' | 'all'
+
+function setCoachFilter(mode, el) {
+  coachFilterMode = mode;
+  document.querySelectorAll('#coach-filter-period, #coach-filter-all').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderMySubmissions();
+}
+
+function setReportsFilter(mode, el) {
+  reportsFilterMode = mode;
+  document.querySelectorAll('#reports-filter-period, #reports-filter-all').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderReportsList();
+}
 
 // ===== 計算本期範圍 =====
 function getCurrentPeriod() {
@@ -866,7 +891,7 @@ function clearCoachForm() {
 }
 
 function renderMySubmissions() {
-  const myRecords = submissions.filter(s => s.coach === currentUser?.name && isInCurrentPeriod(s.date));
+  const myRecords = submissions.filter(s => s.coach === currentUser?.name && (coachFilterMode === 'all' || isInCurrentPeriod(s.date)));
   const el = document.getElementById('submission-list');
   if (!myRecords.length) {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>`;
@@ -928,7 +953,7 @@ async function loadAllReports() {
 
 function renderReportsList() {
   const el = document.getElementById('reports-list');
-  const periodReports = allReports.filter(r => isInCurrentPeriod(r.date));
+  const periodReports = allReports.filter(r => reportsFilterMode === 'all' || isInCurrentPeriod(r.date));
   if (!periodReports.length) {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>本期尚無教練回報資料</p></div>`;
     return;
