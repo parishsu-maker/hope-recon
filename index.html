@@ -698,12 +698,13 @@ function getCurrentPeriod() {
   return { start, end };
 }
 
-function isInCurrentPeriod(dateStr) {
-  if (!dateStr) return false;
+function isInCurrentPeriod(dateStr, tsStr) {
   const { start, end } = getCurrentPeriod();
-  // 支援多種日期格式
-  const d = new Date(dateStr);
-  if (isNaN(d)) return true; // 解析失敗就顯示
+  // 優先用送出時間判斷，沒有送出時間才用匯款日期
+  const checkStr = tsStr || dateStr;
+  if (!checkStr) return false;
+  const d = new Date(checkStr);
+  if (isNaN(d)) return true;
   return d >= start && d <= end;
 }
 
@@ -891,7 +892,7 @@ function clearCoachForm() {
 }
 
 function renderMySubmissions() {
-  const myRecords = submissions.filter(s => s.coach === currentUser?.name && (coachFilterMode === 'all' || isInCurrentPeriod(s.date)));
+  const myRecords = submissions.filter(s => s.coach === currentUser?.name && (coachFilterMode === 'all' || isInCurrentPeriod(s.date, s.ts)));
   const el = document.getElementById('submission-list');
   if (!myRecords.length) {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>`;
@@ -953,7 +954,7 @@ async function loadAllReports() {
 
 function renderReportsList() {
   const el = document.getElementById('reports-list');
-  const periodReports = allReports.filter(r => reportsFilterMode === 'all' || isInCurrentPeriod(r.date));
+  const periodReports = allReports.filter(r => reportsFilterMode === 'all' || isInCurrentPeriod(r.date, r.ts));
   if (!periodReports.length) {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>本期尚無教練回報資料</p></div>`;
     return;
