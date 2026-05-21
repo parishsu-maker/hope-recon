@@ -208,6 +208,7 @@
       </div>
 
       <!-- 共用 -->
+      <div id="alert-course-info" class="alert alert-info" style="margin-bottom:14px;"><span>ℹ️</span><span>學員匯款後，請填寫以下資訊送出。若有多筆請分別填寫。</span></div>
       <div class="form-grid">
         <div class="form-group">
           <label>教練姓名</label>
@@ -240,7 +241,6 @@
 
       <!-- 課程專屬 -->
       <div id="section-course">
-        <div class="alert alert-info" style="margin-top:14px;"><span>ℹ️</span><span>學員匯款後，請填寫以下資訊送出。若有多筆請分別填寫。</span></div>
         <div class="form-grid">
           <div class="form-group full"><label>課程名稱（選填）</label><input type="text" id="c-course" placeholder="例：初階個人E十堂"></div>
         </div>
@@ -417,7 +417,7 @@
   <div class="page" id="page-settings">
     <div class="card">
       <div class="card-title"><span class="dot"></span>Google Sheets 連結設定</div>
-      <div class="alert alert-warn"><span>⚠️</span><span>共需三個 Apps Script 網址。<strong>主表</strong>記錄所有回報；<strong>現金備份表</strong>、<strong>商品備份表</strong>各自獨立，可單獨分享給相關人員。</span></div>
+      <div class="alert alert-warn"><span>⚠️</span><span>只需要一個 Apps Script 網址（主表 GAS）。現金和商品備份都由主表 GAS 統一處理，自動寫入各自的備份表。現金備份表和商品備份表的連結可單獨分享給相關人員查看。</span></div>
 
       <div style="display:flex;flex-direction:column;gap:14px;">
         <div class="form-group">
@@ -427,19 +427,8 @@
             <button class="btn btn-secondary btn-sm" onclick="testSheetUrl('sheets-url')">測試</button>
           </div>
         </div>
-        <div class="form-group">
-          <label>② 現金備份表網址（僅現金資料）</label>
-          <div style="display:flex;gap:8px;">
-            <input type="text" id="cash-url" placeholder="https://script.google.com/macros/s/…/exec（現金備份 GAS）" style="font-family:'DM Mono',monospace;font-size:12px;flex:1;">
-            <button class="btn btn-secondary btn-sm" onclick="testSheetUrl('cash-url')">測試</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>③ 商品備份表網址（僅商品資料）</label>
-          <div style="display:flex;gap:8px;">
-            <input type="text" id="product-url" placeholder="https://script.google.com/macros/s/…/exec（商品備份 GAS）" style="font-family:'DM Mono',monospace;font-size:12px;flex:1;">
-            <button class="btn btn-secondary btn-sm" onclick="testSheetUrl('product-url')">測試</button>
-          </div>
+        <div class="form-group" style="background:var(--green-bg);border:1px solid #a8c8b0;border-radius:8px;padding:12px 14px;">
+          <span style="font-size:12px;color:var(--green);">✅ 現金備份和商品備份由主表 GAS 統一處理，不需要額外填寫網址。備份表 Sheets ID 已寫在 GAS 程式碼裡。</span>
         </div>
       </div>
       <button class="btn btn-primary" onclick="saveSheetUrl()" style="margin-top:16px;">儲存所有連結</button>
@@ -470,7 +459,7 @@
 
     <div class="card">
       <div class="card-title"><span class="dot"></span>📋 Google Apps Script 設定參考</div>
-      <div class="alert alert-info" style="margin-bottom:16px;"><span>ℹ️</span><span>需要建立 <strong>三個</strong> 獨立的 Google Sheets + Apps Script，各自部署後把網址填入上方。每個 GAS 的程式碼如下。</span></div>
+      <div class="alert alert-info" style="margin-bottom:16px;"><span>ℹ️</span><span>只需要在主表的 Apps Script 貼上以下程式碼，現金和商品備份會自動寫入對應的備份表，不需要另外設定。</span></div>
 
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;">① 主表 GAS（所有回報都寫進「教練回報」分頁）</div>
       <pre style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.7;font-family:'DM Mono',monospace;margin-bottom:20px;">function doPost(e) {
@@ -622,6 +611,7 @@ function onReportTypeChange(type) {
     document.getElementById('label-amount').textContent    = '金額（元）*';
     document.getElementById('wrap-last5').style.display    = 'none';
     document.getElementById('wrap-method').style.display   = 'none';
+    document.getElementById('alert-course-info').style.display = 'none';
     document.getElementById('c-last5').value = '';
   } else {
     document.getElementById('label-student').textContent   = '學員姓名 *';
@@ -629,6 +619,7 @@ function onReportTypeChange(type) {
     document.getElementById('label-amount').textContent    = '匯款金額（元）*';
     document.getElementById('wrap-last5').style.display    = 'flex';
     document.getElementById('wrap-method').style.display   = 'flex';
+    document.getElementById('alert-course-info').style.display = 'flex';
   }
 }
 
