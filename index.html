@@ -10,393 +10,166 @@
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
 
   :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --surface2: #f0eeea;
-    --border: #e0ddd6;
-    --text: #1a1916;
-    --text2: #6b6860;
-    --text3: #a09d98;
-    --accent: #2d5a3d;
-    --accent-light: #e8f0eb;
-    --green: #2d5a3d;
-    --green-bg: #e8f0eb;
-    --red: #8b2020;
-    --red-bg: #f5e8e8;
-    --amber: #7a5200;
-    --amber-bg: #fdf3e0;
-    --blue: #1a3a5c;
-    --blue-bg: #e8eef5;
-    --radius: 10px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0eeea;--border:#e0ddd6;
+    --text:#1a1916;--text2:#6b6860;--text3:#a09d98;
+    --accent:#2d5a3d;--accent-light:#e8f0eb;
+    --green:#2d5a3d;--green-bg:#e8f0eb;
+    --red:#8b2020;--red-bg:#f5e8e8;
+    --amber:#7a5200;--amber-bg:#fdf3e0;
+    --blue:#1a3a5c;--blue-bg:#e8eef5;
+    --purple:#4a2d7a;--purple-bg:#f0ebfa;--purple-border:#c8b8e8;
+    --radius:10px;--shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);
   }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Login */
+  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:100%;max-width:420px;box-shadow:var(--shadow);text-align:center;}
+  .login-logo img{width:180px;height:auto;}
+  .login-title{font-size:16px;font-weight:500;margin-bottom:4px;color:#2d7a6a;}
+  .login-label{font-size:12px;font-weight:600;color:var(--text2);text-align:left;display:block;margin-bottom:6px;}
+  .login-select,.login-input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:var(--surface);margin-bottom:16px;outline:none;transition:border-color .15s;}
+  .login-select:focus,.login-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,90,61,.08);}
+  .login-btn{width:100%;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;margin-bottom:12px;}
+  .login-btn:hover{background:#234a32;}
+  .login-or{font-size:12px;color:var(--text3);margin:4px 0 12px;position:relative;}
+  .login-or::before,.login-or::after{content:'';position:absolute;top:50%;width:38%;height:1px;background:var(--border);}
+  .login-or::before{left:0;}.login-or::after{right:0;}
+  .login-admin-btn{width:100%;padding:10px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s;}
+  .login-admin-btn:hover{background:var(--border);color:var(--text);}
+  #admin-pw-wrap{display:none;margin-top:12px;}
 
-  body {
-    font-family: 'Noto Sans TC', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.6;
-  }
+  /* App */
+  #app{display:none;}
+  .header{background:var(--accent);color:white;padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .header-brand{font-size:16px;font-weight:700;letter-spacing:.5px;}
+  .header-brand span{opacity:.6;font-weight:300;margin-left:8px;font-size:13px;}
+  .header-user{font-size:13px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:10px;}
+  .logout-btn{background:rgba(255,255,255,.15);border:none;color:white;padding:4px 10px;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit;}
+  .logout-btn:hover{background:rgba(255,255,255,.25);}
+  .tab-nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 32px;}
+  .tab-btn{padding:14px 20px;border:none;background:none;color:var(--text2);font-family:inherit;font-size:14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;font-weight:400;white-space:nowrap;}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
+  .tab-btn:hover:not(.active){color:var(--text);}
+  .page{display:none;padding:28px 32px;max-width:960px;margin:0 auto;}
+  .page.active{display:block;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--shadow);}
+  .card-title{font-size:15px;font-weight:700;margin-bottom:16px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .card-title .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;}
 
-  /* ===== Login screen ===== */
-  #login-screen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .login-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 40px 36px;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: var(--shadow);
-    text-align: center;
-  }
-  .login-logo {
-    margin-bottom: 8px;
-  }
-  .login-logo img {
-    width: 180px;
-    height: auto;
-  }
-  .login-title {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: #2d7a6a;
-  }
-  .login-subtitle {
-    font-size: 13px;
-    color: var(--text3);
-    margin-bottom: 28px;
-  }
-  .login-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text2);
-    text-align: left;
-    display: block;
-    margin-bottom: 6px;
-  }
-  .login-select, .login-input {
-    width: 100%;
-    padding: 11px 14px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text);
-    background: var(--surface);
-    margin-bottom: 16px;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .login-select:focus, .login-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(45,90,61,0.08);
-  }
-  .login-btn {
-    width: 100%;
-    padding: 12px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s;
-    margin-bottom: 12px;
-  }
-  .login-btn:hover { background: #234a32; }
-  .login-or {
-    font-size: 12px;
-    color: var(--text3);
-    margin: 4px 0 12px;
-    position: relative;
-  }
-  .login-or::before, .login-or::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    width: 38%;
-    height: 1px;
-    background: var(--border);
-  }
-  .login-or::before { left: 0; }
-  .login-or::after { right: 0; }
-  .login-admin-btn {
-    width: 100%;
-    padding: 10px;
-    background: var(--surface2);
-    color: var(--text2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .login-admin-btn:hover { background: var(--border); color: var(--text); }
-  #admin-pw-wrap { display: none; margin-top: 12px; }
+  /* 類型切換 */
+  .type-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+  .type-option{position:relative;cursor:pointer;}
+  .type-option input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
+  .type-option-label{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border:2px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;font-size:14px;font-weight:500;color:var(--text2);background:var(--surface2);user-select:none;}
+  .type-option input[type="radio"]:checked + .type-option-label{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+  .type-option-label .type-icon{font-size:20px;}
 
-  /* ===== App ===== */
-  #app { display: none; }
+  /* 商品 */
+  .product-section{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:8px;padding:16px 18px;margin-top:14px;}
+  .product-section-title{font-size:12px;font-weight:600;color:var(--purple);margin-bottom:12px;}
+  .product-rows{display:flex;flex-direction:column;gap:10px;}
+  .product-row{display:grid;grid-template-columns:2fr 80px 110px auto;gap:8px;align-items:center;}
+  .product-row input{padding:8px 10px;font-size:13px;background:white;}
+  .remove-product-btn{background:none;border:1px solid var(--border);border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;flex-shrink:0;}
+  .remove-product-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-bg);}
+  .add-product-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:7px;border:1px dashed var(--purple-border);background:white;color:var(--purple);font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s;margin-top:8px;}
+  .add-product-btn:hover{background:var(--purple-bg);border-color:var(--purple);}
+  .product-total{text-align:right;padding:10px 0 2px;font-size:13px;color:var(--text2);}
+  .product-total strong{font-size:16px;font-family:'DM Mono',monospace;color:var(--purple);margin-left:6px;}
 
-  .header {
-    background: var(--accent);
-    color: white;
-    padding: 0 32px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-brand { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
-  .header-brand span { opacity: 0.6; font-weight: 300; margin-left: 8px; font-size: 13px; }
-  .header-user { font-size: 13px; color: rgba(255,255,255,0.8); display: flex; align-items: center; gap: 10px; }
-  .logout-btn {
-    background: rgba(255,255,255,0.15);
-    border: none;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    font-size: 12px;
-    cursor: pointer;
-    font-family: inherit;
-  }
-  .logout-btn:hover { background: rgba(255,255,255,0.25); }
+  /* Form */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-group{display:flex;flex-direction:column;gap:5px;}
+  .form-group.full{grid-column:1/-1;}
+  label{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.3px;}
+  input,select,textarea{padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:14px;color:var(--text);background:var(--surface);transition:border-color .15s;outline:none;width:100%;}
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,90,61,.08);}
+  .btn{padding:10px 20px;border-radius:7px;border:none;font-family:inherit;font-size:14px;cursor:pointer;font-weight:500;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+  .btn-primary{background:var(--accent);color:white;}.btn-primary:hover{background:#234a32;}
+  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}.btn-secondary:hover{background:var(--border);}
+  .btn-danger{background:var(--red-bg);color:var(--red);border:1px solid #e0b0b0;}
+  .btn-sm{padding:6px 12px;font-size:12px;}
 
-  .tab-nav {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    padding: 0 32px;
-  }
-  .tab-btn {
-    padding: 14px 20px;
-    border: none;
-    background: none;
-    color: var(--text2);
-    font-family: inherit;
-    font-size: 14px;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    transition: all 0.2s;
-    font-weight: 400;
-    white-space: nowrap;
-  }
-  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
-  .tab-btn:hover:not(.active) { color: var(--text); }
+  .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2);}
+  .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:var(--accent-light);}
+  .upload-zone input{display:none;}
+  .upload-icon{font-size:28px;margin-bottom:8px;}
+  .upload-text{font-size:14px;color:var(--text2);}
+  .upload-text strong{color:var(--accent);}
+  .upload-hint{font-size:12px;color:var(--text3);margin-top:4px;}
+  .upload-success{background:var(--green-bg);border-color:#a8c8b0;}
+  .upload-success .upload-text{color:var(--green);font-weight:500;}
 
-  .page { display: none; padding: 28px 32px; max-width: 960px; margin: 0 auto; }
-  .page.active { display: block; }
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;white-space:nowrap;}
+  .badge-green{background:var(--green-bg);color:var(--green);}
+  .badge-red{background:var(--red-bg);color:var(--red);}
+  .badge-amber{background:var(--amber-bg);color:var(--amber);}
+  .badge-blue{background:var(--blue-bg);color:var(--blue);}
+  .badge-gray{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);}
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-  }
-  .card-title {
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .card-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{background:var(--surface2);padding:10px 14px;text-align:left;font-weight:600;font-size:12px;color:var(--text2);letter-spacing:.3px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--surface2);}
+  .mono{font-family:'DM Mono',monospace;font-size:12px;}
 
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .form-group { display: flex; flex-direction: column; gap: 5px; }
-  .form-group.full { grid-column: 1 / -1; }
-  label { font-size: 12px; font-weight: 500; color: var(--text2); letter-spacing: 0.3px; }
-  input, select, textarea {
-    padding: 9px 12px;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text);
-    background: var(--surface);
-    transition: border-color 0.15s;
-    outline: none;
-    width: 100%;
-  }
-  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08); }
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+  .stat-label{font-size:12px;color:var(--text2);font-weight:500;margin-bottom:6px;}
+  .stat-value{font-size:26px;font-weight:700;font-family:'DM Mono',monospace;}
+  .stat-value.green{color:var(--green);}.stat-value.red{color:var(--red);}.stat-value.amber{color:var(--amber);}
 
-  .btn {
-    padding: 10px 20px;
-    border-radius: 7px;
-    border: none;
-    font-family: inherit;
-    font-size: 14px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.15s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .btn-primary { background: var(--accent); color: white; }
-  .btn-primary:hover { background: #234a32; }
-  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-  .btn-secondary:hover { background: var(--border); }
-  .btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid #e0b0b0; }
-  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+  .alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;}
+  .alert-info{background:var(--blue-bg);color:var(--blue);border:1px solid #c0d0e0;}
+  .alert-success{background:var(--green-bg);color:var(--green);border:1px solid #a8c8b0;}
+  .alert-warn{background:var(--amber-bg);color:var(--amber);border:1px solid #e0c880;}
 
-  .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 32px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--surface2);
-  }
-  .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: var(--accent-light); }
-  .upload-zone input { display: none; }
-  .upload-icon { font-size: 28px; margin-bottom: 8px; }
-  .upload-text { font-size: 14px; color: var(--text2); }
-  .upload-text strong { color: var(--accent); }
-  .upload-hint { font-size: 12px; color: var(--text3); margin-top: 4px; }
-  .upload-success { background: var(--green-bg); border-color: #a8c8b0; }
-  .upload-success .upload-text { color: var(--green); font-weight: 500; }
+  .submission-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
+  .submission-item:last-child{border-bottom:none;}
+  .submission-item.product-entry{border-left:3px solid var(--purple);}
+  .submission-item.course-entry{border-left:3px solid var(--accent);}
+  .submission-main{flex:1;min-width:0;}
+  .submission-name{font-weight:600;font-size:14px;margin-bottom:2px;}
+  .submission-detail{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;}
 
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-  .badge-green { background: var(--green-bg); color: var(--green); }
-  .badge-red { background: var(--red-bg); color: var(--red); }
-  .badge-amber { background: var(--amber-bg); color: var(--amber); }
-  .badge-blue { background: var(--blue-bg); color: var(--blue); }
-  .badge-gray { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+  .inner-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+  .inner-tab{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s;}
+  .inner-tab.active{background:var(--accent);color:white;border-color:var(--accent);font-weight:500;}
 
-  .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: var(--surface2); padding: 10px 14px; text-align: left; font-weight: 600; font-size: 12px; color: var(--text2); letter-spacing: 0.3px; border-bottom: 1px solid var(--border); white-space: nowrap; }
-  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--surface2); }
-  .mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+  .empty-state{text-align:center;padding:48px 24px;color:var(--text3);}
+  .empty-state .empty-icon{font-size:36px;margin-bottom:10px;}
 
-  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
-  .stat-label { font-size: 12px; color: var(--text2); font-weight: 500; margin-bottom: 6px; }
-  .stat-value { font-size: 26px; font-weight: 700; font-family: 'DM Mono', monospace; }
-  .stat-value.green { color: var(--green); }
-  .stat-value.red { color: var(--red); }
-  .stat-value.amber { color: var(--amber); }
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+  @keyframes spin{to{transform:rotate(360deg);}}
 
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  #toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:white;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;max-width:320px;}
+  #toast.show{transform:translateY(0);opacity:1;}
 
-  .alert { padding: 12px 16px; border-radius: var(--radius); font-size: 13px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
-  .alert-info { background: var(--blue-bg); color: var(--blue); border: 1px solid #c0d0e0; }
-  .alert-success { background: var(--green-bg); color: var(--green); border: 1px solid #a8c8b0; }
-  .alert-warn { background: var(--amber-bg); color: var(--amber); border: 1px solid #e0c880; }
+  #config-banner{background:#fff3cd;border-bottom:1px solid #ffc107;padding:10px 32px;font-size:13px;color:#856404;display:none;}
 
-  .submission-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
-  .submission-item:last-child { border-bottom: none; }
-  .submission-main { flex: 1; min-width: 0; }
-  .submission-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
-  .submission-detail { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; }
-
-  .inner-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-  .inner-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); color: var(--text2); font-size: 13px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-  .inner-tab.active { background: var(--accent); color: white; border-color: var(--accent); font-weight: 500; }
-
-  .empty-state { text-align: center; padding: 48px 24px; color: var(--text3); }
-  .empty-state .empty-icon { font-size: 36px; margin-bottom: 10px; }
-
-  /* Spinner */
-  .spinner {
-    display: inline-block;
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.4);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  #toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--text);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    z-index: 9999;
-    transform: translateY(80px);
-    opacity: 0;
-    transition: all 0.3s;
-    max-width: 320px;
-  }
-  #toast.show { transform: translateY(0); opacity: 1; }
-
-  /* Config banner */
-  #config-banner {
-    background: #fff3cd;
-    border-bottom: 1px solid #ffc107;
-    padding: 10px 32px;
-    font-size: 13px;
-    color: #856404;
-    display: none;
-  }
-
-  @media (max-width: 600px) {
-    .page { padding: 16px; }
-    .tab-nav { padding: 0 12px; overflow-x: auto; }
-    .header { padding: 0 16px; }
-    .form-grid { grid-template-columns: 1fr; }
-    .stats-row { grid-template-columns: 1fr; }
-    .stat-value { font-size: 22px; }
-    .login-card { padding: 28px 20px; }
+  @media(max-width:600px){
+    .page{padding:16px;}.tab-nav{padding:0 12px;overflow-x:auto;}.header{padding:0 16px;}
+    .form-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr;}
+    .stat-value{font-size:22px;}.login-card{padding:28px 20px;}
+    .product-row{grid-template-columns:1fr 60px 90px auto;}
   }
 </style>
 </head>
 <body>
 
-<!-- ===== 登入畫面 ===== -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo"><img src="https://parishsu-maker.github.io/hope-recon/YM_HOPE_transparent.png" alt="HOPE Logo"></div>
-    <div class="login-title">元木對帳回報系統</div>
-    <br><br>
-
+    <div class="login-title">元木對帳回報系統</div><br><br>
     <label class="login-label">我是教練</label>
-    <select class="login-select" id="login-coach-select">
-      <option value="">— 請選擇你的名字 —</option>
-    </select>
+    <select class="login-select" id="login-coach-select"><option value="">— 請選擇你的名字 —</option></select>
     <button class="login-btn" onclick="loginAsCoach()">進入教練回報頁</button>
-
     <div class="login-or">或</div>
     <button class="login-admin-btn" onclick="toggleAdminLogin()">🔐 管理員登入</button>
     <div id="admin-pw-wrap">
@@ -406,104 +179,159 @@
   </div>
 </div>
 
-<!-- ===== 主應用 ===== -->
 <div id="app">
   <div class="header">
     <div class="header-brand">HOPE Golf <span>對帳系統</span></div>
-    <div class="header-user">
-      <span id="header-username"></span>
-      <button class="logout-btn" onclick="logout()">登出</button>
-    </div>
+    <div class="header-user"><span id="header-username"></span><button class="logout-btn" onclick="logout()">登出</button></div>
   </div>
-
-  <div id="config-banner">
-    ⚠️ 尚未設定 Google Sheets 連結，教練回報資料將只存在本機。請管理員到「系統設定」頁面完成設定。
-  </div>
-
-  <nav class="tab-nav" id="main-nav">
-    <!-- 動態產生 -->
-  </nav>
+  <div id="config-banner">⚠️ 尚未設定 Google Sheets 連結。請管理員到「系統設定」頁面完成設定。</div>
+  <nav class="tab-nav" id="main-nav"></nav>
 
   <!-- 教練回報頁 -->
   <div class="page" id="page-coach">
     <div class="card">
       <div class="card-title"><span class="dot"></span>匯款回報</div>
-      <div class="alert alert-info">
-        <span>ℹ️</span>
-        <span>學員匯款後，請填寫以下資訊送出。若有多筆請分別填寫。</span>
+
+      <!-- 回報類型 -->
+      <div class="form-group" style="margin-bottom:18px;">
+        <label>回報類型 *</label>
+        <div class="type-switch">
+          <label class="type-option">
+            <input type="radio" name="report-type" value="course" checked onchange="onReportTypeChange('course')">
+            <div class="type-option-label"><span class="type-icon">🏌️</span> 課程回報</div>
+          </label>
+          <label class="type-option">
+            <input type="radio" name="report-type" value="product" onchange="onReportTypeChange('product')">
+            <div class="type-option-label"><span class="type-icon">🛍️</span> 商品回報</div>
+          </label>
+        </div>
       </div>
+
+      <!-- 共用 -->
       <div class="form-grid">
         <div class="form-group">
           <label>教練姓名</label>
           <input type="text" id="c-coach" readonly style="background:var(--surface2);color:var(--text2);">
         </div>
         <div class="form-group">
-          <label>學員姓名 *</label>
+          <label id="label-student">學員姓名 *</label>
           <input type="text" id="c-student" placeholder="例：高小苑">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="wrap-last5">
           <label>匯款後五碼 *</label>
           <input type="text" id="c-last5" placeholder="例：07079" maxlength="5" style="font-family:'DM Mono',monospace;letter-spacing:2px;">
         </div>
         <div class="form-group">
-          <label>匯款金額（元）*</label>
-          <input type="number" id="c-amount" placeholder="例：17000">
-        </div>
-        <div class="form-group">
-          <label>匯款日期 *</label>
+          <label id="label-date">匯款日期 *</label>
           <input type="date" id="c-date">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="wrap-method">
           <label>付款方式</label>
-          <select id="c-method">
+          <select id="c-method" onchange="onMethodChange(this.value)">
             <option value="transfer">匯款轉帳</option>
             <option value="cash">現金 Cash</option>
           </select>
         </div>
-        <div class="form-group full">
-          <label>課程名稱（選填）</label>
-          <input type="text" id="c-course" placeholder="例：初階個人E十堂">
+        <div class="form-group" id="wrap-amount">
+          <label id="label-amount">匯款金額（元）*</label>
+          <input type="number" id="c-amount" placeholder="例：17000">
         </div>
       </div>
 
-      <div style="background:var(--amber-bg);border:1px solid #e8d090;border-radius:8px;padding:16px 18px;margin-top:14px;">
-        <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:12px;">🧾 需要開發票才填寫</div>
+      <!-- 課程專屬 -->
+      <div id="section-course">
+        <div class="alert alert-info" style="margin-top:14px;"><span>ℹ️</span><span>學員匯款後，請填寫以下資訊送出。若有多筆請分別填寫。</span></div>
         <div class="form-grid">
-          <div class="form-group">
-            <label>發票抬頭</label>
-            <input type="text" id="c-invoice-title" placeholder="例：元木運動行銷有限公司" style="background:white;">
+          <div class="form-group full"><label>課程名稱（選填）</label><input type="text" id="c-course" placeholder="例：初階個人E十堂"></div>
+        </div>
+        <!-- 發票區（課程） -->
+        <div style="background:var(--amber-bg);border:1px solid #e8d090;border-radius:8px;padding:16px 18px;margin-top:14px;">
+          <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:12px;">🧾 需要開發票才填寫</div>
+          <div class="form-grid">
+            <div class="form-group"><label>發票抬頭（選填）</label><input type="text" id="c-invoice-title" placeholder="例：元木運動行銷有限公司" style="background:white;"></div>
+            <div class="form-group"><label>統一編號（選填）</label><input type="text" id="c-invoice-tax" placeholder="例：12345678" maxlength="8" style="font-family:'DM Mono',monospace;letter-spacing:2px;background:white;"></div>
           </div>
-          <div class="form-group">
-            <label>統一編號</label>
-            <input type="text" id="c-invoice-tax" placeholder="例：12345678" maxlength="8" style="font-family:'DM Mono',monospace;letter-spacing:2px;background:white;">
-          </div>
+        </div>
+        <div class="form-grid" style="margin-top:14px;">
+          <div class="form-group full"><label>備註（選填）</label><input type="text" id="c-note" placeholder="其他補充說明"></div>
         </div>
       </div>
 
-      <div class="form-grid" style="margin-top:14px;">
-        <div class="form-group full">
-          <label>備註（選填）</label>
-          <input type="text" id="c-note" placeholder="其他補充說明">
+      <!-- 商品專屬 -->
+      <div id="section-product" style="display:none;">
+        <div class="alert" style="margin-top:14px;background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border);">
+          <span>🛍️</span><span>請填寫購買商品資訊。</span>
+        </div>
+        <div class="form-grid" style="margin-top:4px;">
+          <div class="form-group full">
+            <label>商品名稱 *</label>
+            <input type="text" id="c-product-name" placeholder="例：高爾夫球袋（黑色）">
+          </div>
+          <div class="form-group">
+            <label>付款方式</label>
+            <select id="p-method" onchange="onProductMethodChange(this.value)">
+              <option value="transfer">匯款轉帳</option>
+              <option value="cash">現金 Cash</option>
+              <option value="linepay">LINE Pay</option>
+            </select>
+          </div>
+          <div class="form-group" id="p-last5-wrap">
+            <label>匯款後五碼</label>
+            <input type="text" id="p-last5" placeholder="例：07079" maxlength="5" style="font-family:'DM Mono',monospace;letter-spacing:2px;">
+          </div>
+          <div class="form-group full">
+            <label>備註 / 規格說明（選填）</label>
+            <input type="text" id="c-product-note" placeholder="例：顏色、尺寸或其他說明">
+          </div>
+        </div>
+        <!-- 發票區（商品） -->
+        <div style="background:var(--amber-bg);border:1px solid #e8d090;border-radius:8px;padding:16px 18px;margin-top:14px;">
+          <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:12px;">🧾 發票</div>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>發票種類</label>
+            <select id="p-invoice-type" onchange="onInvoiceTypeChange('product')">
+              <option value="none">不需要發票</option>
+              <option value="paper">紙本發票</option>
+              <option value="digital">電子發票</option>
+            </select>
+          </div>
+          <div id="invoice-title-wrap-product" style="display:none;">
+            <div class="form-grid" style="margin-bottom:10px;">
+              <div class="form-group"><label>發票抬頭（選填）</label><input type="text" id="p-invoice-title" placeholder="例：元木運動行銷有限公司" style="background:white;"></div>
+              <div class="form-group"><label>統一編號（選填）</label><input type="text" id="p-invoice-tax" placeholder="例：12345678" maxlength="8" style="font-family:'DM Mono',monospace;letter-spacing:2px;background:white;"></div>
+            </div>
+          </div>
+          <div id="invoice-digital-wrap-product" style="display:none;">
+            <div class="form-grid">
+              <div class="form-group"><label>載具條碼 *</label><input type="text" id="p-invoice-carrier" placeholder="例：/ABC1234" style="font-family:'DM Mono',monospace;background:white;"></div>
+              <div class="form-group"><label>Email *</label><input type="email" id="p-invoice-email" placeholder="例：abc@gmail.com" style="background:white;"></div>
+            </div>
+          </div>
+        </div>
+        <!-- 紅字提醒 -->
+        <div style="margin-top:14px;padding:12px 16px;background:#fff0f0;border:1px solid #f0b0b0;border-radius:8px;display:flex;align-items:flex-start;gap:8px;">
+          <span style="font-size:16px;flex-shrink:0;">📦</span>
+          <span style="color:var(--red);font-size:13px;font-weight:500;line-height:1.6;">商品、發票需寄送，請私訊收件資訊給 Pi</span>
         </div>
       </div>
+
       <div style="margin-top:18px;display:flex;gap:10px;">
         <button class="btn btn-primary" id="submit-btn" onclick="submitCoach()">✓ 送出回報</button>
         <button class="btn btn-secondary" onclick="clearCoachForm()">清除</button>
       </div>
     </div>
 
-    <!-- 本期已回報清單 -->
     <div class="card">
       <div class="section-header">
         <div class="card-title" style="margin-bottom:0"><span class="dot"></span>我的回報紀錄 <span id="coach-period-label" style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px;"></span></div>
-        <div style="display:flex;gap:6px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="inner-tab active" id="coach-filter-period" onclick="setCoachFilter('period',this)">本期</button>
           <button class="inner-tab" id="coach-filter-all" onclick="setCoachFilter('all',this)">全部</button>
+          <button class="inner-tab" id="coach-filter-course" onclick="setCoachFilter('course',this)">🏌️ 課程</button>
+          <button class="inner-tab" id="coach-filter-product" onclick="setCoachFilter('product',this)">🛍️ 商品</button>
         </div>
       </div>
-      <div id="submission-list">
-        <div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>
-      </div>
+      <div id="submission-list"><div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div></div>
     </div>
   </div>
 
@@ -512,18 +340,18 @@
     <div class="card">
       <div class="section-header">
         <div class="card-title" style="margin-bottom:0"><span class="dot"></span>所有教練回報 <span id="period-label" style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px;"></span></div>
-        <div style="display:flex;gap:6px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="inner-tab active" id="reports-filter-period" onclick="setReportsFilter('period',this)">本期</button>
           <button class="inner-tab" id="reports-filter-all" onclick="setReportsFilter('all',this)">全部</button>
+          <button class="inner-tab" id="reports-filter-course-tab" onclick="setReportsFilter('course',this)">🏌️ 課程</button>
+          <button class="inner-tab" id="reports-filter-product-tab" onclick="setReportsFilter('product',this)">🛍️ 商品</button>
         </div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-secondary btn-sm" onclick="loadAllReports()">↺ 重新載入</button>
           <button class="btn btn-secondary btn-sm" onclick="exportReports()">⬇ 匯出 Excel</button>
         </div>
       </div>
-      <div id="reports-list">
-        <div class="empty-state"><div class="empty-icon">📊</div><p>按「重新載入」取得最新資料</p></div>
-      </div>
+      <div id="reports-list"><div class="empty-state"><div class="empty-icon">📊</div><p>按「重新載入」取得最新資料</p></div></div>
     </div>
   </div>
 
@@ -536,12 +364,9 @@
            ondragover="handleDrag(event,'zone-order')" ondragleave="handleDragLeave(event,'zone-order')"
            ondrop="handleDrop(event,'zone-order','order')">
         <input type="file" id="file-order" accept=".xlsx,.xls,.csv" onchange="handleFileChange(event,'order')">
-        <div class="upload-icon">📂</div>
-        <div class="upload-text">點擊或拖曳 <strong>訂單明細 Excel</strong> 至此</div>
-        <div class="upload-hint">.xlsx / .xls / .csv</div>
+        <div class="upload-icon">📂</div><div class="upload-text">點擊或拖曳 <strong>訂單明細 Excel</strong> 至此</div><div class="upload-hint">.xlsx / .xls / .csv</div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title"><span class="dot"></span>上傳銀行對帳單</div>
       <div class="alert alert-info"><span>ℹ️</span><span>請從網銀下載存款明細，支援 PDF 或 Excel 格式（華南銀行格式）</span></div>
@@ -549,12 +374,9 @@
            ondragover="handleDrag(event,'zone-bank')" ondragleave="handleDragLeave(event,'zone-bank')"
            ondrop="handleDrop(event,'zone-bank','bank')">
         <input type="file" id="file-bank" accept=".xlsx,.xls,.csv,.pdf" onchange="handleFileChange(event,'bank')">
-        <div class="upload-icon">🏦</div>
-        <div class="upload-text">點擊或拖曳 <strong>銀行對帳單</strong> 至此</div>
-        <div class="upload-hint">.pdf / .xlsx / .xls / .csv</div>
+        <div class="upload-icon">🏦</div><div class="upload-text">點擊或拖曳 <strong>銀行對帳單</strong> 至此</div><div class="upload-hint">.pdf / .xlsx / .xls / .csv</div>
       </div>
     </div>
-
     <div style="display:flex;gap:12px;flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="runReconciliation()" style="font-size:15px;padding:13px 28px;">⚡ 開始自動對帳</button>
       <button class="btn btn-secondary" onclick="switchTab('result')">查看結果 →</button>
@@ -563,9 +385,7 @@
 
   <!-- 對帳結果 -->
   <div class="page" id="page-result">
-    <div id="result-empty" class="card">
-      <div class="empty-state"><div class="empty-icon">⚡</div><p>請先在管理員後台上傳資料並執行對帳</p></div>
-    </div>
+    <div id="result-empty" class="card"><div class="empty-state"><div class="empty-icon">⚡</div><p>請先在管理員後台上傳資料並執行對帳</p></div></div>
     <div id="result-content" style="display:none;">
       <div class="stats-row">
         <div class="stat-card"><div class="stat-label">✅ 已確認收款</div><div class="stat-value green" id="stat-confirmed">0</div></div>
@@ -593,20 +413,36 @@
     </div>
   </div>
 
-  <!-- 系統設定（管理員） -->
+  <!-- 系統設定 -->
   <div class="page" id="page-settings">
     <div class="card">
       <div class="card-title"><span class="dot"></span>Google Sheets 連結設定</div>
-      <div class="alert alert-warn">
-        <span>⚠️</span>
-        <span>請先完成 Google Apps Script 部署，再把取得的網址貼到下方。</span>
+      <div class="alert alert-warn"><span>⚠️</span><span>共需三個 Apps Script 網址。<strong>主表</strong>記錄所有回報；<strong>現金備份表</strong>、<strong>商品備份表</strong>各自獨立，可單獨分享給相關人員。</span></div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="form-group">
+          <label>① 主表網址（所有回報）</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="sheets-url" placeholder="https://script.google.com/macros/s/…/exec（主表 GAS）" style="font-family:'DM Mono',monospace;font-size:12px;flex:1;">
+            <button class="btn btn-secondary btn-sm" onclick="testSheetUrl('sheets-url')">測試</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>② 現金備份表網址（僅現金資料）</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="cash-url" placeholder="https://script.google.com/macros/s/…/exec（現金備份 GAS）" style="font-family:'DM Mono',monospace;font-size:12px;flex:1;">
+            <button class="btn btn-secondary btn-sm" onclick="testSheetUrl('cash-url')">測試</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>③ 商品備份表網址（僅商品資料）</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="product-url" placeholder="https://script.google.com/macros/s/…/exec（商品備份 GAS）" style="font-family:'DM Mono',monospace;font-size:12px;flex:1;">
+            <button class="btn btn-secondary btn-sm" onclick="testSheetUrl('product-url')">測試</button>
+          </div>
+        </div>
       </div>
-      <div class="form-group" style="margin-bottom:16px;">
-        <label>Apps Script 網址（Web App URL）</label>
-        <input type="text" id="sheets-url" placeholder="https://script.google.com/macros/s/...../exec" style="font-family:'DM Mono',monospace;font-size:12px;">
-      </div>
-      <button class="btn btn-primary" onclick="saveSheetUrl()">儲存連結</button>
-      <button class="btn btn-secondary" onclick="testSheetUrl()" style="margin-left:8px;">測試連線</button>
+      <button class="btn btn-primary" onclick="saveSheetUrl()" style="margin-top:16px;">儲存所有連結</button>
     </div>
 
     <div class="card">
@@ -626,16 +462,130 @@
     <div class="card">
       <div class="card-title"><span class="dot"></span>管理員密碼</div>
       <div class="form-grid">
-        <div class="form-group">
-          <label>新密碼</label>
-          <input type="password" id="new-pw" placeholder="輸入新密碼">
-        </div>
-        <div class="form-group">
-          <label>確認密碼</label>
-          <input type="password" id="confirm-pw" placeholder="再次輸入">
-        </div>
+        <div class="form-group"><label>新密碼</label><input type="password" id="new-pw" placeholder="輸入新密碼"></div>
+        <div class="form-group"><label>確認密碼</label><input type="password" id="confirm-pw" placeholder="再次輸入"></div>
       </div>
       <button class="btn btn-primary" onclick="changePassword()" style="margin-top:14px;">更新密碼</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>📋 Google Apps Script 設定參考</div>
+      <div class="alert alert-info" style="margin-bottom:16px;"><span>ℹ️</span><span>需要建立 <strong>三個</strong> 獨立的 Google Sheets + Apps Script，各自部署後把網址填入上方。每個 GAS 的程式碼如下。</span></div>
+
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;">① 主表 GAS（所有回報都寫進「教練回報」分頁）</div>
+      <pre style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.7;font-family:'DM Mono',monospace;margin-bottom:20px;">function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  const ss   = SpreadsheetApp.getActiveSpreadsheet();
+
+  // ── 教練名單同步 ──
+  if (data.type === 'coaches') {
+    const s = ss.getSheetByName('教練名單') || ss.insertSheet('教練名單');
+    s.clearContents();
+    s.appendRow(['教練姓名']);
+    (data.coaches || []).forEach(n => s.appendRow([n]));
+    return ok();
+  }
+
+  // ── 所有回報 → 「教練回報」分頁（完整主記錄）──
+  const s = getSheet(ss, '教練回報',
+    ['送出時間','教練','學員/購買者','後五碼','金額','日期',
+     '付款方式','類型','課程/商品名稱','發票抬頭','統一編號','備註']);
+  const methodLabel = m => m==='cash'?'現金':m==='linepay'?'LINE Pay':'匯款轉帳';
+  s.appendRow([
+    data.ts, data.coach, data.student, data.last5||'', data.amount, data.date,
+    methodLabel(data.method),
+    data.sheetType==='product' ? '商品' : '課程',
+    data.sheetType==='product' ? data.productName||'' : data.course||'',
+    data.invoiceTitle||'', data.invoiceTax||'',
+    data.sheetType==='product' ? data.productNote||'' : data.note||''
+  ]);
+
+  return ok();
+}
+
+function doGet(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (e.parameter.type === 'coaches') {
+    const s = ss.getSheetByName('教練名單');
+    const coaches = s && s.getLastRow()>1
+      ? s.getRange(2,1,s.getLastRow()-1,1).getValues().flat().filter(Boolean) : [];
+    return json({ status:'ok', coaches });
+  }
+  const s = ss.getSheetByName('教練回報');
+  if (!s || s.getLastRow()<2) return json({ status:'ok', data:[] });
+  const [h,...rows] = s.getDataRange().getValues();
+  return json({ status:'ok', data: rows.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]??'']))) });
+}
+
+function getSheet(ss, name, headers) {
+  const s = ss.getSheetByName(name) || ss.insertSheet(name);
+  if (s.getLastRow() === 0) s.appendRow(headers);
+  return s;
+}
+function ok()   { return json({ status:'ok' }); }
+function json(o){ return ContentService.createTextOutput(JSON.stringify(o))
+                                       .setMimeType(ContentService.MimeType.JSON); }</pre>
+
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;">② 現金備份表 GAS（獨立 Sheets，所有現金付款都記錄，含課程和商品）</div>
+      <pre style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.7;font-family:'DM Mono',monospace;margin-bottom:20px;">function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  // 只接受現金付款
+  if (data.method !== 'cash') return ok();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const s  = ss.getSheetByName('現金回報') || ss.insertSheet('現金回報');
+  if (s.getLastRow() === 0)
+    s.appendRow(['送出時間','教練','學員/購買者','金額','付款日期',
+                 '類型','課程/商品名稱','發票抬頭','統一編號','備註']);
+  s.appendRow([
+    data.ts, data.coach, data.student,
+    data.amount, data.date,
+    data.sheetType==='product' ? '商品' : '課程',
+    data.sheetType==='product' ? data.productName||'' : data.course||'',
+    data.invoiceTitle||'', data.invoiceTax||'',
+    data.sheetType==='product' ? data.productNote||'' : data.note||''
+  ]);
+  return ok();
+}
+function doGet(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const s  = ss.getSheetByName('現金回報');
+  if (!s || s.getLastRow()<2) return json({ status:'ok', data:[] });
+  const [h,...rows] = s.getDataRange().getValues();
+  return json({ status:'ok', data: rows.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]??'']))) });
+}
+function ok()   { return json({ status:'ok' }); }
+function json(o){ return ContentService.createTextOutput(JSON.stringify(o))
+                                       .setMimeType(ContentService.MimeType.JSON); }</pre>
+
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;">③ 商品備份表 GAS（獨立 Sheets，只記錄商品）</div>
+      <pre style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.7;font-family:'DM Mono',monospace;">function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  // 只接受商品
+  if (data.sheetType !== 'product') return ok();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const s  = ss.getSheetByName('商品回報') || ss.insertSheet('商品回報');
+  if (s.getLastRow() === 0)
+    s.appendRow(['送出時間','教練','購買者','後五碼','金額','付款日期','付款方式',
+                 '商品名稱','發票種類','發票抬頭','統一編號','載具條碼','Email','備註']);
+  const invLabel = t => t==='digital'?'電子發票':t==='paper'?'紙本發票':'不需要';
+  const methodLabel = m => m==='cash'?'現金':m==='linepay'?'LINE Pay':'匯款轉帳';
+  s.appendRow([data.ts, data.coach, data.student, data.last5||'',
+               data.amount, data.date, methodLabel(data.method),
+               data.productName||'', invLabel(data.invoiceType),
+               data.invoiceTitle||'', data.invoiceTax||'',
+               data.invoiceCarrier||'', data.invoiceEmail||'', data.productNote||'']);
+  return ok();
+}
+function doGet(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const s  = ss.getSheetByName('商品回報');
+  if (!s || s.getLastRow()<2) return json({ status:'ok', data:[] });
+  const [h,...rows] = s.getDataRange().getValues();
+  return json({ status:'ok', data: rows.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]??'']))) });
+}
+function ok()   { return json({ status:'ok' }); }
+function json(o){ return ContentService.createTextOutput(JSON.stringify(o))
+                                       .setMimeType(ContentService.MimeType.JSON); }</pre>
     </div>
   </div>
 </div>
@@ -643,94 +593,140 @@
 <div id="toast"></div>
 
 <script>
-// ===== Config =====
-// 【重要】管理員第一次使用後，到「系統設定」更改密碼
 const DEFAULT_ADMIN_PW = 'hope2026';
-
-// ===== State =====
-let currentUser = null; // { role: 'coach'|'admin', name: string }
+let currentUser = null;
 let coaches = JSON.parse(localStorage.getItem('hope_coaches') || JSON.stringify([
-  'Adam 林元騁', 'Carol 葉欣萍', 'Kenny 蔡岷宏', 'Joanne 蔡喬安',
-  'Kevin 江侑學', 'Vis 方建雄', 'Allen 張瀚元', 'Sean 黃郁翔',
-  'Ava 林冠妤', 'Howard 鄧庭皓', 'Ella 吳雨樵', 'Elly 吳以勤',
-  '●行政：Elaine'
+  'Adam 林元騁','Carol 葉欣萍','Kenny 蔡岷宏','Joanne 蔡喬安',
+  'Kevin 江侑學','Vis 方建雄','Allen 張瀚元','Sean 黃郁翔',
+  'Ava 林冠妤','Howard 鄧庭皓','Ella 吳雨樵','Elly 吳以勤','●行政：Elaine'
 ]));
 let adminPw = localStorage.getItem('hope_admin_pw') || DEFAULT_ADMIN_PW;
-let sheetsUrl = localStorage.getItem('hope_sheets_url') || 'https://script.google.com/macros/s/AKfycbyWoxzmtfNyZcFchTZDlKgH0JWBNH5bkjkGo_3D4E7EPH4ph1QsgBiAxJeE64wOfOlkug/exec';
+let sheetsUrl   = localStorage.getItem('hope_sheets_url')    || 'https://script.google.com/macros/s/AKfycbyWoxzmtfNyZcFchTZDlKgH0JWBNH5bkjkGo_3D4E7EPH4ph1QsgBiAxJeE64wOfOlkug/exec';
+let cashUrl     = localStorage.getItem('hope_cash_url')     || '';
+let productUrl  = localStorage.getItem('hope_product_url')  || '';
 let submissions = JSON.parse(localStorage.getItem('hope_submissions') || '[]');
 let allReports = [];
-let orderData = [];
-let bankData = [];
-let resultRows = [];
+let orderData = [], bankData = [], resultRows = [];
+let currentReportType = 'course';
+let coachFilterMode = 'period', reportsFilterMode = 'period';
 
-let coachFilterMode = 'period'; // 'period' | 'all'
-let reportsFilterMode = 'period'; // 'period' | 'all'
+// === 類型切換 ===
+function onReportTypeChange(type) {
+  currentReportType = type;
+  document.getElementById('section-course').style.display  = type === 'course'  ? 'block' : 'none';
+  document.getElementById('section-product').style.display = type === 'product' ? 'block' : 'none';
 
+  if (type === 'product') {
+    document.getElementById('label-student').textContent   = '購買者姓名 *';
+    document.getElementById('label-date').textContent      = '付款日期 *';
+    document.getElementById('label-amount').textContent    = '金額（元）*';
+    document.getElementById('wrap-last5').style.display    = 'none';
+    document.getElementById('wrap-method').style.display   = 'none';
+    document.getElementById('c-last5').value = '';
+  } else {
+    document.getElementById('label-student').textContent   = '學員姓名 *';
+    document.getElementById('label-date').textContent      = '匯款日期 *';
+    document.getElementById('label-amount').textContent    = '匯款金額（元）*';
+    document.getElementById('wrap-last5').style.display    = 'flex';
+    document.getElementById('wrap-method').style.display   = 'flex';
+  }
+}
+
+// === 課程付款方式切換（只有匯款/現金）===
+function onMethodChange(val) {
+  const last5input = document.getElementById('c-last5');
+  if (!last5input) return;
+  if (val === 'cash') {
+    last5input.placeholder = '現金不需填寫';
+    last5input.value = '';
+    last5input.disabled = true;
+    last5input.style.background = 'var(--surface2)';
+  } else {
+    last5input.placeholder = '例：07079';
+    last5input.disabled = false;
+    last5input.style.background = '';
+  }
+}
+
+// === 商品付款方式切換（含 LINE Pay）===
+function onProductMethodChange(val) {
+  const wrap  = document.getElementById('p-last5-wrap');
+  const input = document.getElementById('p-last5');
+  if (val === 'cash') {
+    input.placeholder = '現金不需填寫';
+    input.value = '';
+    input.disabled = true;
+    input.style.background = 'var(--surface2)';
+  } else if (val === 'linepay') {
+    input.placeholder = '交易序號後五碼（選填）';
+    input.disabled = false;
+    input.style.background = '';
+  } else {
+    input.placeholder = '例：07079';
+    input.disabled = false;
+    input.style.background = '';
+  }
+}
+
+// === 發票種類切換 ===
+function onInvoiceTypeChange(scope) {
+  const prefix = scope === 'course' ? 'c' : 'p';
+  const typeEl = document.getElementById(scope === 'course' ? 'c-invoice-type' : 'p-invoice-type');
+  const val = typeEl.value;
+  const titleWrap   = document.getElementById(`invoice-title-wrap-${scope}`);
+  const digitalWrap = document.getElementById(`invoice-digital-wrap-${scope}`);
+  titleWrap.style.display   = (val === 'paper' || val === 'digital') ? 'block' : 'none';
+  digitalWrap.style.display = val === 'digital' ? 'block' : 'none';
+}
+
+// === 篩選 ===
 function setCoachFilter(mode, el) {
   coachFilterMode = mode;
-  document.querySelectorAll('#coach-filter-period, #coach-filter-all').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#coach-filter-period,#coach-filter-all,#coach-filter-course,#coach-filter-product').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderMySubmissions();
 }
-
 function setReportsFilter(mode, el) {
   reportsFilterMode = mode;
-  document.querySelectorAll('#reports-filter-period, #reports-filter-all').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#reports-filter-period,#reports-filter-all,#reports-filter-course-tab,#reports-filter-product-tab').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderReportsList();
 }
 
-// ===== 計算本期範圍 =====
+// === 本期 ===
 function getCurrentPeriod() {
   const today = new Date();
-  const y = today.getFullYear();
-  const m = today.getMonth() + 1; // 1-12
   let start, end;
   if (today.getDate() >= 21) {
-    // 本月21日 ~ 下月20日
-    start = new Date(y, today.getMonth(), 21);
-    end = new Date(y, today.getMonth() + 1, 20, 23, 59, 59);
+    start = new Date(today.getFullYear(), today.getMonth(), 21);
+    end   = new Date(today.getFullYear(), today.getMonth() + 1, 20, 23, 59, 59);
   } else {
-    // 上月21日 ~ 本月20日
-    start = new Date(y, today.getMonth() - 1, 21);
-    end = new Date(y, today.getMonth(), 20, 23, 59, 59);
+    start = new Date(today.getFullYear(), today.getMonth() - 1, 21);
+    end   = new Date(today.getFullYear(), today.getMonth(), 20, 23, 59, 59);
   }
   return { start, end };
 }
-
 function isInCurrentPeriod(dateStr, tsStr) {
   const { start, end } = getCurrentPeriod();
-  // 優先用送出時間判斷，沒有送出時間才用匯款日期
   const checkStr = tsStr || dateStr;
   if (!checkStr) return false;
   const d = new Date(checkStr);
-  if (isNaN(d)) return true;
-  return d >= start && d <= end;
+  return !isNaN(d) && d >= start && d <= end;
 }
-
 function getPeriodLabel() {
   const { start, end } = getCurrentPeriod();
   const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
   return `本期：${fmt(start)} ~ ${fmt(end)}`;
 }
 
-// ===== Init =====
-// ===== Init =====
+// === Init ===
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('c-date').valueAsDate = new Date();
   await loadCoachesFromSheets();
   renderLoginCoachSelect();
-
-  // 檢查是否有儲存的登入狀態
   const savedUser = localStorage.getItem('hope_current_user');
   if (savedUser) {
-    try {
-      currentUser = JSON.parse(savedUser);
-      enterApp();
-      return;
-    } catch(e) {
-      localStorage.removeItem('hope_current_user');
-    }
+    try { currentUser = JSON.parse(savedUser); enterApp(); return; } catch(e) { localStorage.removeItem('hope_current_user'); }
   }
 });
 
@@ -743,20 +739,13 @@ async function loadCoachesFromSheets() {
       coaches = json.coaches;
       localStorage.setItem('hope_coaches', JSON.stringify(coaches));
     }
-  } catch(e) {
-    // 網路失敗就用本機快取
-  }
+  } catch(e) {}
 }
 
-// ===== Login =====
 function renderLoginCoachSelect() {
   const sel = document.getElementById('login-coach-select');
   sel.innerHTML = '<option value="">— 請選擇你的名字 —</option>';
-  coaches.forEach(name => {
-    const opt = document.createElement('option');
-    opt.value = name; opt.textContent = name;
-    sel.appendChild(opt);
-  });
+  coaches.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; sel.appendChild(opt); });
 }
 
 function loginAsCoach() {
@@ -765,20 +754,17 @@ function loginAsCoach() {
   currentUser = { role: 'coach', name };
   enterApp();
 }
-
 function toggleAdminLogin() {
   const wrap = document.getElementById('admin-pw-wrap');
   wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
   if (wrap.style.display === 'block') document.getElementById('admin-pw').focus();
 }
-
 function loginAsAdmin() {
   const pw = document.getElementById('admin-pw').value;
   if (pw !== adminPw) { showToast('密碼錯誤'); return; }
   currentUser = { role: 'admin', name: '管理員' };
   enterApp();
 }
-
 function logout() {
   currentUser = null;
   localStorage.removeItem('hope_current_user');
@@ -790,13 +776,10 @@ function logout() {
 }
 
 function enterApp() {
-  // 儲存登入狀態
   localStorage.setItem('hope_current_user', JSON.stringify(currentUser));
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('header-username').textContent = currentUser.name;
-
-  // 建立導航
   const nav = document.getElementById('main-nav');
   if (currentUser.role === 'coach') {
     nav.innerHTML = `<button class="tab-btn active" onclick="switchTab('coach')">📱 回報匯款</button>`;
@@ -808,10 +791,10 @@ function enterApp() {
       <button class="tab-btn active" onclick="switchTab('reports')">📋 教練回報</button>
       <button class="tab-btn" onclick="switchTab('admin')">🏠 對帳後台</button>
       <button class="tab-btn" onclick="switchTab('result')">📊 對帳結果</button>
-      <button class="tab-btn" onclick="switchTab('settings')">⚙️ 系統設定</button>
-    `;
-    
-    document.getElementById('sheets-url').value = sheetsUrl;
+      <button class="tab-btn" onclick="switchTab('settings')">⚙️ 系統設定</button>`;
+    document.getElementById('sheets-url').value  = sheetsUrl;
+    document.getElementById('cash-url').value    = cashUrl;
+    document.getElementById('product-url').value = productUrl;
     renderCoachList();
     loadAllReports();
     setTimeout(() => { const el = document.getElementById('period-label'); if(el) el.textContent = getPeriodLabel(); }, 100);
@@ -819,7 +802,6 @@ function enterApp() {
   switchTab(currentUser.role === 'coach' ? 'coach' : 'reports');
 }
 
-// ===== Tab =====
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -829,683 +811,533 @@ function switchTab(tab) {
   if (page) page.classList.add('active');
 }
 
-// ===== Coach submit =====
+// === 送出 ===
 async function submitCoach() {
-  const coach = document.getElementById('c-coach').value.trim();
+  const coach   = document.getElementById('c-coach').value.trim();
   const student = document.getElementById('c-student').value.trim();
-  const last5 = document.getElementById('c-last5').value.trim();
-  const amount = document.getElementById('c-amount').value.trim();
-  const date = document.getElementById('c-date').value;
-  const method = document.getElementById('c-method').value;
-  const course = document.getElementById('c-course').value.trim();
-  const invoiceTitle = document.getElementById('c-invoice-title').value.trim();
-  const invoiceTax = document.getElementById('c-invoice-tax').value.trim();
-  const note = document.getElementById('c-note').value.trim();
+  const date    = document.getElementById('c-date').value;
 
-  if (!student) { showToast('請填寫學員姓名'); return; }
-  if (method !== 'cash' && !last5) { showToast('請填寫匯款後五碼'); return; }
-  if (!amount) { showToast('請填寫匯款金額'); return; }
-  if (!date) { showToast('請選擇匯款日期'); return; }
-  if (method !== 'cash' && !/^\d{5}$/.test(last5)) { showToast('後五碼請填寫5位數字'); return; }
+  if (!student) { showToast('請填寫學員 / 購買者姓名'); return; }
+  if (!date)    { showToast('請選擇匯款日期'); return; }
 
-  const entry = {
-    id: Date.now(), coach, student,
-    last5: method === 'cash' ? 'CASH' : last5,
-    amount: parseInt(amount), date, method, course, invoiceTitle, invoiceTax, note,
-    ts: new Date().toISOString()
-  };
+  let entry;
+  if (currentReportType === 'course') {
+    const method  = document.getElementById('c-method').value;
+    const last5El = document.getElementById('c-last5');
+    const last5   = last5El.disabled ? '' : last5El.value.trim();
+    const amount  = document.getElementById('c-amount').value.trim();
+    const course  = document.getElementById('c-course').value.trim();
+    const note    = document.getElementById('c-note').value.trim();
+    const invoiceTitle = document.getElementById('c-invoice-title')?.value.trim() || '';
+    const invoiceTax   = document.getElementById('c-invoice-tax')?.value.trim()   || '';
+    if (method !== 'cash' && !last5)                        { showToast('請填寫匯款後五碼'); return; }
+    if (method !== 'cash' && last5 && !/^\d{5}$/.test(last5)) { showToast('後五碼請填寫5位數字'); return; }
+    if (!amount) { showToast('請填寫匯款金額'); return; }
+    entry = {
+      id: Date.now(), entryType: 'course', coach, student,
+      last5: method === 'cash' ? 'CASH' : last5,
+      amount: parseInt(amount), date, method, course, note,
+      invoiceTitle, invoiceTax,
+      ts: new Date().toISOString()
+    };
+  } else {
+    const method  = document.getElementById('p-method').value;
+    const last5El = document.getElementById('p-last5');
+    const last5   = last5El.disabled ? '' : last5El.value.trim();
+    const amount      = document.getElementById('c-amount').value.trim();
+    const productName = document.getElementById('c-product-name').value.trim();
+    const productNote = document.getElementById('c-product-note').value.trim();
+    const invTypeEl   = document.getElementById('p-invoice-type');
+    const invoiceType     = invTypeEl ? invTypeEl.value : 'none';
+    const invoiceTitle    = document.getElementById('p-invoice-title')?.value.trim()   || '';
+    const invoiceTax      = document.getElementById('p-invoice-tax')?.value.trim()     || '';
+    const invoiceCarrier  = document.getElementById('p-invoice-carrier')?.value.trim() || '';
+    const invoiceEmail    = document.getElementById('p-invoice-email')?.value.trim()   || '';
+    if (!productName) { showToast('請填寫商品名稱'); return; }
+    if (!amount)      { showToast('請填寫匯款金額'); return; }
+    if (method === 'transfer' && !last5)                        { showToast('匯款轉帳請填寫後五碼'); return; }
+    if (method === 'transfer' && last5 && !/^\d{5}$/.test(last5)) { showToast('後五碼請填寫5位數字'); return; }
+    if (invoiceType === 'digital') {
+      if (!invoiceCarrier) { showToast('電子發票請填寫載具條碼'); return; }
+      if (!invoiceEmail)   { showToast('電子發票請填寫 Email'); return; }
+    }
+    entry = {
+      id: Date.now(), entryType: 'product', coach, student,
+      last5: method === 'cash' ? 'CASH' : (last5 || ''),
+      amount: parseInt(amount), date, method, productName, productNote,
+      invoiceType, invoiceTitle, invoiceTax, invoiceCarrier, invoiceEmail,
+      ts: new Date().toISOString()
+    };
+  }
 
-  // 儲存本機
   submissions.unshift(entry);
   localStorage.setItem('hope_submissions', JSON.stringify(submissions));
 
-  // 送到 Google Sheets
   if (sheetsUrl) {
     const btn = document.getElementById('submit-btn');
     btn.innerHTML = '<span class="spinner"></span> 送出中...';
     btn.disabled = true;
+    const payload = { ...entry, totalAmount: entry.amount,
+      sheetType: currentReportType === 'product' ? 'product'
+               : entry.method === 'cash' ? 'course_cash'
+               : 'course_transfer' };
+    const post = url => fetch(url, { method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
     try {
-      await fetch(sheetsUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({...entry, type: 'report'})
-      });
-      showToast('✓ 回報成功！已同步到雲端');
-    } catch(e) {
-      showToast('✓ 已儲存本機（網路異常，請稍後重試）');
-    }
+      // 主表（所有回報）
+      await post(sheetsUrl);
+      // 現金備份表（所有現金付款，不分課程/商品）
+      if (cashUrl && entry.method === 'cash') await post(cashUrl);
+      // 商品備份表
+      if (productUrl && currentReportType === 'product') await post(productUrl);
+      showToast(currentReportType === 'course' ? '✓ 課程回報成功！已同步到雲端' : '✓ 商品回報成功！已同步到雲端');
+    } catch(e) { showToast('✓ 已儲存本機（網路異常，請稍後重試）'); }
     btn.innerHTML = '✓ 送出回報';
     btn.disabled = false;
   } else {
     showToast('✓ 回報成功！');
   }
-
   clearCoachForm();
   renderMySubmissions();
 }
 
 function clearCoachForm() {
-  ['c-student','c-last5','c-amount','c-course','c-invoice-title','c-invoice-tax','c-note'].forEach(id => document.getElementById(id).value = '');
+  ['c-student','c-last5','c-amount','c-course','c-note',
+   'c-invoice-title','c-invoice-tax',
+   'c-product-name','c-product-note','p-last5',
+   'p-invoice-title','p-invoice-tax','p-invoice-carrier','p-invoice-email']
+    .forEach(id => { const el = document.getElementById(id); if(el) { el.value = ''; el.disabled = false; el.style.background = ''; } });
   document.getElementById('c-date').valueAsDate = new Date();
   document.getElementById('c-method').value = 'transfer';
+  onMethodChange('transfer');
+  const pm = document.getElementById('p-method'); if(pm) { pm.value = 'transfer'; onProductMethodChange('transfer'); }
+  const pt = document.getElementById('p-invoice-type'); if(pt) { pt.value = 'none'; onInvoiceTypeChange('product'); }
 }
 
 function renderMySubmissions() {
-  const myRecords = submissions.filter(s => s.coach === currentUser?.name && (coachFilterMode === 'all' || isInCurrentPeriod(s.date, s.ts)));
+  let myRecords = submissions.filter(s => s.coach === currentUser?.name);
+  if (coachFilterMode === 'period')  myRecords = myRecords.filter(s => isInCurrentPeriod(s.date, s.ts));
+  else if (coachFilterMode === 'course')  myRecords = myRecords.filter(s => s.entryType !== 'product');
+  else if (coachFilterMode === 'product') myRecords = myRecords.filter(s => s.entryType === 'product');
   const el = document.getElementById('submission-list');
-  if (!myRecords.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>`;
-    return;
-  }
-  el.innerHTML = myRecords.map(s => `
-    <div class="submission-item">
+  if (!myRecords.length) { el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>`; return; }
+
+  const methodLabel = m => m === 'cash' ? '💵 現金' : m === 'linepay' ? '💚 LINE Pay' : `後五碼：${m}`;
+  const invLabel    = type => type === 'paper' ? '📄 紙本發票' : type === 'digital' ? '📱 電子發票' : '';
+
+  el.innerHTML = myRecords.map(s => {
+    const isProduct = s.entryType === 'product';
+    const last5show = s.method === 'cash' ? '💵 現金' : s.method === 'linepay' ? `💚 LINE Pay${s.last5 ? '・'+s.last5 : ''}` : `後五碼：${s.last5}`;
+    const invBadge  = s.invoiceType && s.invoiceType !== 'none' ? ` ｜ ${invLabel(s.invoiceType)}` : '';
+    return `<div class="submission-item ${isProduct ? 'product-entry' : 'course-entry'}">
       <div class="submission-main">
-        <div class="submission-name">${s.student}</div>
+        <div class="submission-name">${isProduct ? '🛍️ ' : '🏌️ '}${s.student}${isProduct && s.productName ? `<span style="font-size:12px;font-weight:400;color:var(--text2);margin-left:6px;">${s.productName}</span>` : ''}</div>
         <div class="submission-detail">
-          ${s.method === 'cash' ? '💵 現金' : `後五碼：${s.last5}`} ｜ $${s.amount.toLocaleString()} ｜ ${s.date}
-          ${s.course ? ` ｜ ${s.course}` : ''}
-          ${s.invoiceTitle ? ` ｜ 🧾 ${s.invoiceTitle}${s.invoiceTax ? '（'+s.invoiceTax+'）' : ''}` : ''}
+          ${last5show} ｜ $${(s.amount||0).toLocaleString()} ｜ ${s.date}
+          ${!isProduct && s.course ? ` ｜ ${s.course}` : ''}
+          ${invBadge}
+          ${s.invoiceType === 'digital' && s.invoiceEmail ? ` ｜ ${s.invoiceEmail}` : ''}
+          ${isProduct && s.productNote ? ` ｜ ${s.productNote}` : ''}
         </div>
       </div>
-      <span class="badge ${s.method==='cash' ? 'badge-blue' : 'badge-green'}">${s.method==='cash' ? '現金' : '轉帳'}</span>
-    </div>
-  `).join('');
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <span class="badge ${isProduct ? 'badge-purple' : 'badge-green'}">${isProduct ? '商品' : '課程'}</span>
+        <span class="badge ${s.method==='cash' ? 'badge-blue' : s.method==='linepay' ? 'badge-green' : 'badge-gray'}">${s.method==='cash' ? '現金' : s.method==='linepay' ? 'LINE Pay' : '轉帳'}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-// ===== Admin: load all reports =====
+// === Admin reports ===
 async function loadAllReports() {
   const el = document.getElementById('reports-list');
   el.innerHTML = `<div class="empty-state"><div class="empty-icon">⏳</div><p>載入中...</p></div>`;
-
-  if (!sheetsUrl) {
-    // 沒設定 Sheets，顯示本機資料
-    allReports = submissions;
-    renderReportsList();
-    return;
-  }
-
+  if (!sheetsUrl) { allReports = submissions; renderReportsList(); return; }
   try {
-    const res = await fetch(sheetsUrl + '?t=' + Date.now());
+    const res  = await fetch(sheetsUrl + '?t=' + Date.now());
     const json = await res.json();
     if (json.status === 'ok') {
-      allReports = json.data.map(row => ({
-        coach: row['教練姓名'] || '',
-        student: row['學員姓名'] || '',
-        last5: String(row['後五碼'] || '').replace(/^'+/, '').padStart(5, '0'),
-        amount: parseFloat(String(row['金額']).replace(/,/g,'')) || 0,
-        date: row['匯款日期'] || '',
-        method: row['付款方式'] === '現金' ? 'cash' : 'transfer',
-        course: row['課程名稱'] || '',
-        invoiceTitle: row['發票抬頭'] || '',
-        invoiceTax: row['統一編號'] || '',
-        note: row['備註'] || '',
-        ts: row['送出時間'] || ''
+      const courseReports  = (json.data || []).map(row => ({
+        entryType:'course', coach:row['教練姓名']||'', student:row['學員姓名']||'',
+        last5:String(row['後五碼']||'').replace(/^'+/,'').padStart(5,'0'),
+        amount:parseFloat(String(row['金額']).replace(/,/g,''))||0,
+        date:row['匯款日期']||'', method:row['付款方式']==='現金'?'cash':'transfer',
+        course:row['課程名稱']||'', invoiceTitle:row['發票抬頭']||'',
+        invoiceTax:row['統一編號']||'', note:row['備註']||'', ts:row['送出時間']||''
       }));
+      const productReports = (json.productData || []).map(row => ({
+        entryType:'product', coach:row['教練姓名']||'', student:row['購買者姓名']||'',
+        last5:String(row['後五碼']||'').replace(/^'+/,'').padStart(5,'0'),
+        amount:parseFloat(String(row['總金額']).replace(/,/g,''))||0,
+        date:row['匯款日期']||'', method:row['付款方式']==='現金'?'cash':'transfer',
+        items:[{name:row['商品名稱']||'',qty:row['數量']||1,price:row['單價']||0}],
+        productNote:row['備註']||'', ts:row['送出時間']||''
+      }));
+      allReports = [...courseReports, ...productReports];
       renderReportsList();
       showToast(`✓ 已載入 ${allReports.length} 筆回報`);
     }
-  } catch(e) {
-    allReports = submissions;
-    renderReportsList();
-    showToast('無法連線，顯示本機資料');
-  }
+  } catch(e) { allReports = submissions; renderReportsList(); showToast('無法連線，顯示本機資料'); }
 }
 
 function renderReportsList() {
   const el = document.getElementById('reports-list');
-  const periodReports = allReports.filter(r => reportsFilterMode === 'all' || isInCurrentPeriod(r.date, r.ts));
-  if (!periodReports.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>本期尚無教練回報資料</p></div>`;
-    return;
-  }
-
-  // 依教練分組（只顯示本期）
+  let filtered = allReports;
+  if (reportsFilterMode === 'period')  filtered = filtered.filter(r => isInCurrentPeriod(r.date, r.ts));
+  else if (reportsFilterMode === 'course')  filtered = filtered.filter(r => r.entryType !== 'product');
+  else if (reportsFilterMode === 'product') filtered = filtered.filter(r => r.entryType === 'product');
+  if (!filtered.length) { el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>目前篩選條件下無資料</p></div>`; return; }
   const byCoach = {};
-  periodReports.forEach(r => {
-    if (!byCoach[r.coach]) byCoach[r.coach] = [];
-    byCoach[r.coach].push(r);
-  });
-
+  filtered.forEach(r => { if (!byCoach[r.coach]) byCoach[r.coach] = []; byCoach[r.coach].push(r); });
+  const invLabel = type => type === 'paper' ? '📄 紙本' : type === 'digital' ? '📱 電子' : '';
   el.innerHTML = Object.entries(byCoach).map(([coach, records]) => `
     <div style="margin-bottom:20px;">
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;padding:0 4px;">
         ${coach} <span style="font-weight:400;color:var(--text3)">（${records.length} 筆）</span>
       </div>
-      ${records.map(s => `
-        <div class="submission-item" style="padding:10px 12px;">
+      ${records.map(s => {
+        const isProduct = s.entryType === 'product';
+        const last5show = s.method==='cash' ? '💵 現金' : s.method==='linepay' ? `💚 LINE Pay${s.last5?'・'+s.last5:''}` : `後五碼：${s.last5}`;
+        const invBadge  = s.invoiceType && s.invoiceType !== 'none' ? ` ｜ ${invLabel(s.invoiceType)}` : '';
+        return `<div class="submission-item ${isProduct ? 'product-entry' : 'course-entry'}" style="padding:10px 12px;">
           <div class="submission-main">
-            <div class="submission-name" style="font-size:13px;">${s.student}</div>
+            <div class="submission-name" style="font-size:13px;">${isProduct ? '🛍️ ' : '🏌️ '}${s.student}${isProduct && s.productName ? `<span style="font-size:11px;font-weight:400;color:var(--text2);margin-left:6px;">${s.productName}</span>` : ''}</div>
             <div class="submission-detail">
-              ${s.method==='cash' ? '💵 現金' : `後五碼：${s.last5}`} ｜ $${s.amount.toLocaleString()} ｜ ${s.date}
-              ${s.course ? ` ｜ ${s.course}` : ''}
-              ${s.invoiceTitle ? ` ｜ 🧾 ${s.invoiceTitle}` : ''}
+              ${last5show} ｜ $${(s.amount||0).toLocaleString()} ｜ ${s.date}
+              ${!isProduct && s.course ? ` ｜ ${s.course}` : ''}
+              ${invBadge}
+              ${s.invoiceType === 'digital' && s.invoiceEmail ? ` ｜ ${s.invoiceEmail}` : ''}
+              ${isProduct && s.productNote ? ` ｜ ${s.productNote}` : ''}
             </div>
           </div>
-          <span class="badge ${s.method==='cash' ? 'badge-blue' : 'badge-green'}" style="font-size:11px;">${s.method==='cash' ? '現金' : '轉帳'}</span>
-        </div>
-      `).join('')}
-    </div>
-  `).join('<hr style="border:none;border-top:1px solid var(--border);margin:4px 0 20px;">');
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            <span class="badge ${isProduct ? 'badge-purple' : 'badge-green'}" style="font-size:11px;">${isProduct ? '商品' : '課程'}</span>
+            <span class="badge ${s.method==='cash' ? 'badge-blue' : s.method==='linepay' ? 'badge-green' : 'badge-gray'}" style="font-size:11px;">${s.method==='cash' ? '現金' : s.method==='linepay' ? 'LINE Pay' : '轉帳'}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`
+  ).join('<hr style="border:none;border-top:1px solid var(--border);margin:4px 0 20px;">');
 }
 
 function exportReports() {
   if (!allReports.length) { showToast('沒有資料可匯出'); return; }
-  const data = allReports.map(r => ({
-    '教練': r.coach, '學員': r.student, '後五碼': r.last5,
-    '金額': r.amount, '匯款日期': r.date, '付款方式': r.method === 'cash' ? '現金' : '轉帳',
-    '課程': r.course, '發票抬頭': r.invoiceTitle, '統一編號': r.invoiceTax, '備註': r.note
+  const methodLabel = m => m === 'cash' ? '現金' : m === 'linepay' ? 'LINE Pay' : '匯款轉帳';
+  const invLabel    = t => t === 'paper' ? '紙本發票' : t === 'digital' ? '電子發票' : '不需要';
+
+  const transferData = allReports.filter(r => r.entryType !== 'product' && r.method !== 'cash').map(r => ({
+    '送出時間':r.ts||'','教練':r.coach,'學員':r.student,'後五碼':r.last5,'金額':r.amount,
+    '匯款日期':r.date,'課程':r.course,'發票抬頭':r.invoiceTitle||'','統一編號':r.invoiceTax||'','備註':r.note||''
   }));
-  const ws = XLSX.utils.json_to_sheet(data);
+  const cashData = allReports.filter(r => r.entryType !== 'product' && r.method === 'cash').map(r => ({
+    '送出時間':r.ts||'','教練':r.coach,'學員':r.student,'金額':r.amount,
+    '付款日期':r.date,'課程':r.course,'發票抬頭':r.invoiceTitle||'','統一編號':r.invoiceTax||'','備註':r.note||''
+  }));
+  const productData = allReports.filter(r => r.entryType === 'product').map(r => ({
+    '送出時間':r.ts||'','教練':r.coach,'購買者':r.student,'後五碼':r.last5||'','金額':r.amount,
+    '付款日期':r.date,'付款方式':methodLabel(r.method),'商品名稱':r.productName||'',
+    '發票種類':invLabel(r.invoiceType),'發票抬頭':r.invoiceTitle||'','統一編號':r.invoiceTax||'',
+    '載具條碼':r.invoiceCarrier||'','Email':r.invoiceEmail||'','備註':r.productNote||''
+  }));
+
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, '教練回報');
+  if (transferData.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(transferData), '教練回報');
+  if (cashData.length)     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(cashData),     '現金回報');
+  if (productData.length)  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(productData),  '商品回報');
   XLSX.writeFile(wb, `教練回報_${new Date().toLocaleDateString('zh-TW').replace(/\//g,'-')}.xlsx`);
+  showToast('✅ 已匯出（教練回報、現金回報、商品回報 三個分頁）');
 }
 
-// ===== File upload =====
-function handleDrag(e, zoneId) { e.preventDefault(); document.getElementById(zoneId).classList.add('dragover'); }
-function handleDragLeave(e, zoneId) { document.getElementById(zoneId).classList.remove('dragover'); }
-function handleDrop(e, zoneId, type) {
-  e.preventDefault(); document.getElementById(zoneId).classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) processFile(file, type);
-}
-function handleFileChange(e, type) { const file = e.target.files[0]; if (file) processFile(file, type); }
+// === File upload ===
+function handleDrag(e,zoneId){e.preventDefault();document.getElementById(zoneId).classList.add('dragover');}
+function handleDragLeave(e,zoneId){document.getElementById(zoneId).classList.remove('dragover');}
+function handleDrop(e,zoneId,type){e.preventDefault();document.getElementById(zoneId).classList.remove('dragover');const f=e.dataTransfer.files[0];if(f)processFile(f,type);}
+function handleFileChange(e,type){const f=e.target.files[0];if(f)processFile(f,type);}
 
-function processFile(file, type) {
-  if (type === 'bank' && file.name.toLowerCase().endsWith('.pdf')) {
-    processBankPDF(file);
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const wb = XLSX.read(e.target.result, { type: 'array' });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const raw = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false });
-    if (type === 'order') {
-      orderData = parseOrderData(raw);
-      showUploadSuccess('zone-order', `訂單明細：已載入 ${orderData.length} 筆`);
-    } else {
-      bankData = parseBankData(raw);
-      showUploadSuccess('zone-bank', `銀行對帳單：已載入 ${bankData.length} 筆入帳`);
-    }
+function processFile(file,type){
+  if(type==='bank'&&file.name.toLowerCase().endsWith('.pdf')){processBankPDF(file);return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const wb=XLSX.read(e.target.result,{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const raw=XLSX.utils.sheet_to_json(ws,{header:1,raw:false});
+    if(type==='order'){orderData=parseOrderData(raw);showUploadSuccess('zone-order',`訂單明細：已載入 ${orderData.length} 筆`);}
+    else{bankData=parseBankData(raw);showUploadSuccess('zone-bank',`銀行對帳單：已載入 ${bankData.length} 筆入帳`);}
   };
   reader.readAsArrayBuffer(file);
 }
 
-async function processBankPDF(file) {
-  showUploadSuccess('zone-bank', '⏳ 解析 PDF 中...');
-  try {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let allText = '';
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      // 依 y 座標分行，再依 x 排序
-      const items = content.items.map(it => ({ x: Math.round(it.transform[4]), y: Math.round(it.transform[5]), str: it.str }));
-      const lineMap = {};
-      items.forEach(it => {
-        if (!lineMap[it.y]) lineMap[it.y] = [];
-        lineMap[it.y].push(it);
-      });
-      const lines = Object.keys(lineMap).sort((a,b) => b-a).map(y =>
-        lineMap[y].sort((a,b) => a.x - b.x).map(it => it.str).join(' ')
-      );
-      allText += lines.join('\n') + '\n';
+async function processBankPDF(file){
+  showUploadSuccess('zone-bank','⏳ 解析 PDF 中...');
+  try{
+    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const ab=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+    let allText='';
+    for(let i=1;i<=pdf.numPages;i++){
+      const page=await pdf.getPage(i);
+      const content=await page.getTextContent();
+      const items=content.items.map(it=>({x:Math.round(it.transform[4]),y:Math.round(it.transform[5]),str:it.str}));
+      const lineMap={};
+      items.forEach(it=>{if(!lineMap[it.y])lineMap[it.y]=[];lineMap[it.y].push(it);});
+      const lines=Object.keys(lineMap).sort((a,b)=>b-a).map(y=>lineMap[y].sort((a,b)=>a.x-b.x).map(it=>it.str).join(' '));
+      allText+=lines.join('\n')+'\n';
     }
-    // DEBUG: 顯示前20行讓我們看格式
-    const debugLines = allText.split('\n').slice(0, 40);
-    console.log('=== PDF.js 讀到的內容 ===');
-    debugLines.forEach((l, i) => console.log(i + ': ' + JSON.stringify(l)));
-    bankData = parseBankPDFText(allText);
-    showUploadSuccess('zone-bank', `銀行對帳單（PDF）：已載入 ${bankData.length} 筆入帳`);
-  } catch(e) {
-    showUploadSuccess('zone-bank', '❌ PDF 解析失敗，請改用 Excel 格式');
-    console.error(e);
-  }
+    bankData=parseBankPDFText(allText);
+    showUploadSuccess('zone-bank',`銀行對帳單（PDF）：已載入 ${bankData.length} 筆入帳`);
+  }catch(e){showUploadSuccess('zone-bank','❌ PDF 解析失敗，請改用 Excel 格式');console.error(e);}
 }
 
-function parseBankPDFText(text) {
-  const rows = [];
-  const allLines = text.split('\n');
-
-  for (let i = 0; i < allLines.length; i++) {
-    const line = allLines[i].trim();
-
-    // 必須包含民國年日期格式
-    if (!/0\d{2,3}\/\d{2}\/\d{2}/.test(line)) continue;
-
-    // 找所有金額
-    const amountMatches = line.match(/[\d,]+\.\d{2}/g) || [];
-    if (amountMatches.length < 2) continue;
-    const nums = amountMatches.map(n => parseFloat(n.replace(/,/g, '')));
-
-    // 餘額增加 = 存入
-    const balance = nums[nums.length - 1];
-    const txAmount = nums[nums.length - 2];
-    if (balance <= txAmount) continue;
-
-    // 日期（民國年轉西元）
-    const dateMatch = line.match(/(0\d{2,3}\/\d{2}\/\d{2})/);
-    let dateStr = '';
-    if (dateMatch) {
-      const parts = dateMatch[1].split('/');
-      dateStr = (parseInt(parts[0]) + 1911) + '/' + parts[1] + '/' + parts[2];
-    }
-
-    // 找後五碼：去掉金額、日期、序號時間、補摺日期、TWD後再找長數字串
-    let cleaned = line;
-    cleaned = cleaned.replace(/[\d,]+\.\d{2}/g, ' ');       // 去金額
-    cleaned = cleaned.replace(/0\d{2,3}\/\d{2}\/\d{2}/g, ' '); // 去民國日期
-    cleaned = cleaned.replace(/\d{6}\s+\d{2}:\d{2}:\d{2}/g, ' '); // 去序號+時間
-    cleaned = cleaned.replace(/\b115\d{4}\b/g, ' ');         // 去補摺日期
-    cleaned = cleaned.replace(/TWD.*/g, '');                    // 去TWD後面
-
-    // 找所有連續數字群（允許中間有空格），合併後取 >= 10 碼的
-    const digitBlocks = cleaned.match(/\d+(?:\s+\d+)*/g) || [];
-    const codes = digitBlocks.map(b => b.replace(/\s/g, '')).filter(b => b.length >= 8);
-    // 取最長的存款人代號
-    const longestCode = codes.length > 0 ? codes.reduce((a, b) => a.length >= b.length ? a : b) : '';
-    const last5 = longestCode ? longestCode.slice(-5) : '';
-
-    // 把當前行和下一行合併（PDF.js 可能把中文備註拆到下一行）
-    const nextLine = i + 1 < allLines.length ? allLines[i + 1] : '';
-    const rawLine = (line + ' ' + nextLine).replace(/\s/g, '');
-    rows.push({ dateStr, amount: txAmount, last5, remark: rawLine, rawLine });
+function parseBankPDFText(text){
+  const rows=[];const allLines=text.split('\n');
+  for(let i=0;i<allLines.length;i++){
+    const line=allLines[i].trim();
+    if(!/0\d{2,3}\/\d{2}\/\d{2}/.test(line))continue;
+    const amountMatches=line.match(/[\d,]+\.\d{2}/g)||[];
+    if(amountMatches.length<2)continue;
+    const nums=amountMatches.map(n=>parseFloat(n.replace(/,/g,'')));
+    const balance=nums[nums.length-1],txAmount=nums[nums.length-2];
+    if(balance<=txAmount)continue;
+    const dateMatch=line.match(/(0\d{2,3}\/\d{2}\/\d{2})/);
+    let dateStr='';
+    if(dateMatch){const parts=dateMatch[1].split('/');dateStr=(parseInt(parts[0])+1911)+'/'+parts[1]+'/'+parts[2];}
+    let cleaned=line.replace(/[\d,]+\.\d{2}/g,' ').replace(/0\d{2,3}\/\d{2}\/\d{2}/g,' ')
+      .replace(/\d{6}\s+\d{2}:\d{2}:\d{2}/g,' ').replace(/\b115\d{4}\b/g,' ').replace(/TWD.*/g,'');
+    const digitBlocks=cleaned.match(/\d+(?:\s+\d+)*/g)||[];
+    const codes=digitBlocks.map(b=>b.replace(/\s/g,'')).filter(b=>b.length>=8);
+    const longestCode=codes.length>0?codes.reduce((a,b)=>a.length>=b.length?a:b):'';
+    const last5=longestCode?longestCode.slice(-5):'';
+    const nextLine=i+1<allLines.length?allLines[i+1]:'';
+    const rawLine=(line+' '+nextLine).replace(/\s/g,'');
+    rows.push({dateStr,amount:txAmount,last5,remark:rawLine,rawLine});
   }
   return rows;
 }
-function showUploadSuccess(zoneId, msg) {
-  const zone = document.getElementById(zoneId);
+
+function showUploadSuccess(zoneId,msg){
+  const zone=document.getElementById(zoneId);
   zone.classList.add('upload-success');
-  zone.querySelector('.upload-icon').textContent = '✅';
-  zone.querySelector('.upload-text').innerHTML = msg;
-  zone.querySelector('.upload-hint').textContent = '點擊重新上傳';
+  zone.querySelector('.upload-icon').textContent='✅';
+  zone.querySelector('.upload-text').innerHTML=msg;
+  zone.querySelector('.upload-hint').textContent='點擊重新上傳';
 }
 
-function parseOrderData(raw) {
-  if (!raw.length) return [];
-  let headerRow = 0;
-  for (let i = 0; i < Math.min(5, raw.length); i++) {
-    const row = raw[i].map(c => String(c||''));
-    if (row.some(c => c.includes('消費者') || c.includes('課程'))) { headerRow = i; break; }
+function parseOrderData(raw){
+  if(!raw.length)return[];
+  let headerRow=0;
+  for(let i=0;i<Math.min(5,raw.length);i++){
+    const row=raw[i].map(c=>String(c||''));
+    if(row.some(c=>c.includes('消費者')||c.includes('課程'))){headerRow=i;break;}
   }
-  const headers = raw[headerRow].map(c => String(c||'').trim());
-  const rows = [];
-  for (let i = headerRow + 1; i < raw.length; i++) {
-    const row = raw[i];
-    if (!row || row.every(c => !c)) continue;
-    const obj = {};
-    headers.forEach((h, idx) => obj[h] = String(row[idx]||'').trim());
-    const note = obj['備註'] || '';
-    const last5Match = note.match(/(\d{5})/);
-    const last5 = last5Match ? last5Match[1] : '';
-    const isCash = note.toLowerCase().includes('cash');
-    const fee = parseFloat(obj['費用'] || '0') || 0;
-    let dateStr = '';
-    const rawDate = obj['訂單日期'] || '';
-    if (/^\d{4,5}$/.test(rawDate)) {
-      const d = new Date(Math.round((parseFloat(rawDate) - 25569) * 86400 * 1000));
-      dateStr = d.toLocaleDateString('zh-TW');
-    } else { dateStr = rawDate; }
-    const student = obj['消費者'] || '';
-    const course = obj['課程'] || '';
-    if (!student && !course) continue;
-    if (fee === 0 && !last5 && !isCash) continue;
-    rows.push({ student, course, fee, note, last5, isCash, dateStr, status: '', matchedBank: '', matchedDate: '', invoiceTitle: '', invoiceTax: '' });
+  const headers=raw[headerRow].map(c=>String(c||'').trim());
+  const rows=[];
+  for(let i=headerRow+1;i<raw.length;i++){
+    const row=raw[i];if(!row||row.every(c=>!c))continue;
+    const obj={};headers.forEach((h,idx)=>obj[h]=String(row[idx]||'').trim());
+    const note=obj['備註']||'';
+    const last5Match=note.match(/(\d{5})/);const last5=last5Match?last5Match[1]:'';
+    const isCash=note.toLowerCase().includes('cash');
+    const fee=parseFloat(obj['費用']||'0')||0;
+    let dateStr='';const rawDate=obj['訂單日期']||'';
+    if(/^\d{4,5}$/.test(rawDate)){const d=new Date(Math.round((parseFloat(rawDate)-25569)*86400*1000));dateStr=d.toLocaleDateString('zh-TW');}
+    else dateStr=rawDate;
+    const student=obj['消費者']||'',course=obj['課程']||'';
+    if(!student&&!course)continue;if(fee===0&&!last5&&!isCash)continue;
+    rows.push({student,course,fee,note,last5,isCash,dateStr,status:'',matchedBank:'',matchedDate:'',invoiceTitle:'',invoiceTax:''});
   }
   return rows;
 }
 
-function parseBankData(raw) {
-  let headerRow = -1;
-  for (let i = 0; i < Math.min(15, raw.length); i++) {
-    const rowStr = (raw[i] || []).join('|');
-    if (rowStr.includes('存入') || rowStr.includes('交易日期')) { headerRow = i; break; }
+function parseBankData(raw){
+  let headerRow=-1;
+  for(let i=0;i<Math.min(15,raw.length);i++){
+    const rowStr=(raw[i]||[]).join('|');
+    if(rowStr.includes('存入')||rowStr.includes('交易日期')){headerRow=i;break;}
   }
-  if (headerRow < 0) headerRow = 0;
-  const headers = (raw[headerRow] || []).map(c => String(c||'').trim());
-  const rows = [];
-  for (let i = headerRow + 1; i < raw.length; i++) {
-    const row = raw[i];
-    if (!row || row.every(c => !c)) continue;
-    const obj = {};
-    headers.forEach((h, idx) => obj[h] = String(row[idx]||'').trim());
-    const amountKeys = ['存入', '存入金額', '入帳'];
-    let amount = 0;
-    for (const k of amountKeys) {
-      const n = parseFloat((obj[k]||'').replace(/,/g,''));
-      if (!isNaN(n) && n > 0) { amount = n; break; }
-    }
-    if (amount <= 0) continue;
-    const codeKeys = ['存款人代號', '存款人', '帳號'];
-    let last5 = '';
-    for (const k of codeKeys) {
-      const val = (obj[k]||'').replace(/\*/g,'').replace(/\s/g,'');
-      if (val.length >= 5) { last5 = val.slice(-5); break; }
-    }
-    const dateKeys = ['交易日期', '日期'];
-    let dateStr = '';
-    for (const k of dateKeys) { if (obj[k]) { dateStr = obj[k]; break; } }
-    rows.push({ dateStr, amount, last5, remark: obj['收付款說明'] || obj['備註'] || '' });
+  if(headerRow<0)headerRow=0;
+  const headers=(raw[headerRow]||[]).map(c=>String(c||'').trim());
+  const rows=[];
+  for(let i=headerRow+1;i<raw.length;i++){
+    const row=raw[i];if(!row||row.every(c=>!c))continue;
+    const obj={};headers.forEach((h,idx)=>obj[h]=String(row[idx]||'').trim());
+    const amountKeys=['存入','存入金額','入帳'];let amount=0;
+    for(const k of amountKeys){const n=parseFloat((obj[k]||'').replace(/,/g,''));if(!isNaN(n)&&n>0){amount=n;break;}}
+    if(amount<=0)continue;
+    const codeKeys=['存款人代號','存款人','帳號'];let last5='';
+    for(const k of codeKeys){const val=(obj[k]||'').replace(/\*/g,'').replace(/\s/g,'');if(val.length>=5){last5=val.slice(-5);break;}}
+    const dateKeys=['交易日期','日期'];let dateStr='';
+    for(const k of dateKeys){if(obj[k]){dateStr=obj[k];break;}}
+    rows.push({dateStr,amount,last5,remark:obj['收付款說明']||obj['備註']||''});
   }
   return rows;
 }
 
-// ===== Reconciliation =====
-function runReconciliation() {
-  if (!orderData.length) { showToast('請先上傳訂單明細！'); return; }
-
-  const paymentSource = allReports.length ? allReports : submissions;
-
-  // 建立銀行後五碼 Map（每個後五碼可能有多筆）
-  const bankMap = {};
-  bankData.forEach(b => {
-    if (!b.last5) return;
-    if (!bankMap[b.last5]) bankMap[b.last5] = [];
-    bankMap[b.last5].push(b);
-  });
-
-  // 深拷貝 bankMap，每筆只能被使用一次
-  const bankMapUsed = {};
-  Object.keys(bankMap).forEach(k => {
-    bankMapUsed[k] = [...bankMap[k]];
-  });
-
-  // 幫每筆訂單找對應的教練回報（用學員名模糊比對）
-  function findPayment(order) {
-    // 先從訂單備註取後五碼
-    if (order.last5 && order.last5 !== 'CASH') return { last5: order.last5, method: 'transfer', source: null };
-    if (order.isCash) return { last5: 'CASH', method: 'cash', source: null };
-
-    // 取學員名的中文部分（去掉英文）
-    const studentCN = order.student.replace(/[a-zA-Z\s]/g, '').trim();
-    const studentKey = studentCN.length >= 2 ? studentCN : order.student.trim();
-
-    // 在教練回報裡找學員名相符的
-    const matches = paymentSource.filter(s => {
-      if (!s.student) return false;
-      const sCN = s.student.replace(/[a-zA-Z\s]/g, '').trim();
-      const sKey = sCN.length >= 2 ? sCN : s.student.trim();
-      return studentKey && sKey && (
-        studentKey.includes(sKey.slice(0, 2)) || sKey.includes(studentKey.slice(0, 2))
-      );
+// === Reconciliation ===
+function runReconciliation(){
+  if(!orderData.length){showToast('請先上傳訂單明細！');return;}
+  const paymentSource=allReports.length?allReports.filter(r=>r.entryType!=='product'):submissions.filter(s=>s.entryType!=='product');
+  const bankMapUsed={};
+  bankData.forEach(b=>{if(!b.last5)return;if(!bankMapUsed[b.last5])bankMapUsed[b.last5]=[];bankMapUsed[b.last5].push(b);});
+  function findPayment(order){
+    if(order.last5&&order.last5!=='CASH')return{last5:order.last5,method:'transfer',source:null};
+    if(order.isCash)return{last5:'CASH',method:'cash',source:null};
+    const studentCN=order.student.replace(/[a-zA-Z\s]/g,'').trim();
+    const studentKey=studentCN.length>=2?studentCN:order.student.trim();
+    const matches=paymentSource.filter(s=>{
+      if(!s.student)return false;
+      const sCN=s.student.replace(/[a-zA-Z\s]/g,'').trim();
+      const sKey=sCN.length>=2?sCN:s.student.trim();
+      return studentKey&&sKey&&(studentKey.includes(sKey.slice(0,2))||sKey.includes(studentKey.slice(0,2)));
     });
-
-    if (!matches.length) return null;
-
-    // 優先找金額完全一致的轉帳，其次找現金，最後取第一筆
-    const exactMatch = matches.find(s => s.method !== 'cash' && Math.abs((s.amount || 0) - order.fee) < 1);
-    const cashMatch = matches.find(s => s.method === 'cash');
-    const best = exactMatch || cashMatch || matches[0];
-
-    return best ? { last5: best.last5, method: best.method, source: best } : null;
+    if(!matches.length)return null;
+    const exactMatch=matches.find(s=>s.method!=='cash'&&Math.abs((s.amount||0)-order.fee)<1);
+    const cashMatch=matches.find(s=>s.method==='cash');
+    const best=exactMatch||cashMatch||matches[0];
+    return best?{last5:best.last5,method:best.method,source:best}:null;
   }
-
-  // 第一階段：預配對（金額完全一致的先配對，避免被其他訂單搶走）
-  const preMatched = {};
-  orderData.forEach((order, idx) => {
-    if (order.isCash) return;
-    const payment = findPayment(order);
-    if (!payment || payment.method === 'cash' || !payment.last5 || payment.last5 === 'CASH') return;
-    const matches = bankMapUsed[payment.last5];
-    if (!matches?.length) return;
-    const exactIdx = matches.findIndex(b => Math.abs(b.amount - order.fee) < 1);
-    if (exactIdx >= 0) {
-      preMatched[idx] = { bank: matches[exactIdx], payment };
-      matches.splice(exactIdx, 1);
-    }
+  const preMatched={};
+  orderData.forEach((order,idx)=>{
+    if(order.isCash)return;
+    const payment=findPayment(order);
+    if(!payment||payment.method==='cash'||!payment.last5||payment.last5==='CASH')return;
+    const matches=bankMapUsed[payment.last5];if(!matches?.length)return;
+    const exactIdx=matches.findIndex(b=>Math.abs(b.amount-order.fee)<1);
+    if(exactIdx>=0){preMatched[idx]={bank:matches[exactIdx],payment};matches.splice(exactIdx,1);}
   });
-
-  // 第二階段：正式對帳
-  resultRows = orderData.map((order, orderIdx) => {
-    const row = { ...order };
-    const payment = findPayment(order);
-    const subInfo = payment?.source;
-
-    // 帶入發票資訊
-    if (subInfo) { row.invoiceTitle = subInfo.invoiceTitle || ''; row.invoiceTax = subInfo.invoiceTax || ''; }
-
-    // 現金判斷
-    const isCashOrder = order.isCash || (payment?.method === 'cash') || (payment?.last5 === 'CASH');
-    if (isCashOrder) {
-      row.status = 'cash'; row.matchedBank = '現金收款'; row.last5 = '';
-      return row;
+  resultRows=orderData.map((order,orderIdx)=>{
+    const row={...order};const payment=findPayment(order);const subInfo=payment?.source;
+    if(subInfo){row.invoiceTitle=subInfo.invoiceTitle||'';row.invoiceTax=subInfo.invoiceTax||'';}
+    const isCashOrder=order.isCash||(payment?.method==='cash')||(payment?.last5==='CASH');
+    if(isCashOrder){row.status='cash';row.matchedBank='現金收款';row.last5='';return row;}
+    const last5=payment?.last5;row.last5=last5||order.last5||'';
+    if(!last5){row.status='pending';row.matchedBank='—';return row;}
+    const pre=preMatched[orderIdx],bankMatches=bankMapUsed[last5];
+    let best=null;
+    if(pre){best=pre.bank;}
+    else if(bankMatches?.length){
+      const exactIdx=bankMatches.findIndex(b=>Math.abs(b.amount-order.fee)<1);
+      const bestIdx=exactIdx>=0?exactIdx:0;
+      best=bankMatches[bestIdx];bankMapUsed[last5].splice(bestIdx,1);
     }
-
-    const last5 = payment?.last5;
-    row.last5 = last5 || order.last5 || '';
-
-    if (!last5) {
-      row.status = 'pending'; row.matchedBank = '—';
-      return row;
-    }
-
-    // 使用預配對結果或從剩餘銀行紀錄找
-    const pre = preMatched[orderIdx];
-    const bankMatches = bankMapUsed[last5];
-
-    let best = null;
-    if (pre) {
-      best = pre.bank;
-    } else if (bankMatches?.length) {
-      // 找金額最接近的
-      const exactIdx = bankMatches.findIndex(b => Math.abs(b.amount - order.fee) < 1);
-      const bestIdx = exactIdx >= 0 ? exactIdx : 0;
-      best = bankMatches[bestIdx];
-      bankMapUsed[last5].splice(bestIdx, 1);
-    }
-
-    if (!best) {
-      if (!bankData.length && payment) {
-        // 沒上傳銀行資料，教練有回報
-        row.status = 'coach_reported'; row.matchedBank = '教練已回報（待對帳）';
-      } else {
-        // 後五碼找不到，試從備註找學員名
-        const studentCN = order.student.replace(/[a-zA-Z\s]/g, '').trim();
-        const nameToSearch = studentCN.length >= 2 ? studentCN.slice(0, 2) : order.student.slice(0, 2);
-        const remarkMatch = bankData.find(b => {
-          const searchIn = (b.remark || '') + ' ' + (b.rawLine || '');
-          const nameFound = nameToSearch && searchIn.replace(/\s/g, '').includes(nameToSearch.replace(/\s/g, ''));
-          const amountClose = Math.abs(b.amount - order.fee) < 2000;
-          return nameFound && amountClose;
+    if(!best){
+      if(!bankData.length&&payment){row.status='coach_reported';row.matchedBank='教練已回報（待對帳）';}
+      else{
+        const studentCN=order.student.replace(/[a-zA-Z\s]/g,'').trim();
+        const nameToSearch=studentCN.length>=2?studentCN.slice(0,2):order.student.slice(0,2);
+        const remarkMatch=bankData.find(b=>{
+          const searchIn=(b.remark||'')+' '+(b.rawLine||'');
+          return nameToSearch&&searchIn.replace(/\s/g,'').includes(nameToSearch.replace(/\s/g,''))&&Math.abs(b.amount-order.fee)<2000;
         });
-        if (remarkMatch) {
-          row.status = 'suspected';
-          row.matchedBank = `📌 備註含「${nameToSearch}」`;
-          row.matchedDate = remarkMatch.dateStr;
-          row.suspectedAmount = remarkMatch.amount;
-          row.suspectedLast5 = remarkMatch.last5;
-        } else {
-          row.status = 'missing'; row.matchedBank = bankData.length ? '銀行找不到' : '—';
-        }
+        if(remarkMatch){row.status='suspected';row.matchedBank=`📌 備註含「${nameToSearch}」`;row.matchedDate=remarkMatch.dateStr;row.suspectedAmount=remarkMatch.amount;row.suspectedLast5=remarkMatch.last5;}
+        else{row.status='missing';row.matchedBank=bankData.length?'銀行找不到':'—';}
       }
       return row;
     }
-
-    // 有找到銀行紀錄，比對金額
-    const amountMismatch = Math.abs(best.amount - order.fee) >= 1;
-    row.matchedBank = `$${best.amount.toLocaleString()}`;
-    row.matchedDate = best.dateStr;
-
-    if (amountMismatch) {
-      row.status = 'mismatch';
-      row.mismatchReason = `金額不符（銀行$${best.amount.toLocaleString()}）`;
-    } else {
-      row.status = 'confirmed';
-      // 日期差超過5天，加備註提醒
-      if (order.date && best.dateStr) {
-        const coachDate = new Date(order.date);
-        const bankDate = new Date(best.dateStr);
-        if (!isNaN(coachDate) && !isNaN(bankDate)) {
-          const diffDays = Math.abs((coachDate - bankDate) / (1000 * 60 * 60 * 24));
-          if (diffDays > 5) row.mismatchReason = `日期差${Math.round(diffDays)}天（銀行${best.dateStr}）`;
-        }
+    const amountMismatch=Math.abs(best.amount-order.fee)>=1;
+    row.matchedBank=`$${best.amount.toLocaleString()}`;row.matchedDate=best.dateStr;
+    if(amountMismatch){row.status='mismatch';row.mismatchReason=`金額不符（銀行$${best.amount.toLocaleString()}）`;}
+    else{
+      row.status='confirmed';
+      if(order.date&&best.dateStr){
+        const coachDate=new Date(order.date),bankDate=new Date(best.dateStr);
+        if(!isNaN(coachDate)&&!isNaN(bankDate)){const diffDays=Math.abs((coachDate-bankDate)/(1000*60*60*24));if(diffDays>5)row.mismatchReason=`日期差${Math.round(diffDays)}天（銀行${best.dateStr}）`;}
       }
     }
     return row;
   });
-  renderResult();
-  switchTab('result');
-  showToast('✅ 對帳完成！');
+  renderResult();switchTab('result');showToast('✅ 對帳完成！');
 }
 
-function renderResult(filter = 'all') {
-  const confirmed = resultRows.filter(r => r.status === 'confirmed' || r.status === 'cash');
-  const missing = resultRows.filter(r => r.status === 'missing' || r.status === 'mismatch');
-  const pending = resultRows.filter(r => r.status === 'pending' || r.status === 'coach_reported' || r.status === 'suspected');
-  document.getElementById('stat-confirmed').textContent = confirmed.length;
-  document.getElementById('stat-missing').textContent = missing.length;
-  document.getElementById('stat-pending').textContent = pending.length;
-
-  let rows = resultRows;
-  if (filter === 'confirmed') rows = confirmed;
-  if (filter === 'missing') rows = resultRows.filter(r => r.status === 'missing' || r.status === 'mismatch');
-  if (filter === 'pending') rows = resultRows.filter(r => r.status === 'pending' || r.status === 'coach_reported' || r.status === 'suspected');
-  if (filter === 'cash') rows = resultRows.filter(r => r.status === 'cash');
-
-  const badgeMap = {
-    confirmed: '<span class="badge badge-green">✅ 已收款</span>',
-    mismatch: '<span class="badge badge-red">⚠️ 金額異常</span>',
-    suspected: '<span class="badge badge-amber">📌 疑似符合</span>',
-    cash: '<span class="badge badge-blue">💵 現金</span>',
-    missing: '<span class="badge badge-red">❌ 未收款</span>',
-    pending: '<span class="badge badge-amber">⚠️ 待確認</span>',
-    coach_reported: '<span class="badge badge-amber">📋 教練已回報</span>',
-  };
-  const tbody = document.getElementById('result-tbody');
-  tbody.innerHTML = rows.length ? rows.map(r => `<tr>
-    <td>${badgeMap[r.status]||''}</td>
-    <td style="font-weight:500">${r.student}</td>
+function renderResult(filter='all'){
+  const confirmed=resultRows.filter(r=>r.status==='confirmed'||r.status==='cash');
+  const missing=resultRows.filter(r=>r.status==='missing'||r.status==='mismatch');
+  const pending=resultRows.filter(r=>r.status==='pending'||r.status==='coach_reported'||r.status==='suspected');
+  document.getElementById('stat-confirmed').textContent=confirmed.length;
+  document.getElementById('stat-missing').textContent=missing.length;
+  document.getElementById('stat-pending').textContent=pending.length;
+  let rows=resultRows;
+  if(filter==='confirmed')rows=confirmed;
+  if(filter==='missing')rows=resultRows.filter(r=>r.status==='missing'||r.status==='mismatch');
+  if(filter==='pending')rows=resultRows.filter(r=>r.status==='pending'||r.status==='coach_reported'||r.status==='suspected');
+  if(filter==='cash')rows=resultRows.filter(r=>r.status==='cash');
+  const badgeMap={confirmed:'<span class="badge badge-green">✅ 已收款</span>',mismatch:'<span class="badge badge-red">⚠️ 金額異常</span>',suspected:'<span class="badge badge-amber">📌 疑似符合</span>',cash:'<span class="badge badge-blue">💵 現金</span>',missing:'<span class="badge badge-red">❌ 未收款</span>',pending:'<span class="badge badge-amber">⚠️ 待確認</span>',coach_reported:'<span class="badge badge-amber">📋 教練已回報</span>'};
+  const tbody=document.getElementById('result-tbody');
+  tbody.innerHTML=rows.length?rows.map(r=>`<tr>
+    <td>${badgeMap[r.status]||''}</td><td style="font-weight:500">${r.student}</td>
     <td style="color:var(--text2);font-size:12px">${r.course.length>28?r.course.slice(0,28)+'…':r.course}</td>
     <td class="mono">$${r.fee?r.fee.toLocaleString():'—'}</td>
-    <td class="mono">${r.status==='cash' ? '—' : r.last5||'—'}</td>
-    <td style="font-size:12px">${
-      r.status === 'suspected' ? `${r.matchedBank}（$${r.suspectedAmount?.toLocaleString()}，後五碼${r.suspectedLast5}）` :
-      r.status === 'mismatch' && r.mismatchReason ? `⚠️ ${r.mismatchReason}` :
-      r.matchedBank||'—'
-    }</td>
+    <td class="mono">${r.status==='cash'?'—':r.last5||'—'}</td>
+    <td style="font-size:12px">${r.status==='suspected'?`${r.matchedBank}（$${r.suspectedAmount?.toLocaleString()}，後五碼${r.suspectedLast5}）`:r.status==='mismatch'&&r.mismatchReason?`⚠️ ${r.mismatchReason}`:r.matchedBank||'—'}</td>
     <td style="font-size:12px;color:var(--text2)">${r.matchedDate||r.dateStr||'—'}</td>
-    <td style="font-size:12px">${r.invoiceTitle ? `🧾 ${r.invoiceTitle}` : '—'}</td>
-  </tr>`).join('') : `<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:32px">無資料</td></tr>`;
-
-  document.getElementById('result-empty').style.display = 'none';
-  document.getElementById('result-content').style.display = 'block';
+    <td style="font-size:12px">${r.invoiceTitle?`🧾 ${r.invoiceTitle}`:'—'}</td>
+  </tr>`).join(''):`<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:32px">無資料</td></tr>`;
+  document.getElementById('result-empty').style.display='none';
+  document.getElementById('result-content').style.display='block';
 }
 
-function showResultTab(filter, el) {
-  document.querySelectorAll('.inner-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderResult(filter);
+function showResultTab(filter,el){
+  document.querySelectorAll('.inner-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');renderResult(filter);
 }
 
-function exportResult() {
-  if (!resultRows.length) { showToast('沒有對帳結果可匯出'); return; }
-  const statusMap = { confirmed:'已收款', mismatch:'金額異常', cash:'現金', missing:'未收款', pending:'待確認', coach_reported:'教練已回報', suspected:'疑似符合(請確認)' };
-  const data = resultRows.map(r => ({
-    '狀態': statusMap[r.status]||'',
-    '學員': r.student, '課程': r.course, '費用': r.fee,
-    '後五碼': r.last5||'', '銀行核對金額': r.matchedBank||'', '異常原因': r.mismatchReason||'',
-    '匯款日期': r.matchedDate||'', '訂單日期': r.dateStr,
-    '發票抬頭': r.invoiceTitle||'', '統一編號': r.invoiceTax||'', '備註': r.note||''
-  }));
-  const ws = XLSX.utils.json_to_sheet(data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, '對帳結果');
-  XLSX.writeFile(wb, `HOPE對帳_${new Date().toLocaleDateString('zh-TW').replace(/\//g,'-')}.xlsx`);
+function exportResult(){
+  if(!resultRows.length){showToast('沒有對帳結果可匯出');return;}
+  const statusMap={confirmed:'已收款',mismatch:'金額異常',cash:'現金',missing:'未收款',pending:'待確認',coach_reported:'教練已回報',suspected:'疑似符合(請確認)'};
+  const data=resultRows.map(r=>({'狀態':statusMap[r.status]||'','學員':r.student,'課程':r.course,'費用':r.fee,'後五碼':r.last5||'','銀行核對金額':r.matchedBank||'','異常原因':r.mismatchReason||'','匯款日期':r.matchedDate||'','訂單日期':r.dateStr,'發票抬頭':r.invoiceTitle||'','統一編號':r.invoiceTax||'','備註':r.note||''}));
+  const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'對帳結果');
+  XLSX.writeFile(wb,`HOPE對帳_${new Date().toLocaleDateString('zh-TW').replace(/\//g,'-')}.xlsx`);
   showToast('✅ 已匯出 Excel');
 }
 
-// ===== Settings =====
-function saveSheetUrl() {
-  const url = document.getElementById('sheets-url').value.trim();
-  if (!url) { showToast('請輸入網址'); return; }
-  sheetsUrl = url;
-  localStorage.setItem('hope_sheets_url', url);
+// === Settings ===
+function saveSheetUrl(){
+  const url  = document.getElementById('sheets-url').value.trim();
+  const curl = document.getElementById('cash-url').value.trim();
+  const purl = document.getElementById('product-url').value.trim();
+  if (!url) { showToast('請輸入主表網址'); return; }
+  sheetsUrl  = url;  localStorage.setItem('hope_sheets_url',  url);
+  cashUrl    = curl; localStorage.setItem('hope_cash_url',    curl);
+  productUrl = purl; localStorage.setItem('hope_product_url', purl);
   document.getElementById('config-banner').style.display = 'none';
-  showToast('✅ 已儲存連結');
+  showToast('✅ 已儲存三個連結');
 }
-
-async function testSheetUrl() {
-  const url = document.getElementById('sheets-url').value.trim();
+async function testSheetUrl(inputId){
+  const url = document.getElementById(inputId).value.trim();
   if (!url) { showToast('請先輸入網址'); return; }
   try {
-    const res = await fetch(url + '?t=' + Date.now());
+    const res  = await fetch(url + '?t=' + Date.now());
     const json = await res.json();
-    if (json.status === 'ok') showToast(`✅ 連線成功！目前有 ${json.data.length} 筆資料`);
+    if (json.status === 'ok') showToast(`✅ 連線成功！`);
     else showToast('⚠️ 連線有誤：' + json.message);
-  } catch(e) {
-    showToast('❌ 連線失敗，請確認網址是否正確');
-  }
+  } catch(e) { showToast('❌ 連線失敗，請確認網址是否正確'); }
+}
+async function addCoach(){
+  const input=document.getElementById('new-coach-input');const name=input.value.trim();
+  if(!name){showToast('請輸入教練姓名');return;}if(coaches.includes(name)){showToast('此教練已存在');return;}
+  coaches.push(name);await syncCoachesToSheets();input.value='';renderCoachList();showToast(`✓ 已新增：${name}`);
+}
+async function deleteCoach(idx){coaches.splice(idx,1);await syncCoachesToSheets();renderCoachList();}
+async function syncCoachesToSheets(){
+  localStorage.setItem('hope_coaches',JSON.stringify(coaches));
+  if(!sheetsUrl)return;
+  try{await fetch(sheetsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'coaches',coaches})});}catch(e){}
+}
+function renderCoachList(){
+  const tbody=document.getElementById('coach-list-tbody');
+  if(!coaches.length){tbody.innerHTML=`<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:20px">尚未新增任何教練</td></tr>`;return;}
+  tbody.innerHTML=coaches.map((name,i)=>`<tr><td style="color:var(--text3)">${i+1}</td><td style="font-weight:500">${name}</td><td><button class="btn btn-danger btn-sm" onclick="deleteCoach(${i})">刪除</button></td></tr>`).join('');
+}
+function changePassword(){
+  const np=document.getElementById('new-pw').value;const cp=document.getElementById('confirm-pw').value;
+  if(!np){showToast('請輸入新密碼');return;}if(np!==cp){showToast('兩次密碼不一致');return;}if(np.length<4){showToast('密碼至少 4 個字元');return;}
+  adminPw=np;localStorage.setItem('hope_admin_pw',np);
+  document.getElementById('new-pw').value='';document.getElementById('confirm-pw').value='';showToast('✅ 密碼已更新');
 }
 
-async function addCoach() {
-  const input = document.getElementById('new-coach-input');
-  const name = input.value.trim();
-  if (!name) { showToast('請輸入教練姓名'); return; }
-  if (coaches.includes(name)) { showToast('此教練已存在'); return; }
-  coaches.push(name);
-  await syncCoachesToSheets();
-  input.value = '';
-  renderCoachList();
-  showToast(`✓ 已新增：${name}`);
-}
-
-async function deleteCoach(idx) {
-  coaches.splice(idx, 1);
-  await syncCoachesToSheets();
-  renderCoachList();
-}
-
-async function syncCoachesToSheets() {
-  localStorage.setItem('hope_coaches', JSON.stringify(coaches));
-  if (!sheetsUrl) return;
-  try {
-    await fetch(sheetsUrl, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'coaches', coaches })
-    });
-  } catch(e) {}
-}
-
-function renderCoachList() {
-  const tbody = document.getElementById('coach-list-tbody');
-  if (!coaches.length) {
-    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:20px">尚未新增任何教練</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = coaches.map((name, i) => `
-    <tr>
-      <td style="color:var(--text3)">${i+1}</td>
-      <td style="font-weight:500">${name}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteCoach(${i})">刪除</button></td>
-    </tr>
-  `).join('');
-}
-
-function changePassword() {
-  const np = document.getElementById('new-pw').value;
-  const cp = document.getElementById('confirm-pw').value;
-  if (!np) { showToast('請輸入新密碼'); return; }
-  if (np !== cp) { showToast('兩次密碼不一致'); return; }
-  if (np.length < 4) { showToast('密碼至少 4 個字元'); return; }
-  adminPw = np;
-  localStorage.setItem('hope_admin_pw', np);
-  document.getElementById('new-pw').value = '';
-  document.getElementById('confirm-pw').value = '';
-  showToast('✅ 密碼已更新');
-}
-
-// ===== Toast =====
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
 </script>
 </body>
