@@ -218,10 +218,6 @@
           <label id="label-student">學員姓名 *</label>
           <input type="text" id="c-student" placeholder="例：高小苑">
         </div>
-        <div class="form-group" id="wrap-last5">
-          <label>匯款後五碼 *</label>
-          <input type="text" id="c-last5" placeholder="例：07079" maxlength="5" style="font-family:'DM Mono',monospace;letter-spacing:2px;">
-        </div>
         <div class="form-group">
           <label id="label-date">匯款日期 *</label>
           <input type="date" id="c-date">
@@ -233,6 +229,10 @@
             <option value="cash">現金 Cash</option>
           </select>
         </div>
+        <div class="form-group" id="wrap-last5">
+          <label>匯款後五碼 *</label>
+          <input type="text" id="c-last5" placeholder="例：07079" maxlength="5" style="font-family:'DM Mono',monospace;letter-spacing:2px;">
+        </div>
         <div class="form-group" id="wrap-amount">
           <label id="label-amount">匯款金額（元）*</label>
           <input type="number" id="c-amount" placeholder="例：17000">
@@ -241,8 +241,8 @@
 
       <!-- 課程專屬 -->
       <div id="section-course">
-        <div class="form-grid">
-          <div class="form-group full"><label>課程名稱（選填）</label><input type="text" id="c-course" placeholder="例：初階個人E十堂"></div>
+        <div class="form-grid" style="margin-top:14px;">
+          <div class="form-group full"><label>課程名稱 *</label><input type="text" id="c-course" placeholder="例：初階個人E十堂"></div>
         </div>
         <!-- 發票區（課程） -->
         <div style="background:var(--amber-bg);border:1px solid #e8d090;border-radius:8px;padding:16px 18px;margin-top:14px;">
@@ -824,6 +824,7 @@ async function submitCoach() {
     if (method !== 'cash' && !last5)                        { showToast('請填寫匯款後五碼'); return; }
     if (method !== 'cash' && last5 && !/^\d{5}$/.test(last5)) { showToast('後五碼請填寫5位數字'); return; }
     if (!amount) { showToast('請填寫匯款金額'); return; }
+    if (!course)  { showToast('請填寫課程名稱'); return; }
     entry = {
       id: Date.now(), entryType: 'course', coach, student,
       last5: method === 'cash' ? 'CASH' : last5,
