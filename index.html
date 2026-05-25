@@ -713,12 +713,18 @@ function getPeriodLabel() {
 // === Init ===
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('c-date').valueAsDate = new Date();
-  await loadCoachesFromSheets();
+
+  // 先用本機快取立刻顯示選單（不卡頓）
   renderLoginCoachSelect();
+
+  // 自動登入也不等網路
   const savedUser = localStorage.getItem('hope_current_user');
   if (savedUser) {
-    try { currentUser = JSON.parse(savedUser); enterApp(); return; } catch(e) { localStorage.removeItem('hope_current_user'); }
+    try { currentUser = JSON.parse(savedUser); enterApp(); } catch(e) { localStorage.removeItem('hope_current_user'); }
   }
+
+  // 背景靜默更新教練名單（不擋畫面）
+  loadCoachesFromSheets();
 });
 
 async function loadCoachesFromSheets() {
@@ -729,6 +735,10 @@ async function loadCoachesFromSheets() {
     if (json.status === 'ok' && json.coaches.length > 0) {
       coaches = json.coaches;
       localStorage.setItem('hope_coaches', JSON.stringify(coaches));
+      // 只在登入畫面還顯示時才更新選單
+      if (document.getElementById('login-screen').style.display !== 'none') {
+        renderLoginCoachSelect();
+      }
     }
   } catch(e) {}
 }
