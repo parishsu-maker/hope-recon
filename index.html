@@ -793,9 +793,7 @@ function enterApp() {
       <button class="tab-btn" onclick="switchTab('admin')">🏠 對帳後台</button>
       <button class="tab-btn" onclick="switchTab('result')">📊 對帳結果</button>
       <button class="tab-btn" onclick="switchTab('settings')">⚙️ 系統設定</button>`;
-    document.getElementById('sheets-url').value  = sheetsUrl;
-    document.getElementById('cash-url').value    = cashUrl;
-    document.getElementById('product-url').value = productUrl;
+    document.getElementById('sheets-url').value = sheetsUrl;
     renderCoachList();
     loadAllReports();
     setTimeout(() => { const el = document.getElementById('period-label'); if(el) el.textContent = getPeriodLabel(); }, 100);
@@ -959,23 +957,29 @@ async function loadAllReports() {
     const res  = await fetch(sheetsUrl + '?t=' + Date.now());
     const json = await res.json();
     if (json.status === 'ok') {
-      const courseReports  = (json.data || []).map(row => ({
-        entryType:'course', coach:row['教練姓名']||'', student:row['學員姓名']||'',
-        last5:String(row['後五碼']||'').replace(/^'+/,'').padStart(5,'0'),
-        amount:parseFloat(String(row['金額']).replace(/,/g,''))||0,
-        date:row['匯款日期']||'', method:row['付款方式']==='現金'?'cash':'transfer',
-        course:row['課程名稱']||'', invoiceTitle:row['發票抬頭']||'',
-        invoiceTax:row['統一編號']||'', note:row['備註']||'', ts:row['送出時間']||''
-      }));
-      const productReports = (json.productData || []).map(row => ({
-        entryType:'product', coach:row['教練姓名']||'', student:row['購買者姓名']||'',
-        last5:String(row['後五碼']||'').replace(/^'+/,'').padStart(5,'0'),
-        amount:parseFloat(String(row['總金額']).replace(/,/g,''))||0,
-        date:row['匯款日期']||'', method:row['付款方式']==='現金'?'cash':'transfer',
-        items:[{name:row['商品名稱']||'',qty:row['數量']||1,price:row['單價']||0}],
-        productNote:row['備註']||'', ts:row['送出時間']||''
-      }));
-      allReports = [...courseReports, ...productReports];
+      const methodMap = m => m==='現金'?'cash':m==='LINE Pay'?'linepay':'transfer';
+      allReports = (json.data || []).map(row => {
+        const isProduct = (row['類型']||'') === '商品';
+        return {
+          entryType:    isProduct ? 'product' : 'course',
+          coach:        row['教練姓名']          || '',
+          student:      row['學員/購買者']        || '',
+          last5:        String(row['後五碼']||'').replace(/^'+/,''),
+          amount:       parseFloat(String(row['金額']||0).toString().replace(/,/g,'')) || 0,
+          date:         row['日期']              || '',
+          method:       methodMap(row['付款方式']),
+          course:       isProduct ? '' : (row['課程/商品名稱'] || ''),
+          productName:  isProduct ? (row['課程/商品名稱'] || '') : '',
+          invoiceType:  row['發票種類']==='電子發票'?'digital':row['發票種類']==='紙本發票'?'paper':'',
+          invoiceTitle: row['發票抬頭']          || '',
+          invoiceTax:   row['統一編號']          || '',
+          invoiceCarrier: row['載具條碼']        || '',
+          invoiceEmail: row['Email']             || '',
+          note:         isProduct ? '' : (row['備註'] || ''),
+          productNote:  isProduct ? (row['備註'] || '') : '',
+          ts:           row['送出時間']          || ''
+        };
+      });
       renderReportsList();
       showToast(`✓ 已載入 ${allReports.length} 筆回報`);
     }
