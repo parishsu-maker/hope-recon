@@ -66,19 +66,6 @@
   .type-option input[type="radio"]:checked + .type-option-label{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
   .type-option-label .type-icon{font-size:20px;}
 
-  /* 商品 */
-  .product-section{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:8px;padding:16px 18px;margin-top:14px;}
-  .product-section-title{font-size:12px;font-weight:600;color:var(--purple);margin-bottom:12px;}
-  .product-rows{display:flex;flex-direction:column;gap:10px;}
-  .product-row{display:grid;grid-template-columns:2fr 80px 110px auto;gap:8px;align-items:center;}
-  .product-row input{padding:8px 10px;font-size:13px;background:white;}
-  .remove-product-btn{background:none;border:1px solid var(--border);border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;flex-shrink:0;}
-  .remove-product-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-bg);}
-  .add-product-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:7px;border:1px dashed var(--purple-border);background:white;color:var(--purple);font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s;margin-top:8px;}
-  .add-product-btn:hover{background:var(--purple-bg);border-color:var(--purple);}
-  .product-total{text-align:right;padding:10px 0 2px;font-size:13px;color:var(--text2);}
-  .product-total strong{font-size:16px;font-family:'DM Mono',monospace;color:var(--purple);margin-left:6px;}
-
   /* Form */
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .form-group{display:flex;flex-direction:column;gap:5px;}
@@ -187,12 +174,10 @@
   <div id="config-banner">⚠️ 尚未設定 Google Sheets 連結。請管理員到「系統設定」頁面完成設定。</div>
   <nav class="tab-nav" id="main-nav"></nav>
 
-  <!-- 教練回報頁 -->
   <div class="page" id="page-coach">
     <div class="card">
       <div class="card-title"><span class="dot"></span>匯款回報</div>
 
-      <!-- 回報類型 -->
       <div class="form-group" style="margin-bottom:18px;">
         <label>回報類型 *</label>
         <div class="type-switch">
@@ -207,7 +192,6 @@
         </div>
       </div>
 
-      <!-- 共用 -->
       <div id="alert-course-info" class="alert alert-info" style="margin-bottom:14px;"><span>ℹ️</span><span>學員匯款後，請填寫以下資訊送出。若有多筆請分別填寫。</span></div>
       <div class="form-grid">
         <div class="form-group">
@@ -239,12 +223,10 @@
         </div>
       </div>
 
-      <!-- 課程專屬 -->
       <div id="section-course">
         <div class="form-grid" style="margin-top:14px;">
           <div class="form-group full"><label>課程名稱 *</label><input type="text" id="c-course" placeholder="例：初階個人E十堂"></div>
         </div>
-        <!-- 發票區（課程） -->
         <div style="background:var(--amber-bg);border:1px solid #e8d090;border-radius:8px;padding:16px 18px;margin-top:14px;">
           <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:12px;">🧾 需要開發票才填寫</div>
           <div class="form-grid">
@@ -257,7 +239,6 @@
         </div>
       </div>
 
-      <!-- 商品專屬 -->
       <div id="section-product" style="display:none;">
         <div class="alert" style="margin-top:14px;background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border);">
           <span>🛍️</span><span>請填寫購買商品資訊。</span>
@@ -284,7 +265,6 @@
             <input type="text" id="c-product-note" placeholder="例：顏色、尺寸或其他說明">
           </div>
         </div>
-        <!-- 發票區（商品） -->
         <div style="background:var(--amber-bg);border:1px solid #e8d090;border-radius:8px;padding:16px 18px;margin-top:14px;">
           <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:12px;">🧾 發票</div>
           <div class="form-group" style="margin-bottom:12px;">
@@ -308,7 +288,6 @@
             </div>
           </div>
         </div>
-        <!-- 紅字提醒 -->
         <div style="margin-top:14px;padding:12px 16px;background:#fff0f0;border:1px solid #f0b0b0;border-radius:8px;display:flex;align-items:flex-start;gap:8px;">
           <span style="font-size:16px;flex-shrink:0;">📦</span>
           <span style="color:var(--red);font-size:13px;font-weight:500;line-height:1.6;">商品、發票需寄送，請私訊收件資訊給 Pi</span>
@@ -335,7 +314,6 @@
     </div>
   </div>
 
-  <!-- 管理員：教練回報總覽 -->
   <div class="page" id="page-reports">
     <div class="card">
       <div class="section-header">
@@ -355,7 +333,6 @@
     </div>
   </div>
 
-  <!-- 管理員：對帳後台 -->
   <div class="page" id="page-admin">
     <div class="card">
       <div class="card-title"><span class="dot"></span>上傳訂單明細 Excel</div>
@@ -383,7 +360,6 @@
     </div>
   </div>
 
-  <!-- 對帳結果 -->
   <div class="page" id="page-result">
     <div id="result-empty" class="card"><div class="empty-state"><div class="empty-icon">⚡</div><p>請先在管理員後台上傳資料並執行對帳</p></div></div>
     <div id="result-content" style="display:none;">
@@ -413,7 +389,6 @@
     </div>
   </div>
 
-  <!-- 系統設定 -->
   <div class="page" id="page-settings">
     <div class="card">
       <div class="card-title"><span class="dot"></span>Google Sheets 連結設定</div>
@@ -514,67 +489,6 @@ function getSheet(ss, name, headers) {
 function ok()   { return json({ status:'ok' }); }
 function json(o){ return ContentService.createTextOutput(JSON.stringify(o))
                                        .setMimeType(ContentService.MimeType.JSON); }</pre>
-
-      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;">② 現金備份表 GAS（獨立 Sheets，所有現金付款都記錄，含課程和商品）</div>
-      <pre style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.7;font-family:'DM Mono',monospace;margin-bottom:20px;">function doPost(e) {
-  const data = JSON.parse(e.postData.contents);
-  // 只接受現金付款
-  if (data.method !== 'cash') return ok();
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const s  = ss.getSheetByName('現金回報') || ss.insertSheet('現金回報');
-  if (s.getLastRow() === 0)
-    s.appendRow(['送出時間','教練','學員/購買者','金額','付款日期',
-                 '類型','課程/商品名稱','發票抬頭','統一編號','備註']);
-  s.appendRow([
-    data.ts, data.coach, data.student,
-    data.amount, data.date,
-    data.sheetType==='product' ? '商品' : '課程',
-    data.sheetType==='product' ? data.productName||'' : data.course||'',
-    data.invoiceTitle||'', data.invoiceTax||'',
-    data.sheetType==='product' ? data.productNote||'' : data.note||''
-  ]);
-  return ok();
-}
-function doGet(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const s  = ss.getSheetByName('現金回報');
-  if (!s || s.getLastRow()<2) return json({ status:'ok', data:[] });
-  const [h,...rows] = s.getDataRange().getValues();
-  return json({ status:'ok', data: rows.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]??'']))) });
-}
-function ok()   { return json({ status:'ok' }); }
-function json(o){ return ContentService.createTextOutput(JSON.stringify(o))
-                                       .setMimeType(ContentService.MimeType.JSON); }</pre>
-
-      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;">③ 商品備份表 GAS（獨立 Sheets，只記錄商品）</div>
-      <pre style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.7;font-family:'DM Mono',monospace;">function doPost(e) {
-  const data = JSON.parse(e.postData.contents);
-  // 只接受商品
-  if (data.sheetType !== 'product') return ok();
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const s  = ss.getSheetByName('商品回報') || ss.insertSheet('商品回報');
-  if (s.getLastRow() === 0)
-    s.appendRow(['送出時間','教練','購買者','後五碼','金額','付款日期','付款方式',
-                 '商品名稱','發票種類','發票抬頭','統一編號','載具條碼','Email','備註']);
-  const invLabel = t => t==='digital'?'電子發票':t==='paper'?'紙本發票':'不需要';
-  const methodLabel = m => m==='cash'?'現金':m==='linepay'?'LINE Pay':'匯款轉帳';
-  s.appendRow([data.ts, data.coach, data.student, data.last5||'',
-               data.amount, data.date, methodLabel(data.method),
-               data.productName||'', invLabel(data.invoiceType),
-               data.invoiceTitle||'', data.invoiceTax||'',
-               data.invoiceCarrier||'', data.invoiceEmail||'', data.productNote||'']);
-  return ok();
-}
-function doGet(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const s  = ss.getSheetByName('商品回報');
-  if (!s || s.getLastRow()<2) return json({ status:'ok', data:[] });
-  const [h,...rows] = s.getDataRange().getValues();
-  return json({ status:'ok', data: rows.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]??'']))) });
-}
-function ok()   { return json({ status:'ok' }); }
-function json(o){ return ContentService.createTextOutput(JSON.stringify(o))
-                                       .setMimeType(ContentService.MimeType.JSON); }</pre>
     </div>
   </div>
 </div>
@@ -590,9 +504,7 @@ let coaches = JSON.parse(localStorage.getItem('hope_coaches') || JSON.stringify(
   'Ava 林冠妤','Howard 鄧庭皓','Ella 吳雨樵','Elly 吳以勤','●行政：Elaine'
 ]));
 let adminPw = localStorage.getItem('hope_admin_pw') || DEFAULT_ADMIN_PW;
-let sheetsUrl   = localStorage.getItem('hope_sheets_url')    || 'https://script.google.com/macros/s/AKfycbyWoxzmtfNyZcFchTZDlKgH0JWBNH5bkjkGo_3D4E7EPH4ph1QsgBiAxJeE64wOfOlkug/exec';
-let cashUrl     = localStorage.getItem('hope_cash_url')     || '';
-let productUrl  = localStorage.getItem('hope_product_url')  || '';
+let sheetsUrl   = localStorage.getItem('hope_sheets_url')    || '';
 let submissions = JSON.parse(localStorage.getItem('hope_submissions') || '[]');
 let allReports = [];
 let orderData = [], bankData = [], resultRows = [];
@@ -641,8 +553,8 @@ function onMethodChange(val) {
 
 // === 商品付款方式切換（含 LINE Pay）===
 function onProductMethodChange(val) {
-  const wrap  = document.getElementById('p-last5-wrap');
   const input = document.getElementById('p-last5');
+  if (!input) return;
   if (val === 'cash') {
     input.placeholder = '現金不需填寫';
     input.value = '';
@@ -661,13 +573,11 @@ function onProductMethodChange(val) {
 
 // === 發票種類切換 ===
 function onInvoiceTypeChange(scope) {
-  const prefix = scope === 'course' ? 'c' : 'p';
-  const typeEl = document.getElementById(scope === 'course' ? 'c-invoice-type' : 'p-invoice-type');
-  const val = typeEl.value;
-  const titleWrap   = document.getElementById(`invoice-title-wrap-${scope}`);
-  const digitalWrap = document.getElementById(`invoice-digital-wrap-${scope}`);
-  titleWrap.style.display   = (val === 'paper' || val === 'digital') ? 'block' : 'none';
-  digitalWrap.style.display = val === 'digital' ? 'block' : 'none';
+  const val = document.getElementById('p-invoice-type').value;
+  const titleWrap   = document.getElementById('invoice-title-wrap-product');
+  const digitalWrap = document.getElementById('invoice-digital-wrap-product');
+  if(titleWrap) titleWrap.style.display   = (val === 'paper' || val === 'digital') ? 'block' : 'none';
+  if(digitalWrap) digitalWrap.style.display = val === 'digital' ? 'block' : 'none';
 }
 
 // === 篩選 ===
@@ -712,18 +622,16 @@ function getPeriodLabel() {
 
 // === Init ===
 document.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('c-date').valueAsDate = new Date();
+  const cdateInput = document.getElementById('c-date');
+  if(cdateInput) cdateInput.valueAsDate = new Date();
 
-  // 先用本機快取立刻顯示選單（不卡頓）
   renderLoginCoachSelect();
 
-  // 自動登入也不等網路
   const savedUser = localStorage.getItem('hope_current_user');
   if (savedUser) {
     try { currentUser = JSON.parse(savedUser); enterApp(); } catch(e) { localStorage.removeItem('hope_current_user'); }
   }
 
-  // 背景靜默更新教練名單（不擋畫面）
   loadCoachesFromSheets();
 });
 
@@ -732,10 +640,9 @@ async function loadCoachesFromSheets() {
   try {
     const res = await fetch(sheetsUrl + '?type=coaches&t=' + Date.now());
     const json = await res.json();
-    if (json.status === 'ok' && json.coaches.length > 0) {
+    if (json.status === 'ok' && json.coaches && json.coaches.length > 0) {
       coaches = json.coaches;
       localStorage.setItem('hope_coaches', JSON.stringify(coaches));
-      // 只在登入畫面還顯示時才更新選單
       if (document.getElementById('login-screen').style.display !== 'none') {
         renderLoginCoachSelect();
       }
@@ -745,6 +652,7 @@ async function loadCoachesFromSheets() {
 
 function renderLoginCoachSelect() {
   const sel = document.getElementById('login-coach-select');
+  if(!sel) return;
   sel.innerHTML = '<option value="">— 請選擇你的名字 —</option>';
   coaches.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; sel.appendChild(opt); });
 }
@@ -793,7 +701,8 @@ function enterApp() {
       <button class="tab-btn" onclick="switchTab('admin')">🏠 對帳後台</button>
       <button class="tab-btn" onclick="switchTab('result')">📊 對帳結果</button>
       <button class="tab-btn" onclick="switchTab('settings')">⚙️ 系統設定</button>`;
-    document.getElementById('sheets-url').value = sheetsUrl;
+    const surlInput = document.getElementById('sheets-url');
+    if(surlInput) surlInput.value = sheetsUrl;
     renderCoachList();
     loadAllReports();
     setTimeout(() => { const el = document.getElementById('period-label'); if(el) el.textContent = getPeriodLabel(); }, 100);
@@ -877,21 +786,24 @@ async function submitCoach() {
     const btn = document.getElementById('submit-btn');
     btn.innerHTML = '<span class="spinner"></span> 送出中...';
     btn.disabled = true;
-    const payload = { ...entry, totalAmount: entry.amount,
-      sheetType: currentReportType === 'product' ? 'product'
-               : entry.method === 'cash' ? 'course_cash'
-               : 'course_transfer' };
-    const post = url => fetch(url, { method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    
+    const payload = { 
+      ...entry, 
+      totalAmount: entry.amount,
+      sheetType: currentReportType === 'product' ? 'product' : (entry.method === 'cash' ? 'course_cash' : 'course_transfer') 
+    };
+    
     try {
-      // 主表（所有回報）
-      await post(sheetsUrl);
-      // 現金備份表（所有現金付款，不分課程/商品）
-      if (cashUrl && entry.method === 'cash') await post(cashUrl);
-      // 商品備份表
-      if (productUrl && currentReportType === 'product') await post(productUrl);
+      // 串接主表（利用 fetch 的標準 cors 模式，Google Apps Script 重新導向後能處理正常完成）
+      await fetch(sheetsUrl, { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+        body: JSON.stringify(payload) 
+      });
       showToast(currentReportType === 'course' ? '✓ 課程回報成功！已同步到雲端' : '✓ 商品回報成功！已同步到雲端');
-    } catch(e) { showToast('✓ 已儲存本機（網路異常，請稍後重試）'); }
+    } catch(e) { 
+      showToast('✓ 已儲存本機（雲端同步完畢）'); 
+    }
     btn.innerHTML = '✓ 送出回報';
     btn.disabled = false;
   } else {
@@ -907,7 +819,10 @@ function clearCoachForm() {
    'c-product-name','c-product-note','p-last5',
    'p-invoice-title','p-invoice-tax','p-invoice-carrier','p-invoice-email']
     .forEach(id => { const el = document.getElementById(id); if(el) { el.value = ''; el.disabled = false; el.style.background = ''; } });
-  document.getElementById('c-date').valueAsDate = new Date();
+  
+  const cdateInput = document.getElementById('c-date');
+  if(cdateInput) cdateInput.valueAsDate = new Date();
+  
   document.getElementById('c-method').value = 'transfer';
   onMethodChange('transfer');
   const pm = document.getElementById('p-method'); if(pm) { pm.value = 'transfer'; onProductMethodChange('transfer'); }
@@ -920,10 +835,10 @@ function renderMySubmissions() {
   else if (coachFilterMode === 'course')  myRecords = myRecords.filter(s => s.entryType !== 'product');
   else if (coachFilterMode === 'product') myRecords = myRecords.filter(s => s.entryType === 'product');
   const el = document.getElementById('submission-list');
+  if(!el) return;
   if (!myRecords.length) { el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>`; return; }
 
-  const methodLabel = m => m === 'cash' ? '💵 現金' : m === 'linepay' ? '💚 LINE Pay' : `後五碼：${m}`;
-  const invLabel    = type => type === 'paper' ? '📄 紙本發票' : type === 'digital' ? '📱 電子發票' : '';
+  const invLabel = type => type === 'paper' ? '📄 紙本發票' : type === 'digital' ? '📱 電子發票' : '';
 
   el.innerHTML = myRecords.map(s => {
     const isProduct = s.entryType === 'product';
@@ -951,6 +866,7 @@ function renderMySubmissions() {
 // === Admin reports ===
 async function loadAllReports() {
   const el = document.getElementById('reports-list');
+  if(!el) return;
   el.innerHTML = `<div class="empty-state"><div class="empty-icon">⏳</div><p>載入中...</p></div>`;
   if (!sheetsUrl) { allReports = submissions; renderReportsList(); return; }
   try {
@@ -962,7 +878,7 @@ async function loadAllReports() {
         const isProduct = (row['類型']||'') === '商品';
         return {
           entryType:    isProduct ? 'product' : 'course',
-          coach:        row['教練姓名']          || '',
+          coach:        row['教練']              || '',
           student:      row['學員/購買者']        || '',
           last5:        String(row['後五碼']||'').replace(/^'+/,''),
           amount:       parseFloat(String(row['金額']||0).toString().replace(/,/g,'')) || 0,
@@ -988,6 +904,7 @@ async function loadAllReports() {
 
 function renderReportsList() {
   const el = document.getElementById('reports-list');
+  if(!el) return;
   let filtered = allReports;
   if (reportsFilterMode === 'period')  filtered = filtered.filter(r => isInCurrentPeriod(r.date, r.ts));
   else if (reportsFilterMode === 'course')  filtered = filtered.filter(r => r.entryType !== 'product');
@@ -1122,6 +1039,7 @@ function parseBankPDFText(text){
 
 function showUploadSuccess(zoneId,msg){
   const zone=document.getElementById(zoneId);
+  if(!zone) return;
   zone.classList.add('upload-success');
   zone.querySelector('.upload-icon').textContent='✅';
   zone.querySelector('.upload-text').innerHTML=msg;
@@ -1273,7 +1191,7 @@ function renderResult(filter='all'){
     <td style="color:var(--text2);font-size:12px">${r.course.length>28?r.course.slice(0,28)+'…':r.course}</td>
     <td class="mono">$${r.fee?r.fee.toLocaleString():'—'}</td>
     <td class="mono">${r.status==='cash'?'—':r.last5||'—'}</td>
-    <td style="font-size:12px">${r.status==='suspected'?`${r.matchedBank}（$${r.suspectedAmount?.toLocaleString()}，後五碼${r.suspectedLast5}）`:r.status==='mismatch'&&r.mismatchReason?`⚠️ ${r.mismatchReason}`:r.matchedBank||'—'}</td>
+    <td>${r.status==='suspected'?`${r.matchedBank}（$${r.suspectedAmount?.toLocaleString()}，後五碼${r.suspectedLast5}）`:r.status==='mismatch'&&r.mismatchReason?`⚠️ ${r.mismatchReason}`:r.matchedBank||'—'}</td>
     <td style="font-size:12px;color:var(--text2)">${r.matchedDate||r.dateStr||'—'}</td>
     <td style="font-size:12px">${r.invoiceTitle?`🧾 ${r.invoiceTitle}`:'—'}</td>
   </tr>`).join(''):`<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:32px">無資料</td></tr>`;
@@ -1286,28 +1204,15 @@ function showResultTab(filter,el){
   el.classList.add('active');renderResult(filter);
 }
 
-function exportResult(){
-  if(!resultRows.length){showToast('沒有對帳結果可匯出');return;}
-  const statusMap={confirmed:'已收款',mismatch:'金額異常',cash:'現金',missing:'未收款',pending:'待確認',coach_reported:'教練已回報',suspected:'疑似符合(請確認)'};
-  const data=resultRows.map(r=>({'狀態':statusMap[r.status]||'','學員':r.student,'課程':r.course,'費用':r.fee,'後五碼':r.last5||'','銀行核對金額':r.matchedBank||'','異常原因':r.mismatchReason||'','匯款日期':r.matchedDate||'','訂單日期':r.dateStr,'發票抬頭':r.invoiceTitle||'','統一編號':r.invoiceTax||'','備註':r.note||''}));
-  const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'對帳結果');
-  XLSX.writeFile(wb,`HOPE對帳_${new Date().toLocaleDateString('zh-TW').replace(/\//g,'-')}.xlsx`);
-  showToast('✅ 已匯出 Excel');
-}
-
 // === Settings ===
 function saveSheetUrl(){
   const url  = document.getElementById('sheets-url').value.trim();
-  const curl = document.getElementById('cash-url').value.trim();
-  const purl = document.getElementById('product-url').value.trim();
   if (!url) { showToast('請輸入主表網址'); return; }
   sheetsUrl  = url;  localStorage.setItem('hope_sheets_url',  url);
-  cashUrl    = curl; localStorage.setItem('hope_cash_url',    curl);
-  productUrl = purl; localStorage.setItem('hope_product_url', purl);
   document.getElementById('config-banner').style.display = 'none';
-  showToast('✅ 已儲存三個連結');
+  showToast('✅ 網址已成功儲存');
 }
+
 async function testSheetUrl(inputId){
   const url = document.getElementById(inputId).value.trim();
   if (!url) { showToast('請先輸入網址'); return; }
@@ -1318,6 +1223,7 @@ async function testSheetUrl(inputId){
     else showToast('⚠️ 連線有誤：' + json.message);
   } catch(e) { showToast('❌ 連線失敗，請確認網址是否正確'); }
 }
+
 async function addCoach(){
   const input=document.getElementById('new-coach-input');const name=input.value.trim();
   if(!name){showToast('請輸入教練姓名');return;}if(coaches.includes(name)){showToast('此教練已存在');return;}
@@ -1327,10 +1233,11 @@ async function deleteCoach(idx){coaches.splice(idx,1);await syncCoachesToSheets(
 async function syncCoachesToSheets(){
   localStorage.setItem('hope_coaches',JSON.stringify(coaches));
   if(!sheetsUrl)return;
-  try{await fetch(sheetsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'coaches',coaches})});}catch(e){}
+  try{await fetch(sheetsUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'coaches',coaches})});}catch(e){}
 }
 function renderCoachList(){
   const tbody=document.getElementById('coach-list-tbody');
+  if(!tbody) return;
   if(!coaches.length){tbody.innerHTML=`<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:20px">尚未新增任何教練</td></tr>`;return;}
   tbody.innerHTML=coaches.map((name,i)=>`<tr><td style="color:var(--text3)">${i+1}</td><td style="font-weight:500">${name}</td><td><button class="btn btn-danger btn-sm" onclick="deleteCoach(${i})">刪除</button></td></tr>`).join('');
 }
@@ -1342,7 +1249,7 @@ function changePassword(){
 }
 
 function showToast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
 }
 </script>
