@@ -881,15 +881,9 @@ async function submitCoach() {
       sheetType: currentReportType === 'product' ? 'product'
                : entry.method === 'cash' ? 'course_cash'
                : 'course_transfer' };
-    const post = url => fetch(url, { method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
     try {
-      // 主表（所有回報）
-      await post(sheetsUrl);
-      // 現金備份表（所有現金付款，不分課程/商品）
-      if (cashUrl && entry.method === 'cash') await post(cashUrl);
-      // 商品備份表
-      if (productUrl && currentReportType === 'product') await post(productUrl);
+      await fetch(sheetsUrl, { method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
       showToast(currentReportType === 'course' ? '✓ 課程回報成功！已同步到雲端' : '✓ 商品回報成功！已同步到雲端');
     } catch(e) { showToast('✓ 已儲存本機（網路異常，請稍後重試）'); }
     btn.innerHTML = '✓ 送出回報';
@@ -1298,15 +1292,12 @@ function exportResult(){
 
 // === Settings ===
 function saveSheetUrl(){
-  const url  = document.getElementById('sheets-url').value.trim();
-  const curl = document.getElementById('cash-url').value.trim();
-  const purl = document.getElementById('product-url').value.trim();
+  const url = document.getElementById('sheets-url').value.trim();
   if (!url) { showToast('請輸入主表網址'); return; }
-  sheetsUrl  = url;  localStorage.setItem('hope_sheets_url',  url);
-  cashUrl    = curl; localStorage.setItem('hope_cash_url',    curl);
-  productUrl = purl; localStorage.setItem('hope_product_url', purl);
+  sheetsUrl = url;
+  localStorage.setItem('hope_sheets_url', url);
   document.getElementById('config-banner').style.display = 'none';
-  showToast('✅ 已儲存三個連結');
+  showToast('✅ 已儲存連結');
 }
 async function testSheetUrl(inputId){
   const url = document.getElementById(inputId).value.trim();
