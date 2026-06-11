@@ -958,7 +958,12 @@ async function loadAllReports() {
           entryType:    isProduct ? 'product' : 'course',
           coach:        row['教練姓名']          || '',
           student:      row['學員/購買者']        || '',
-          last5:        String(row['後五碼']||'').replace(/^'+/,''),
+          last5: (() => {
+            const r = String(row['後五碼']||'').replace(/^'+/,'').trim();
+            // Google Sheets 可能把 "09522" 存成數字 9522（掉了前導零），這裡補回來
+            if (r && /^\d{1,4}$/.test(r)) return r.padStart(5, '0');
+            return r;
+          })(),
           amount:       parseFloat(String(row['金額']||0).toString().replace(/,/g,'')) || 0,
           date:         row['日期']              || '',
           method:       methodMap(row['付款方式']),
