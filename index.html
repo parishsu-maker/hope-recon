@@ -2,1616 +2,1348 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>國華短桿果嶺/下場班 報名管理系統</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<title>HOPE 對帳系統</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans TC',sans-serif;background:#F2F2F0;color:#1A1A1A;min-height:100vh}
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
 
-/* ===== LOGIN ===== */
-#login-screen{position:fixed;inset:0;background:#C8D4CE;display:flex;align-items:center;justify-content:center;z-index:1000}
-.login-box{background:#fff;border-radius:16px;padding:2.5rem;width:360px;box-shadow:0 8px 32px rgba(100,130,115,0.18);border:1px solid #D4DDD8}
-.login-logo{text-align:center;margin-bottom:2rem}
-.login-logo .logo-main{font-size:22px;font-weight:700;color:#1A1A1A;letter-spacing:1px}
-.login-logo .logo-sub{font-size:12px;color:#888;margin-top:4px;letter-spacing:2px}
-.login-logo .logo-icon{width:56px;height:56px;background:#1A1A1A;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:26px}
-.login-roles{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem}
-.role-btn{padding:14px 16px;border:1.5px solid #E5E5E5;border-radius:10px;background:#fff;cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:12px}
-.role-btn:hover{border-color:#1A1A1A;background:#F9F9F9}
-.role-btn.selected{border-color:#6B9E8F;background:#6B9E8F;color:#fff}
-.role-btn .role-icon{width:36px;height:36px;border-radius:8px;background:#F0F0F0;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:background .15s}
-.role-btn.selected .role-icon{background:rgba(255,255,255,0.15)}
-.role-btn .role-info .role-name{font-size:14px;font-weight:500}
-.role-btn .role-info .role-desc{font-size:11px;color:#999;margin-top:2px}
-.role-btn.selected .role-info .role-desc{color:rgba(255,255,255,0.6)}
-.login-btn{width:100%;padding:14px;background:#6B9E8F;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Noto Sans TC',sans-serif;letter-spacing:1px;transition:opacity .15s}
-.login-btn:hover{background:#5A8A7A;opacity:1}
-.login-btn:disabled{opacity:.4;cursor:not-allowed}
-.login-hint{font-size:11px;color:#AAA;text-align:center;margin-top:12px}
+  :root {
+    --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0eeea;--border:#e0ddd6;
+    --text:#1a1916;--text2:#6b6860;--text3:#a09d98;
+    --accent:#2d5a3d;--accent-light:#e8f0eb;
+    --green:#2d5a3d;--green-bg:#e8f0eb;
+    --red:#8b2020;--red-bg:#f5e8e8;
+    --amber:#7a5200;--amber-bg:#fdf3e0;
+    --blue:#1a3a5c;--blue-bg:#e8eef5;
+    --purple:#4a2d7a;--purple-bg:#f0ebfa;--purple-border:#c8b8e8;
+    --radius:10px;--shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;}
 
-/* ===== APP ===== */
-#app{display:none;min-height:100vh}
-.topbar{background:#fff;color:#1A1A1A;border-bottom:1px solid #E0E0E0;padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.topbar-left{display:flex;align-items:center;gap:12px}
-.topbar-logo{font-size:15px;font-weight:700;letter-spacing:0.5px;color:#1A1A1A}
-.topbar-role{background:rgba(255,255,255,0.12);padding:3px 10px;border-radius:20px;font-size:11px;letter-spacing:1px}
-.topbar-role.role-admin{background:#3B82F6;color:#fff}
-.topbar-role.role-coach{background:#10B981;color:#fff}
-.topbar-role.role-finance{background:#F59E0B;color:#fff}
-.topbar-right{display:flex;align-items:center;gap:8px}
-.logout-btn{background:#F0F0F0;border:1px solid #E0E0E0;color:#444;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:background .15s}
-.logout-btn:hover{background:#E0E0E0}
+  /* Login */
+  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:100%;max-width:420px;box-shadow:var(--shadow);text-align:center;}
+  .login-logo img{width:180px;height:auto;}
+  .login-title{font-size:16px;font-weight:500;margin-bottom:4px;color:#2d7a6a;}
+  .login-label{font-size:12px;font-weight:600;color:var(--text2);text-align:left;display:block;margin-bottom:6px;}
+  .login-select,.login-input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:var(--surface);margin-bottom:16px;outline:none;transition:border-color .15s;}
+  .login-select:focus,.login-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,90,61,.08);}
+  .login-btn{width:100%;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;margin-bottom:12px;}
+  .login-btn:hover{background:#234a32;}
+  .login-or{font-size:12px;color:var(--text3);margin:4px 0 12px;position:relative;}
+  .login-or::before,.login-or::after{content:'';position:absolute;top:50%;width:38%;height:1px;background:var(--border);}
+  .login-or::before{left:0;}.login-or::after{right:0;}
+  .login-admin-btn{width:100%;padding:10px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s;}
+  .login-admin-btn:hover{background:var(--border);color:var(--text);}
+  #admin-pw-wrap{display:none;margin-top:12px;}
 
-.nav-wrap{background:#fff;border-bottom:1px solid #E8E8E8;padding:0 1.5rem;display:flex;flex-direction:column}
-.nav-row{display:flex;gap:2px;padding:6px 0}
-.nav-row:first-child{border-bottom:1px solid #F0F0F0}
-.nav-btn{padding:7px 18px;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:13px;color:#666;font-family:'Noto Sans TC',sans-serif;transition:all .12s;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:0}
-.nav-btn:hover{background:#F5F5F5;color:#1A1A1A}
-.nav-btn.active{background:#6B9E8F;color:#fff}
+  /* App */
+  #app{display:none;}
+  .header{background:var(--accent);color:white;padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .header-brand{font-size:16px;font-weight:700;letter-spacing:.5px;}
+  .header-brand span{opacity:.6;font-weight:300;margin-left:8px;font-size:13px;}
+  .header-user{font-size:13px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:10px;}
+  .logout-btn{background:rgba(255,255,255,.15);border:none;color:white;padding:4px 10px;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit;}
+  .logout-btn:hover{background:rgba(255,255,255,.25);}
+  .tab-nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 32px;}
+  .tab-btn{padding:14px 20px;border:none;background:none;color:var(--text2);font-family:inherit;font-size:14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;font-weight:400;white-space:nowrap;}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
+  .tab-btn:hover:not(.active){color:var(--text);}
+  .page{display:none;padding:28px 32px;max-width:960px;margin:0 auto;}
+  .page.active{display:block;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--shadow);}
+  .card-title{font-size:15px;font-weight:700;margin-bottom:16px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .card-title .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;}
 
-.main{padding:1.5rem;max-width:1200px;margin:0 auto}
-.page{display:none}.page.active{display:block}
+  /* 類型切換 */
+  .type-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+  .type-option{position:relative;cursor:pointer;}
+  .type-option input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
+  .type-option-label{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border:2px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;font-size:14px;font-weight:500;color:var(--text2);background:var(--surface2);user-select:none;}
+  .type-option input[type="radio"]:checked + .type-option-label{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+  .type-option-label .type-icon{font-size:20px;}
 
-.card{background:#fff;border:1px solid #E8E8E8;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
-.card-title{font-size:15px;font-weight:600;margin-bottom:1rem;color:#1A1A1A;display:flex;align-items:center;gap:8px}
-.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:10px}
-.fg{display:flex;flex-direction:column;gap:4px}
-.fg label{font-size:12px;color:#888;font-weight:500}
-.fg input,.fg select{width:100%;padding:8px 10px;border:1px solid #E0E0E0;border-radius:8px;font-size:13px;font-family:'Noto Sans TC',sans-serif;color:#1A1A1A;background:#fff;transition:border .12s;outline:none}
-.fg input:focus,.fg select:focus{border-color:#1A1A1A}
-.fg input[readonly]{background:#F7F7F7;color:#666}
+  /* 商品 */
+  .product-section{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:8px;padding:16px 18px;margin-top:14px;}
+  .product-section-title{font-size:12px;font-weight:600;color:var(--purple);margin-bottom:12px;}
+  .product-rows{display:flex;flex-direction:column;gap:10px;}
+  .product-row{display:grid;grid-template-columns:2fr 80px 110px auto;gap:8px;align-items:center;}
+  .product-row input{padding:8px 10px;font-size:13px;background:white;}
+  .remove-product-btn{background:none;border:1px solid var(--border);border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;flex-shrink:0;}
+  .remove-product-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-bg);}
+  .add-product-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:7px;border:1px dashed var(--purple-border);background:white;color:var(--purple);font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s;margin-top:8px;}
+  .add-product-btn:hover{background:var(--purple-bg);border-color:var(--purple);}
+  .product-total{text-align:right;padding:10px 0 2px;font-size:13px;color:var(--text2);}
+  .product-total strong{font-size:16px;font-family:'DM Mono',monospace;color:var(--purple);margin-left:6px;}
 
-.btn{padding:8px 16px;border-radius:8px;border:1px solid #E0E0E0;background:#fff;cursor:pointer;font-size:13px;color:#1A1A1A;font-family:'Noto Sans TC',sans-serif;transition:all .12s;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{background:#F5F5F5}.btn i,.btn .ti{color:inherit}
-.btn-primary{background:#6B9E8F;color:#fff;border-color:#6B9E8F}
-.btn-primary:hover{background:#5A8A7A}
-.btn-success{background:#10B981;color:#fff;border-color:#10B981}
-.btn-success:hover{background:#059669}
-.btn-danger{color:#DC2626;border-color:#FCA5A5}
-.btn-danger:hover{background:#FEF2F2}
-.btn-info{color:#2563EB;border-color:#BFDBFE}
-.btn-info:hover{background:#EFF6FF}
-.btn-warning{color:#D97706;border-color:#FCD34D}
-.btn-sm{padding:4px 10px;font-size:12px;color:#1A1A1A}.btn-sm i,.btn-sm .ti{color:#1A1A1A !important}
+  /* Form */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-group{display:flex;flex-direction:column;gap:5px;}
+  .form-group.full{grid-column:1/-1;}
+  label{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.3px;}
+  input,select,textarea{padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:14px;color:var(--text);background:var(--surface);transition:border-color .15s;outline:none;width:100%;}
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,90,61,.08);}
+  .btn{padding:10px 20px;border-radius:7px;border:none;font-family:inherit;font-size:14px;cursor:pointer;font-weight:500;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+  .btn-primary{background:var(--accent);color:white;}.btn-primary:hover{background:#234a32;}
+  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}.btn-secondary:hover{background:var(--border);}
+  .btn-danger{background:var(--red-bg);color:var(--red);border:1px solid #e0b0b0;}
+  .btn-sm{padding:6px 12px;font-size:12px;}
 
-.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;display:none}
-.alert-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;display:block}
-.alert-warn{background:#FFFBEB;color:#92400E;border:1px solid #FCD34D;display:block}
-.alert-danger{background:#FEF2F2;color:#991B1B;border:1px solid #FCA5A5;display:block}
-.divider{border:none;border-top:1px solid #F0F0F0;margin:1rem 0}
+  .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2);}
+  .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:var(--accent-light);}
+  .upload-zone input{display:none;}
+  .upload-icon{font-size:28px;margin-bottom:8px;}
+  .upload-text{font-size:14px;color:var(--text2);}
+  .upload-text strong{color:var(--accent);}
+  .upload-hint{font-size:12px;color:var(--text3);margin-top:4px;}
+  .upload-success{background:var(--green-bg);border-color:#a8c8b0;}
+  .upload-success .upload-text{color:var(--green);font-weight:500;}
 
-.admin-notice{background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:9px 14px;font-size:12px;color:#92400E;display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;white-space:nowrap;}
+  .badge-green{background:var(--green-bg);color:var(--green);}
+  .badge-red{background:var(--red-bg);color:var(--red);}
+  .badge-amber{background:var(--amber-bg);color:var(--amber);}
+  .badge-blue{background:var(--blue-bg);color:var(--blue);}
+  .badge-gray{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);}
 
-.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;gap:4px}
-.tag-green{background:#ECFDF5;color:#065F46}
-.tag-amber{background:#FFFBEB;color:#92400E}
-.tag-red{background:#FEF2F2;color:#991B1B}
-.tag-blue{background:#EFF6FF;color:#1D4ED8}
-.tag-purple{background:#F5F3FF;color:#5B21B6}
-.tag-reschedule{background:#FFF7ED;color:#C2410C;border:1px solid #FDBA74}
-.tag-gray{background:#F3F4F6;color:#374151}
+  .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{background:var(--surface2);padding:10px 14px;text-align:left;font-weight:600;font-size:12px;color:var(--text2);letter-spacing:.3px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--surface2);}
+  .mono{font-family:'DM Mono',monospace;font-size:12px;}
 
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;padding:9px 10px;font-weight:500;font-size:12px;color:#888;border-bottom:1px solid #F0F0F0;background:#FAFAFA}
-td{padding:9px 10px;border-bottom:1px solid #F7F7F7;vertical-align:top;color:#1A1A1A}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#FAFAFA}
-.ovx{overflow-x:auto}
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+  .stat-label{font-size:12px;color:var(--text2);font-weight:500;margin-bottom:6px;}
+  .stat-value{font-size:26px;font-weight:700;font-family:'DM Mono',monospace;}
+  .stat-value.green{color:var(--green);}.stat-value.red{color:var(--red);}.stat-value.amber{color:var(--amber);}
 
-.avatar{width:26px;height:26px;border-radius:50%;background:#E0E7FF;color:#3730A3;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;margin-right:5px;vertical-align:middle;flex-shrink:0}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+  .alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;}
+  .alert-info{background:var(--blue-bg);color:var(--blue);border:1px solid #c0d0e0;}
+  .alert-success{background:var(--green-bg);color:var(--green);border:1px solid #a8c8b0;}
+  .alert-warn{background:var(--amber-bg);color:var(--amber);border:1px solid #e0c880;}
 
-.week-nav{display:flex;align-items:center;gap:8px}
-.week-label{font-size:14px;font-weight:600;min-width:170px;text-align:center;color:#1A1A1A}
-.slot-bar{display:flex;gap:3px;align-items:center}
-.slot-dot{width:8px;height:8px;border-radius:50%}
-.dot-filled{background:#10B981}
-.dot-empty{background:#E5E7EB}
+  .submission-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
+  .submission-item:last-child{border-bottom:none;}
+  .submission-item.product-entry{border-left:3px solid var(--purple);}
+  .submission-item.course-entry{border-left:3px solid var(--accent);}
+  .submission-main{flex:1;min-width:0;}
+  .submission-name{font-weight:600;font-size:14px;margin-bottom:2px;}
+  .submission-detail{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;}
 
-.day-card{border:1px solid #E8E8E8;border-radius:10px;overflow:hidden;margin-bottom:8px}
-.day-card.today-card{border-color:#3B82F6;border-width:2px}
-.day-card.closed-card{border-color:#FCA5A5}
-.day-hdr{display:flex;align-items:center;padding:10px 14px;background:#F9F9F9;gap:12px}
-.day-hdr.today-hdr{background:#EFF6FF}
-.day-hdr.closed-hdr{background:#FEF2F2}
-.dow-badge{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;background:#fff;border:1px solid #E5E5E5;flex-shrink:0}
-.dow-badge.today-b{background:#3B82F6;color:#fff;border-color:#3B82F6}
-.dow-badge.closed-b{background:#FEF2F2;color:#DC2626;border-color:#FCA5A5}
-.dow-badge.wkend-b{color:#9CA3AF}
-.day-date-info{font-size:13px;color:#888}
-.day-date-info strong{font-size:15px;font-weight:600;color:#1A1A1A;display:block}
-.day-date-info.closed-lbl strong{color:#DC2626}
-.day-body{padding:10px 14px;background:#fff}
-.coach-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #F0F0F0;background:#fff}
-.coach-row:last-child{border-bottom:none}
-.coach-row.reschedule-row{background:#FFF7ED}
-.coach-info{display:flex;align-items:center;min-width:90px}
-.coach-status{display:flex;align-items:center;gap:8px;flex:1}
-.coach-students{font-size:12px;color:#9CA3AF;flex:1}
+  .inner-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+  .inner-tab{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s;}
+  .inner-tab.active{background:var(--accent);color:white;border-color:var(--accent);font-weight:500;}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;z-index:500}
-.modal-overlay.show{display:flex}
-.modal-box{background:#fff;border-radius:12px;padding:1.5rem;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
-.modal-title{font-size:15px;font-weight:600;margin-bottom:1rem}
-.modal-info{background:#F7F7F7;border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:1rem;color:#666}
+  .empty-state{text-align:center;padding:48px 24px;color:var(--text3);}
+  .empty-state .empty-icon{font-size:36px;margin-bottom:10px;}
 
-.similar-box{background:#F7F7F7;border:1px solid #E5E5E5;border-radius:8px;padding:12px;margin-bottom:10px;display:none}
-.similar-box.show{display:block}
-.similar-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #EEEEEE}
-.similar-item:last-child{border-bottom:none}
-.new-stu-box{background:#F0FDF4;border:1px solid #A7F3D0;border-radius:8px;padding:12px;margin-bottom:10px;display:none}
-.new-stu-box.show{display:block}
-.plan-fixed{padding:8px 10px;border:1px solid #E0E0E0;border-radius:8px;background:#F7F7F7;font-size:13px;color:#9CA3AF;width:100%}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+  @keyframes spin{to{transform:rotate(360deg);}}
 
-.step-badge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#6B9E8F;color:#fff;font-size:11px;font-weight:600;margin-right:6px}
-.closed-banner{background:#FEF2F2;border:1px solid #FCA5A5;border-radius:8px;padding:10px 14px;font-size:13px;color:#DC2626;margin-bottom:1rem;display:none;align-items:center;gap:8px}
-.closed-banner.show{display:flex}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
-.coach-cb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:1rem}
-.coach-cb{display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #E5E5E5;border-radius:8px;cursor:pointer;font-size:13px;transition:all .12s}
-.coach-cb.checked{background:#EAF2EF;border-color:#6B9E8F}
-.coach-cb.disabled{opacity:.4;pointer-events:none}
-.si{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #F0F0F0}
-.si:last-child{border-bottom:none}
-.ilfx{display:flex;align-items:center;gap:8px}
-.time-sub{font-size:11px;color:#9CA3AF;display:block;margin-top:1px}
-.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.25rem}
-.metric{background:#fff;border:1px solid #E8E8E8;border-radius:10px;padding:14px}
-.metric .m-label{font-size:12px;color:#888;margin-bottom:4px}
-.metric .m-value{font-size:24px;font-weight:700;color:#1A1A1A}
-.metric .m-sub{font-size:11px;color:#9CA3AF;margin-top:2px}
-.lock-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:#065F46;background:#ECFDF5;padding:2px 6px;border-radius:10px;margin-left:6px;vertical-align:middle}
-.section-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #F0F0F0}
-.section-hdr-title{font-size:14px;font-weight:600}
-.mode-toggle{display:flex;gap:4px;margin-bottom:1rem}
-.mode-btn{padding:6px 14px;border-radius:8px;border:1px solid #E0E0E0;background:#fff;cursor:pointer;font-size:13px;color:#666;font-family:'Noto Sans TC',sans-serif}
-.mode-btn.active{background:#1A1A1A;color:#fff;border-color:#1A1A1A}
-.export-card{background:#F7F7F7;border-radius:8px;padding:1rem;margin-bottom:1rem}
-.filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:flex-end}
+  #toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:white;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;max-width:320px;}
+  #toast.show{transform:translateY(0);opacity:1;}
 
-/* 時段自填欄位動畫 */
-.time-other-wrap{display:none;flex-direction:column;gap:4px}
-.time-other-wrap.show{display:flex}
+  #config-banner{background:#fff3cd;border-bottom:1px solid #ffc107;padding:10px 32px;font-size:13px;color:#856404;display:none;}
 
-/* finance-only welcome */
-.finance-welcome{text-align:center;padding:3rem 1rem}
-.finance-welcome .fw-icon{font-size:48px;margin-bottom:1rem;color:#F59E0B}
-.finance-welcome h2{font-size:20px;font-weight:600;margin-bottom:8px}
-.finance-welcome p{color:#888;font-size:14px}
+  @media(max-width:600px){
+    .page{padding:16px;}.tab-nav{padding:0 12px;overflow-x:auto;}.header{padding:0 16px;}
+    .form-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr;}
+    .stat-value{font-size:22px;}.login-card{padding:28px 20px;}
+    .product-row{grid-template-columns:1fr 60px 90px auto;}
+  }
 </style>
 </head>
 <body>
 
-<!-- ===== LOGIN ===== -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <div style="margin:0 auto 14px;text-align:center"><img src="https://raw.githubusercontent.com/parishsu-maker/hope-khreserve/main/YM_HOPE_transparent.png" style="height:64px;max-width:220px;object-fit:contain"></div>
-      <div class="logo-main" style="color:#2A6B5F">國華短桿果嶺/下場班</div>
-      <div class="logo-sub" style="font-size:22px;font-weight:700;color:#2A6B5F;letter-spacing:1px">報名管理系統</div>
+  <div class="login-card">
+    <div class="login-logo"><img src="https://parishsu-maker.github.io/hope-recon/YM_HOPE_transparent.png" alt="HOPE Logo"></div>
+    <div class="login-title">元木對帳回報系統</div><br><br>
+    <label class="login-label">我是教練</label>
+    <select class="login-select" id="login-coach-select"><option value="">— 請選擇你的名字 —</option></select>
+    <button class="login-btn" onclick="loginAsCoach()">進入教練回報頁</button>
+    <div class="login-or">或</div>
+    <button class="login-admin-btn" onclick="toggleAdminLogin()">🔐 管理員登入</button>
+    <div id="admin-pw-wrap">
+      <input type="password" class="login-input" id="admin-pw" placeholder="輸入管理員密碼" style="margin-top:10px;" onkeydown="if(event.key==='Enter')loginAsAdmin()">
+      <button class="login-btn" onclick="loginAsAdmin()" style="margin-top:4px;">進入管理員後台</button>
     </div>
-    <p style="font-size:12px;color:#888;margin-bottom:12px;text-align:center">請選擇您的身份</p>
-    <div class="login-roles">
-      <div class="role-btn" onclick="selectRole('coach',this)">
-        <div class="role-icon"><i class="ti ti-golf"></i></div>
-        <div class="role-info">
-          <div class="role-name">教練</div>
-          <div class="role-desc">課表總覽、下場班報名、短桿果嶺報名</div>
-        </div>
-      </div>
-      <div class="role-btn" onclick="selectRole('admin',this)">
-        <div class="role-icon"><i class="ti ti-shield-check"></i></div>
-        <div class="role-info">
-          <div class="role-name">行政（後台管理）</div>
-          <div class="role-desc">全功能，含補登過去日期</div>
-        </div>
-      </div>
-      <div class="role-btn" onclick="selectRole('finance',this)">
-        <div class="role-icon"><i class="ti ti-chart-bar"></i></div>
-        <div class="role-info">
-          <div class="role-name">財務會計</div>
-          <div class="role-desc">僅限財務報表與 Excel 下載</div>
-        </div>
-      </div>
-    </div>
-    <div id="password-field" style="display:none;margin-bottom:12px">
-      <input type="password" id="login-password" placeholder="請輸入密碼"
-        style="width:100%;padding:12px 14px;border:1.5px solid #E5E5E5;border-radius:10px;font-size:14px;font-family:'Noto Sans TC',sans-serif;outline:none;transition:border .15s"
-        onfocus="this.style.borderColor='#6B9E8F'" onblur="this.style.borderColor='#E5E5E5'"
-        onkeydown="if(event.key==='Enter')doLogin()">
-      <div id="password-error" style="color:#EF4444;font-size:12px;margin-top:6px;display:none">密碼錯誤，請再試一次</div>
-    </div>
-    <button class="login-btn" id="login-btn" onclick="doLogin()" disabled>進入系統</button>
-    <div id="login-loading" style="display:none;text-align:center;padding:12px 0;font-size:13px;color:#6B9E8F">
-      <span style="display:inline-block;animation:spin 1s linear infinite;margin-right:6px">⟳</span>連線中，請稍候…
-    </div>
-    <style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
-    <div class="login-hint">元木運動內部系統 · 僅限授權人員使用</div>
   </div>
 </div>
 
-<!-- ===== APP ===== -->
 <div id="app">
-  <div class="topbar">
-    <div class="topbar-left">
-      <img src="https://raw.githubusercontent.com/parishsu-maker/hope-khreserve/main/YM_HOPE_transparent.png" style="height:28px;object-fit:contain">
-      <span class="topbar-role" id="role-badge"></span>
-    </div>
-    <div class="topbar-right">
-      <span id="sync-status" style="font-size:11px;color:#9CA3AF;white-space:nowrap">未連線</span>
-      <button class="logout-btn" id="sheets-url-btn" onclick="openUrlModal()" style="background:#EAF2EF;color:#4A7A6B;border-color:#B0CCC5;display:none">⚙ 設定 Sheets URL</button>
-      <span id="topbar-date" style="font-size:12px;color:#888;"></span>
-      <button class="logout-btn" onclick="doLogout()"><i class="ti ti-logout"></i> 登出</button>
-    </div>
+  <div class="header">
+    <div class="header-brand">HOPE Golf <span>對帳系統</span></div>
+    <div class="header-user"><span id="header-username"></span><button class="logout-btn" onclick="logout()">登出</button></div>
   </div>
+  <div id="config-banner">⚠️ 尚未設定 Google Sheets 連結。請管理員到「系統設定」頁面完成設定。</div>
+  <nav class="tab-nav" id="main-nav"></nav>
 
-  <div class="nav-wrap" id="nav-wrap"></div>
+  <!-- 教練回報頁 -->
+  <div class="page" id="page-coach">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>匯款回報</div>
 
-  <div class="main">
-
-    <!-- 課表總覽 -->
-    <div id="page-schedule" class="page">
-      <div class="filter-bar">
-        <div class="week-nav">
-          <button class="btn btn-sm" onclick="shiftWeek(-1)" style="color:#1A1A1A"><i class="ti ti-chevron-left" style="color:#1A1A1A"></i></button>
-          <span class="week-label" id="week-label"></span>
-          <button class="btn btn-sm" onclick="shiftWeek(1)" style="color:#1A1A1A"><i class="ti ti-chevron-right" style="color:#1A1A1A"></i></button>
-          <button class="btn btn-sm" onclick="goThisWeek()" style="color:#1A1A1A">本週</button>
-        </div>
-        <div class="fg"><label style="font-size:12px;color:#888">篩選教練</label>
-          <select id="sch-coach" onchange="renderSchedule()" style="width:120px"></select></div>
-      </div>
-      <div id="schedule-content"></div>
-    </div>
-
-    <!-- 下場班報名 -->
-    <div id="page-register" class="page">
-      <div class="card">
-        <div class="card-title">下場班報名登記</div>
-        <div class="admin-notice" id="reg-admin-notice" style="display:none"><i class="ti ti-info-circle"></i>補登過去日期的資料，請聯絡行政由後台操作</div>
-        <div id="reg-alert" class="alert"></div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:12px;color:#888;margin-bottom:6px"><span class="step-badge">1</span>教練登記</div>
-          <div class="form-row" style="margin-bottom:0">
-            <div class="fg"><label>我是哪位教練</label><select id="reg-self-coach"><option value="">— 請選擇 —</option></select></div>
-            <div class="fg"><label>下場日期</label><input type="date" id="reg-date" onchange="onRegDateChange()"></div>
-            <div class="fg"><label>指定教練</label><select id="reg-coach" onchange="checkCoachSlots()"><option value="">— 請先選日期 —</option></select></div>
-          </div>
-        </div>
-        <div class="divider"></div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:12px;color:#888;margin-bottom:6px"><span class="step-badge">2</span>學員資訊</div>
-          <div class="form-row" style="margin-bottom:6px">
-            <div class="fg" style="grid-column:span 2"><label>學員姓名（輸入後系統自動比對）</label>
-              <input type="text" id="reg-stu-name" placeholder="輸入姓名..." oninput="onStuNameInput()" autocomplete="off"></div>
-            <div class="fg"><label>人數 <span style="font-weight:400;color:#9CA3AF;font-size:11px">(一對一請選2人)</span></label>
-              <select id="reg-count" onchange="syncCoachHours()"><option value="1">1人</option><option value="2">2人</option><option value="3">3人</option><option value="4">4人</option></select></div>
-          </div>
-          <div style="margin-bottom:6px">
-            <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:8px 12px;border:1px solid #E0E0E0;border-radius:8px;background:#fff;transition:all .12s" id="solo-class-label">
-              <span style="position:relative;width:18px;height:18px;flex-shrink:0">
-                <input type="checkbox" id="reg-solo-class" onchange="onSoloClassChange()" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;margin:0">
-                <span style="width:18px;height:18px;border-radius:4px;border:1.5px solid #D1D5DB;background:#fff;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:all .12s" id="solo-class-box">
-                  <i class="ti ti-check" style="font-size:12px;color:#fff;display:none" id="solo-class-check"></i>
-                </span>
-              </span>
-              <span style="font-size:13px;font-weight:500">一人開班</span>
-              <span style="font-size:11px;color:#9CA3AF">（勾選後此教練此日不開放其他學員報名）</span>
-            </label>
-            <div id="solo-class-banner" style="display:none;margin-top:6px;padding:7px 12px;background:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;font-size:12px;color:#C2410C;align-items:center;gap:6px">
-              <i class="ti ti-lock"></i> 一人開班模式：此教練此日僅限此學員上課，其他人無法報名
-            </div>
-          </div>
-          <div class="similar-box" id="similar-box">
-            <div style="font-size:12px;font-weight:500;margin-bottom:6px;color:#666">找到相似學員，確認是否同一人：</div>
-            <div id="similar-list"></div>
-            <div style="margin-top:8px"><button class="btn btn-sm" onclick="confirmNewStudent()">不是，這是新學員</button></div>
-          </div>
-          <div class="new-stu-box" id="new-student-box">
-            <div style="font-size:12px;font-weight:500;margin-bottom:8px;color:#065F46"><i class="ti ti-user-plus"></i> 新學員 — 請填寫方案資訊（自動建檔）</div>
-            <div class="form-row" style="margin-bottom:0">
-              <div class="fg"><label>方案類型</label><div class="plan-fixed">單堂</div></div>
-              <div class="fg"><label>此次上課堂數</label><input type="number" id="new-stu-sessions" value="1" min="1"></div>
-            </div>
-          </div>
-          <div id="existing-stu-info" style="display:none;padding:8px 12px;background:#F7F7F7;border-radius:8px;font-size:13px;margin-top:6px"></div>
-        </div>
-        <div class="divider"></div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:12px;color:#888;margin-bottom:6px"><span class="step-badge">3</span>課程資訊</div>
-          <div class="form-row" style="margin-bottom:8px">
-            <div class="fg"><label>程度</label><select id="reg-level"><option>完全初學</option><option>100桿以上</option><option>90–99桿</option><option>80–89桿</option><option>80桿以下</option></select></div>
-            <div class="fg"><label>系統已購課訂單</label><select id="reg-fee-type"></select></div>
-            <div class="fg"><label>課堂數</label><input type="number" id="reg-sessions" value="1" min="1" style="font-weight:600"></div>
-            <div class="fg"><label>備註</label><input type="text" id="reg-note" placeholder="選填"></div>
-          </div>
-          <div style="background:#F7F7F7;border-radius:8px;padding:10px 14px;font-size:13px">
-            <div class="fg" style="max-width:320px">
-              <label>教練上課時數（統計課堂數用，以人次計算）</label>
-              <input type="text" id="preview-coach-hours" readonly style="background:#fff;font-weight:600">
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn btn-primary" onclick="submitReg()">確認報名</button>
-          <button class="btn" onclick="clearReg()">清除</button>
+      <!-- 回報類型 -->
+      <div class="form-group" style="margin-bottom:18px;">
+        <label>回報類型 *</label>
+        <div class="type-switch">
+          <label class="type-option">
+            <input type="radio" name="report-type" value="course" checked onchange="onReportTypeChange('course')">
+            <div class="type-option-label"><span class="type-icon">🏌️</span> 課程回報</div>
+          </label>
+          <label class="type-option">
+            <input type="radio" name="report-type" value="product" onchange="onReportTypeChange('product')">
+            <div class="type-option-label"><span class="type-icon">🛍️</span> 商品回報</div>
+          </label>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">報名記錄</div>
-        <div class="ovx"><table><thead><tr><th>下場日期 / 登記時間</th><th>登記教練</th><th>學員</th><th>人數</th><th>指定教練</th><th>系統已購課訂單</th><th>課堂數</th><th>教練上課時數</th><th>備註</th><th></th></tr></thead>
-        <tbody id="reg-tbody"></tbody></table></div>
-      </div>
-    </div>
 
-    <!-- 短桿果嶺報名 -->
-    <div id="page-short" class="page">
-      <div class="card">
-        <div class="card-title"><i class="ti ti-flag"></i> 短桿果嶺使用報名登記</div>
-        <div style="background:#F0FDF4;border:1px solid #A7F3D0;border-radius:8px;padding:10px 14px;font-size:13px;color:#065F46;margin-bottom:1rem;display:flex;align-items:center;gap:8px">
-          <i class="ti ti-info-circle"></i>固定收費 NT$ <span id="short-rate-display">500</span> / 人，所有教練均可選，時段由教練自行填寫。<strong>報名即視為使用完畢。</strong></div>
-        <div class="admin-notice" id="short-admin-notice" style="display:none"><i class="ti ti-info-circle"></i>補登過去日期的資料，請聯絡行政由後台操作</div>
-        <div id="short-alert" class="alert"></div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:12px;color:#888;margin-bottom:6px"><span class="step-badge">1</span>教練與時間</div>
-          <div class="form-row" style="margin-bottom:0">
-            <div class="fg"><label>登記教練</label><select id="short-coach"><option value="">— 請選擇 —</option></select></div>
-            <div class="fg"><label>日期</label><input type="date" id="short-date"></div>
-            <!-- ★ 時段下拉選單 -->
-            <div class="fg">
-              <label>時段</label>
-              <select id="short-time-select" onchange="onShortTimeChange()">
-                <option value="">— 請選擇時段 —</option>
-                <option value="12:00–13:00">12:00–13:00</option>
-                <option value="13:00–14:00">13:00–14:00</option>
-                <option value="14:00–15:00">14:00–15:00</option>
-                <option value="15:00–16:00">15:00–16:00</option>
-                <option value="16:00–17:00">16:00–17:00</option>
-                <option value="17:00–18:00">17:00–18:00</option>
-                <option value="other">其他時段</option>
-              </select>
-            </div>
-            <!-- ★ 其他時段自填欄位（預設隱藏） -->
-            <div class="fg time-other-wrap" id="short-time-other-wrap">
-              <label>自行填寫時段</label>
-              <input type="text" id="short-time-other" placeholder="例：18:00–19:00">
-            </div>
-          </div>
+      <!-- 共用 -->
+      <div id="alert-course-info" class="alert alert-info" style="margin-bottom:14px;"><span>ℹ️</span><span>學員匯款後，請填寫以下資訊送出。若有多筆請分別填寫。</span></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>教練姓名</label>
+          <input type="text" id="c-coach" readonly style="background:var(--surface2);color:var(--text2);">
         </div>
-        <div class="divider"></div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:12px;color:#888;margin-bottom:6px"><span class="step-badge">2</span>學員資訊</div>
-          <div class="form-row" style="margin-bottom:6px">
-            <div class="fg" style="grid-column:span 2"><label>學員姓名</label>
-              <input type="text" id="short-stu-name" placeholder="輸入姓名..." oninput="onShortStuNameInput()" autocomplete="off" spellcheck="false"></div>
-            <div class="fg"><label>人數</label>
-              <select id="short-count" onchange="calcShortFee()"><option value="1">1人</option><option value="2">2人</option><option value="3">3人</option><option value="4">4人</option><option value="5">5人</option><option value="6">6人</option></select></div>
-          </div>
-          <div class="similar-box" id="short-similar-box">
-            <div style="font-size:12px;font-weight:500;margin-bottom:6px;color:#666">找到相似學員，確認是否同一人：</div>
-            <div id="short-similar-list"></div>
-            <div style="margin-top:8px"><button class="btn btn-sm" onclick="confirmShortNewStudent()">不是，這是新學員</button></div>
-          </div>
-          <div class="new-stu-box" id="short-new-student-box">
-            <div style="font-size:12px;font-weight:500;margin-bottom:8px;color:#065F46"><i class="ti ti-user-plus"></i> 新學員 — 請填寫方案資訊（自動建檔）</div>
-            <div class="form-row" style="margin-bottom:0">
-              <div class="fg"><label>方案類型</label><div class="plan-fixed">單堂</div></div>
-              <div class="fg"><label>此次上課堂數</label><input type="number" id="short-new-stu-sessions" value="1" min="1"></div>
-            </div>
-          </div>
-          <div id="short-existing-stu-info" style="display:none;padding:8px 12px;background:#F7F7F7;border-radius:8px;font-size:13px;margin-top:6px"></div>
+        <div class="form-group">
+          <label id="label-student">學員姓名 *</label>
+          <input type="text" id="c-student" placeholder="例：高小苑">
         </div>
-        <div class="divider"></div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:12px;color:#888;margin-bottom:6px"><span class="step-badge">3</span>費用</div>
-          <div class="form-row" style="margin-bottom:8px">
-            <div class="fg"><label>計價方式</label>
-              <select id="short-price-mode" onchange="onShortPriceModeChange()">
-                <option value="fixed">每人固定</option>
-                <option value="hourly">每小時計價</option>
-              </select>
-            </div>
-            <div class="fg time-other-wrap" id="short-hours-wrap">
-              <label>時數（小時）</label>
-              <input type="number" id="short-hours" value="1" min="0.5" step="0.5" onchange="calcShortFee()" oninput="calcShortFee()">
-            </div>
-          </div>
-          <div class="form-row" style="margin-bottom:0">
-            <div class="fg"><label>應收費用（報名即鎖定）</label><input type="text" id="short-fee-display" readonly style="background:#F7F7F7;font-weight:600"></div>
-            <div class="fg"><label>備註</label><input type="text" id="short-note" placeholder="選填"></div>
-          </div>
+        <div class="form-group">
+          <label id="label-date">匯款日期 *</label>
+          <input type="date" id="c-date">
         </div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn btn-primary" onclick="submitShort()">確認報名</button>
-          <button class="btn" onclick="clearShort()">清除</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">短桿果嶺報名記錄</div>
-        <div class="ovx"><table><thead><tr><th>日期 / 登記時間</th><th>時段</th><th>教練</th><th>學員</th><th>人數</th><th>費用</th><th>備註</th><th></th></tr></thead>
-        <tbody id="short-tbody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- 學員管理 -->
-    <div id="page-students" class="page">
-      <div class="card">
-        <div class="card-title">新增學員（手動建檔）</div>
-        <div class="form-row">
-          <div class="fg"><label>學員姓名</label><input type="text" id="stu-name" placeholder="輸入姓名"></div>
-          <div class="fg"><label>方案類型</label><select id="stu-plan"><option>單堂</option><option>個人套組</option><option>2人套組</option><option>3人套組</option><option>週週下場班</option></select></div>
-          <div class="fg"><label>此次上課堂數</label><input type="number" id="stu-total" value="1" min="1"></div>
-        </div>
-        <button class="btn btn-primary" onclick="addStudent()">新增學員</button>
-      </div>
-      <div class="card">
-        <div class="card-title">學員名單</div>
-        <div class="filter-bar">
-          <input type="text" id="stu-search" placeholder="搜尋姓名..." oninput="renderStudents()" style="width:180px;padding:8px 10px;border:1px solid #E0E0E0;border-radius:8px;font-size:13px;font-family:'Noto Sans TC',sans-serif">
-          <select id="stu-filter-plan" onchange="renderStudents()" style="width:150px;padding:8px 10px;border:1px solid #E0E0E0;border-radius:8px;font-size:13px;font-family:'Noto Sans TC',sans-serif">
-            <option value="">全部方案</option><option>單堂</option><option>個人套組</option><option>2人套組</option><option>3人套組</option><option>週週下場班</option>
+        <div class="form-group" id="wrap-method">
+          <label>付款方式</label>
+          <select id="c-method" onchange="onMethodChange(this.value)">
+            <option value="transfer">匯款轉帳</option>
+            <option value="cash">現金 Cash</option>
           </select>
         </div>
-        <div class="section-hdr"><i class="ti ti-golf" style="color:#9CA3AF"></i><span class="section-hdr-title">下場班</span><span class="tag tag-green" style="font-size:10px">開班才消耗堂數</span></div>
-        <div class="ovx" style="margin-bottom:1.5rem">
-          <table><thead><tr><th>姓名</th><th>方案</th><th>上課堂數</th><th>已消耗（開班）</th><th>剩餘堂數</th><th>建檔方式</th><th></th></tr></thead>
-          <tbody id="stu-tbody-golf"></tbody></table>
+        <div class="form-group" id="wrap-last5">
+          <label>匯款後五碼 *</label>
+          <input type="text" id="c-last5" placeholder="例：07079" maxlength="5" style="font-family:'DM Mono',monospace;letter-spacing:2px;">
         </div>
-        <div class="section-hdr"><i class="ti ti-flag" style="color:#5B21B6"></i><span class="section-hdr-title">短桿果嶺</span><span class="tag tag-purple" style="font-size:10px">報名即消耗堂數</span></div>
-        <div class="ovx">
-          <table><thead><tr><th>姓名</th><th>使用次數</th><th>最近使用日期</th><th>建檔方式</th><th></th></tr></thead>
-          <tbody id="stu-tbody-short"></tbody></table>
+        <div class="form-group" id="wrap-amount">
+          <label id="label-amount">匯款金額（元）*</label>
+          <input type="number" id="c-amount" placeholder="例：17000">
         </div>
       </div>
-    </div>
 
-    <!-- 教練排班 -->
-    <div id="page-roster" class="page">
-      <div class="two-col">
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">設定排班</div>
-          <div class="closed-banner" id="roster-closed-warn"><i class="ti ti-ban"></i> 此日為封場日，無法設定排班</div>
-          <div class="form-row" style="margin-bottom:1rem"><div class="fg"><label>下場日期</label><input type="date" id="roster-date" onchange="onRosterDateChange(this.value)" style="width:170px"></div></div>
-          <div style="font-size:13px;color:#888;margin-bottom:8px">選擇當天值班教練</div>
-          <div class="coach-cb-grid" id="roster-coach-grid"></div>
-          <div class="ilfx"><button class="btn btn-primary" id="roster-save-btn" onclick="saveRoster()">儲存排班</button><span id="roster-saved" style="font-size:13px;color:#065F46;display:none">✓ 已儲存</span></div>
-        </div>
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title" style="color:#DC2626"><i class="ti ti-ban"></i> 封場設定</div>
-          <p style="font-size:13px;color:#888;margin-bottom:1rem">封場日禁止排班與報名，由行政設定</p>
-          <div class="fg" style="margin-bottom:8px"><label>封場日期</label><input type="date" id="closed-date" style="width:170px"></div>
-          <div class="fg" style="margin-bottom:12px"><label>封場原因（選填）</label><input type="text" id="closed-reason" placeholder="例：球場維護、颱風停課"></div>
-          <button class="btn btn-danger btn-sm" onclick="addClosedDate()">新增封場日</button>
-          <hr class="divider">
-          <div style="font-size:12px;color:#888;font-weight:600;margin-bottom:8px">已設定封場日期</div>
-          <div id="closed-list"></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">排班總覽</div>
-        <div class="ovx"><table><thead><tr><th>日期</th><th>狀態</th><th>值班教練</th><th>操作</th></tr></thead><tbody id="roster-tbody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- 財務報表 -->
-    <div id="page-finance" class="page">
-      <div class="card">
-        <div class="card-title"><i class="ti ti-download"></i> 下載 Excel 報表</div>
-        <div class="mode-toggle">
-          <button class="mode-btn active" id="mode-month-btn" onclick="switchExportMode('month')">月份</button>
-          <button class="mode-btn" id="mode-range-btn" onclick="switchExportMode('range')">自訂區間</button>
-        </div>
-        <div id="export-month-ui" class="export-card">
-          <div class="form-row" style="margin-bottom:0;align-items:flex-end">
-            <div class="fg"><label>選擇月份</label><input type="month" id="export-month" style="width:160px"></div>
-            <button class="btn btn-success" onclick="downloadExcel('month')" style="align-self:flex-end"><i class="ti ti-file-spreadsheet"></i> 下載 Excel</button>
+      <!-- 課程專屬 -->
+      <div id="section-course">
+        <div class="form-grid" style="margin-top:14px;">
+          <div class="form-group full">
+            <label>課程名稱 * <span style="color:var(--red);font-size:11px;font-weight:400;">下場班、單堂請特別寫上課日期</span></label>
+            <input type="text" id="c-course" placeholder="例：初階個人E十堂">
           </div>
         </div>
-        <div id="export-range-ui" class="export-card" style="display:none">
-          <div class="form-row" style="margin-bottom:0;align-items:flex-end">
-            <div class="fg"><label>開始日期</label><input type="date" id="export-start"></div>
-            <div class="fg"><label>結束日期</label><input type="date" id="export-end"></div>
-            <button class="btn btn-success" onclick="downloadExcel('range')" style="align-self:flex-end"><i class="ti ti-file-spreadsheet"></i> 下載 Excel</button>
+        <!-- 發票區（課程） -->
+        <div style="background:var(--amber-bg);border:1px solid #e8d090;border-radius:8px;padding:16px 18px;margin-top:14px;">
+          <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:12px;">🧾 需要開發票才填寫</div>
+          <div class="form-grid">
+            <div class="form-group"><label>發票抬頭（選填）</label><input type="text" id="c-invoice-title" placeholder="例：元木運動行銷有限公司" style="background:white;"></div>
+            <div class="form-group"><label>統一編號（選填）</label><input type="text" id="c-invoice-tax" placeholder="例：12345678" maxlength="8" style="font-family:'DM Mono',monospace;letter-spacing:2px;background:white;"></div>
           </div>
-          <p style="font-size:12px;color:#888;margin-top:8px">例：上個月21日到本月20日結帳區間</p>
+        </div>
+        <div class="form-grid" style="margin-top:14px;">
+          <div class="form-group full"><label>備註（選填）</label><input type="text" id="c-note" placeholder="其他補充說明"></div>
         </div>
       </div>
-      <div class="filter-bar">
-        <div class="fg"><label>月份篩選</label><input type="month" id="fin-month" onchange="renderFinance()" style="width:150px;padding:8px 10px;border:1px solid #E0E0E0;border-radius:8px;font-size:13px;font-family:'Noto Sans TC',sans-serif"></div>
-        <div class="fg"><label>教練</label><select id="fin-coach" onchange="renderFinance()" style="width:120px;padding:8px 10px;border:1px solid #E0E0E0;border-radius:8px;font-size:13px;font-family:'Noto Sans TC',sans-serif"><option value="">全部</option></select></div>
+
+      <!-- 商品專屬 -->
+      <div id="section-product" style="display:none;">
+        <div class="alert" style="margin-top:14px;background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border);">
+          <span>🛍️</span><span>請填寫購買商品資訊。</span>
+        </div>
+        <div class="form-grid" style="margin-top:4px;">
+          <div class="form-group full">
+            <label>商品名稱 *</label>
+            <input type="text" id="c-product-name" placeholder="例：高爾夫球袋（黑色）">
+          </div>
+          <div class="form-group">
+            <label>付款方式</label>
+            <select id="p-method" onchange="onProductMethodChange(this.value)">
+              <option value="transfer">匯款轉帳</option>
+              <option value="cash">現金 Cash</option>
+              <option value="linepay">LINE Pay</option>
+            </select>
+          </div>
+          <div class="form-group" id="p-last5-wrap">
+            <label>匯款後五碼</label>
+            <input type="text" id="p-last5" placeholder="例：07079" maxlength="5" style="font-family:'DM Mono',monospace;letter-spacing:2px;">
+          </div>
+          <div class="form-group full">
+            <label>備註 / 規格說明（選填）</label>
+            <input type="text" id="c-product-note" placeholder="例：顏色、尺寸或其他說明">
+          </div>
+        </div>
+        <!-- 發票區（商品） -->
+        <div style="background:var(--amber-bg);border:1px solid #e8d090;border-radius:8px;padding:16px 18px;margin-top:14px;">
+          <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:12px;">🧾 發票</div>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>發票種類</label>
+            <select id="p-invoice-type" onchange="onInvoiceTypeChange('product')">
+              <option value="none">不需要發票</option>
+              <option value="paper">紙本發票</option>
+              <option value="digital">電子發票</option>
+            </select>
+          </div>
+          <div id="invoice-title-wrap-product" style="display:none;">
+            <div class="form-grid" style="margin-bottom:10px;">
+              <div class="form-group"><label>發票抬頭（選填）</label><input type="text" id="p-invoice-title" placeholder="例：元木運動行銷有限公司" style="background:white;"></div>
+              <div class="form-group"><label>統一編號（選填）</label><input type="text" id="p-invoice-tax" placeholder="例：12345678" maxlength="8" style="font-family:'DM Mono',monospace;letter-spacing:2px;background:white;"></div>
+            </div>
+          </div>
+          <div id="invoice-digital-wrap-product" style="display:none;">
+            <div class="form-grid">
+              <div class="form-group"><label>載具條碼 *</label><input type="text" id="p-invoice-carrier" placeholder="例：/ABC1234" style="font-family:'DM Mono',monospace;background:white;"></div>
+              <div class="form-group"><label>Email *</label><input type="email" id="p-invoice-email" placeholder="例：abc@gmail.com" style="background:white;"></div>
+            </div>
+          </div>
+        </div>
+        <!-- 紅字提醒 -->
+        <div style="margin-top:14px;padding:12px 16px;background:#fff0f0;border:1px solid #f0b0b0;border-radius:8px;display:flex;align-items:flex-start;gap:8px;">
+          <span style="font-size:16px;flex-shrink:0;">📦</span>
+          <span style="color:var(--red);font-size:13px;font-weight:500;line-height:1.6;">商品、發票需寄送，請私訊收件資訊給 Pi</span>
+        </div>
       </div>
-      <div class="metric-grid" id="fin-metrics"></div>
-      <div class="card">
-        <div class="card-title">下場班 — 教練費明細<span class="lock-badge"><i class="ti ti-lock"></i> 僅計算開班（≥2人）</span></div>
-        <div class="ovx"><table><thead><tr><th>教練</th><th>開班堂數</th><th>學員總人次</th><th>課堂數</th><th>教練上課時數</th><th>教練費小計</th></tr></thead><tbody id="fin-coach-tbody"></tbody></table></div>
-      </div>
-      <div class="card">
-        <div class="card-title">下場班 — 每日明細</div>
-        <div class="ovx"><table><thead><tr><th>日期</th><th>學員</th><th>教練</th><th>系統已購課訂單</th><th>人數</th><th>課堂數</th><th>教練上課時數</th><th>開班狀態</th></tr></thead><tbody id="fin-daily-tbody"></tbody></table></div>
-      </div>
-      <div class="card">
-        <div class="card-title">短桿果嶺 — 收費明細 <span style="font-size:12px;font-weight:400;color:#9CA3AF;margin-left:4px">（代收代付）</span></div>
-        <div class="ovx"><table><thead><tr><th>日期</th><th>時段</th><th>教練</th><th>學員</th><th>人數</th><th>收款</th></tr></thead><tbody id="fin-short-tbody"></tbody></table></div>
+
+      <div style="margin-top:18px;display:flex;gap:10px;">
+        <button class="btn btn-primary" id="submit-btn" onclick="submitCoach()">✓ 送出回報</button>
+        <button class="btn btn-secondary" onclick="clearCoachForm()">清除</button>
       </div>
     </div>
 
-    <!-- 系統設定 -->
-    <div id="page-settings" class="page">
-      <div class="card"><div class="card-title">教練名單</div><div id="coach-list-ui"></div><hr class="divider"><div class="ilfx"><input type="text" id="new-coach" placeholder="新增教練姓名" style="width:180px;padding:8px 10px;border:1px solid #E0E0E0;border-radius:8px;font-size:13px;font-family:'Noto Sans TC',sans-serif"><button class="btn btn-primary btn-sm" onclick="addCoach()">新增</button></div></div>
-      <div class="card"><div class="card-title">系統已購課訂單設定（下場班）</div><p style="font-size:12px;color:#888;margin-bottom:1rem"><i class="ti ti-lock"></i> 修改後僅影響新報名，舊記錄金額不變</p><div id="fee-types-ui"></div><hr class="divider"><div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap"><div class="fg" style="flex:2;min-width:160px"><label>訂單名稱</label><input type="text" id="new-fee-name" placeholder="例：個人套組第三堂"></div><div class="fg" style="flex:1;min-width:100px"><label>金額 (NT$)</label><input type="number" id="new-fee-amt" placeholder="例：3000" min="0"></div><button class="btn btn-primary btn-sm" onclick="addFeeType()" style="align-self:flex-end;height:36px">新增</button></div></div>
-      <div class="card"><div class="card-title">費率設定</div><p style="font-size:12px;color:#888;margin-bottom:1rem"><i class="ti ti-lock"></i> 修改後僅影響新報名，舊記錄金額不變</p><div class="si"><span style="font-size:13px">國華球場費用（每人）</span><div class="ilfx"><span style="font-size:12px;color:#888">NT$/人</span><input type="number" id="kh-rate" style="width:90px;text-align:right;padding:6px 8px;border:1px solid #E0E0E0;border-radius:6px;font-family:'Noto Sans TC',sans-serif" onchange="saveKhRate(this.value)"></div></div><div class="si"><span style="font-size:13px">短桿果嶺費用（每人固定）</span><div class="ilfx"><span style="font-size:12px;color:#888">NT$/人</span><input type="number" id="short-rate" style="width:90px;text-align:right;padding:6px 8px;border:1px solid #E0E0E0;border-radius:6px;font-family:'Noto Sans TC',sans-serif" onchange="saveShortRate(this.value)"></div></div><div class="si"><span style="font-size:13px">短桿果嶺費用（每小時）</span><div class="ilfx"><span style="font-size:12px;color:#888">NT$/小時/人</span><input type="number" id="short-hourly-rate" style="width:90px;text-align:right;padding:6px 8px;border:1px solid #E0E0E0;border-radius:6px;font-family:'Noto Sans TC',sans-serif" onchange="saveShortHourlyRate(this.value)"></div></div></div>
-      <div class="card"><div class="card-title">教練抽成費率（下場班）</div><p style="font-size:13px;color:#888;margin-bottom:4px">每帶一位學員的教練費，最低保障＝2倍</p><p style="font-size:12px;color:#888;margin-bottom:1rem"><i class="ti ti-lock"></i> 修改後僅影響新報名，舊記錄金額不變</p><div id="coach-fee-ui"></div></div>
+    <div class="card">
+      <div class="section-header">
+        <div class="card-title" style="margin-bottom:0"><span class="dot"></span>我的回報紀錄 <span id="coach-period-label" style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px;"></span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="inner-tab active" id="coach-filter-period" onclick="setCoachFilter('period',this)">本期</button>
+          <button class="inner-tab" id="coach-filter-all" onclick="setCoachFilter('all',this)">全部</button>
+          <button class="inner-tab" id="coach-filter-course" onclick="setCoachFilter('course',this)">🏌️ 課程</button>
+          <button class="inner-tab" id="coach-filter-product" onclick="setCoachFilter('product',this)">🛍️ 商品</button>
+        </div>
+      </div>
+      <div id="submission-list"><div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div></div>
+    </div>
+  </div>
+
+  <!-- 管理員：教練回報總覽 -->
+  <div class="page" id="page-reports">
+    <div class="card">
+      <div class="section-header">
+        <div class="card-title" style="margin-bottom:0"><span class="dot"></span>所有教練回報 <span id="period-label" style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px;"></span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="inner-tab active" id="reports-filter-period" onclick="setReportsFilter('period',this)">本期</button>
+          <button class="inner-tab" id="reports-filter-all" onclick="setReportsFilter('all',this)">全部</button>
+          <button class="inner-tab" id="reports-filter-course-tab" onclick="setReportsFilter('course',this)">🏌️ 課程</button>
+          <button class="inner-tab" id="reports-filter-product-tab" onclick="setReportsFilter('product',this)">🛍️ 商品</button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="loadAllReports()">↺ 重新載入</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportReports()">⬇ 匯出 Excel</button>
+        </div>
+      </div>
+      <div id="reports-list"><div class="empty-state"><div class="empty-icon">📊</div><p>按「重新載入」取得最新資料</p></div></div>
+    </div>
+  </div>
+
+  <!-- 管理員：對帳後台 -->
+  <div class="page" id="page-admin">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>上傳訂單明細 Excel</div>
+      <div class="alert alert-info"><span>ℹ️</span><span>請上傳從系統匯出的訂單 Excel（欄位：消費者、課程、費用、備註、訂單日期）</span></div>
+      <div class="upload-zone" id="zone-order" onclick="document.getElementById('file-order').click()"
+           ondragover="handleDrag(event,'zone-order')" ondragleave="handleDragLeave(event,'zone-order')"
+           ondrop="handleDrop(event,'zone-order','order')">
+        <input type="file" id="file-order" accept=".xlsx,.xls,.csv" onchange="handleFileChange(event,'order')">
+        <div class="upload-icon">📂</div><div class="upload-text">點擊或拖曳 <strong>訂單明細 Excel</strong> 至此</div><div class="upload-hint">.xlsx / .xls / .csv</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>上傳銀行對帳單</div>
+      <div class="alert alert-info"><span>ℹ️</span><span>請從網銀下載存款明細，支援 PDF 或 Excel 格式（華南銀行格式）</span></div>
+      <div class="upload-zone" id="zone-bank" onclick="document.getElementById('file-bank').click()"
+           ondragover="handleDrag(event,'zone-bank')" ondragleave="handleDragLeave(event,'zone-bank')"
+           ondrop="handleDrop(event,'zone-bank','bank')">
+        <input type="file" id="file-bank" accept=".xlsx,.xls,.csv,.pdf" onchange="handleFileChange(event,'bank')">
+        <div class="upload-icon">🏦</div><div class="upload-text">點擊或拖曳 <strong>銀行對帳單</strong> 至此</div><div class="upload-hint">.pdf / .xlsx / .xls / .csv</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="runReconciliation()" style="font-size:15px;padding:13px 28px;">⚡ 開始自動對帳</button>
+      <button class="btn btn-secondary" onclick="switchTab('result')">查看結果 →</button>
+    </div>
+  </div>
+
+  <!-- 對帳結果 -->
+  <div class="page" id="page-result">
+    <div id="result-empty" class="card"><div class="empty-state"><div class="empty-icon">⚡</div><p>請先在管理員後台上傳資料並執行對帳</p></div></div>
+    <div id="result-content" style="display:none;">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">✅ 已確認收款</div><div class="stat-value green" id="stat-confirmed">0</div></div>
+        <div class="stat-card"><div class="stat-label">❌ 未收款</div><div class="stat-value red" id="stat-missing">0</div></div>
+        <div class="stat-card"><div class="stat-label">⚠️ 待確認</div><div class="stat-value amber" id="stat-pending">0</div></div>
+      </div>
+      <div class="card">
+        <div class="section-header">
+          <div class="inner-tabs">
+            <button class="inner-tab active" onclick="showResultTab('all',this)">全部</button>
+            <button class="inner-tab" onclick="showResultTab('confirmed',this)">✅ 已收款</button>
+            <button class="inner-tab" onclick="showResultTab('missing',this)">❌ 未收款</button>
+            <button class="inner-tab" onclick="showResultTab('pending',this)">⚠️ 待確認</button>
+            <button class="inner-tab" onclick="showResultTab('cash',this)">💵 現金</button>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="exportResult()">⬇ 匯出 Excel</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>狀態</th><th>學員</th><th>課程（教練）</th><th>金額</th><th>後五碼</th><th>銀行核對</th><th>匯款日期</th><th>發票</th></tr></thead>
+            <tbody id="result-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 系統設定 -->
+  <div class="page" id="page-settings">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Google Sheets 連結設定</div>
+      <div class="alert alert-warn"><span>⚠️</span><span>只需要一個 Apps Script 網址（主表 GAS）。現金和商品備份都由主表 GAS 統一處理，自動寫入各自的備份表。現金備份表和商品備份表的連結可單獨分享給相關人員查看。</span></div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="form-group">
+          <label>① 主表網址（所有回報）</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="sheets-url" placeholder="https://script.google.com/macros/s/…/exec（主表 GAS）" style="font-family:'DM Mono',monospace;font-size:12px;flex:1;">
+            <button class="btn btn-secondary btn-sm" onclick="testSheetUrl('sheets-url')">測試</button>
+          </div>
+        </div>
+        <div class="form-group" style="background:var(--green-bg);border:1px solid #a8c8b0;border-radius:8px;padding:12px 14px;">
+          <span style="font-size:12px;color:var(--green);">✅ 現金備份和商品備份由主表 GAS 統一處理，不需要額外填寫網址。備份表 Sheets ID 已寫在 GAS 程式碼裡。</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveSheetUrl()" style="margin-top:16px;">儲存所有連結</button>
     </div>
 
-  </div><!-- /main -->
-</div><!-- /app -->
-
-<!-- Reschedule Modal -->
-<div class="modal-overlay" id="reschedule-modal">
-  <div class="modal-box">
-    <div class="modal-title"><i class="ti ti-calendar-event"></i> 改期</div>
-    <div class="modal-info" id="modal-reg-info"></div>
-    <div id="modal-alert" class="alert"></div>
-    <div class="form-row" style="margin-bottom:10px">
-      <div class="fg"><label>新日期（需有排班）</label><select id="modal-new-date" onchange="onModalDateChange()"><option value="">— 選擇日期 —</option></select></div>
-      <div class="fg"><label>新指定教練</label><select id="modal-new-coach"><option value="">— 請先選日期 —</option></select></div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>教練名單管理</div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <input type="text" id="new-coach-input" placeholder="輸入教練姓名，例：Allen 張瀚元" style="flex:1;min-width:200px;" onkeydown="if(event.key==='Enter')addCoach()">
+        <button class="btn btn-primary" onclick="addCoach()">＋ 新增教練</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th style="width:50px">#</th><th>教練姓名</th><th style="width:80px">操作</th></tr></thead>
+          <tbody id="coach-list-tbody"></tbody>
+        </table>
+      </div>
     </div>
-    <div class="fg" style="margin-bottom:1rem"><label>改期原因</label><input type="text" id="modal-reason" placeholder="例：下雨取消、學員臨時有事..."></div>
-    <div style="display:flex;gap:8px"><button class="btn btn-primary" onclick="confirmReschedule()">確認改期</button><button class="btn" onclick="closeModal()">取消</button></div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>管理員密碼</div>
+      <div class="form-grid">
+        <div class="form-group"><label>新密碼</label><input type="password" id="new-pw" placeholder="輸入新密碼"></div>
+        <div class="form-group"><label>確認密碼</label><input type="password" id="confirm-pw" placeholder="再次輸入"></div>
+      </div>
+      <button class="btn btn-primary" onclick="changePassword()" style="margin-top:14px;">更新密碼</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>📋 Google Apps Script 設定參考</div>
+      <div class="alert alert-info" style="margin-bottom:16px;"><span>ℹ️</span><span>只需要在主表的 Apps Script 貼上以下程式碼，現金和商品備份會自動寫入對應的備份表，不需要另外設定。</span></div>
+
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;">① 主表 GAS（所有回報都寫進「教練回報」分頁）</div>
+      <pre style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.7;font-family:'DM Mono',monospace;margin-bottom:20px;">function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  const ss   = SpreadsheetApp.getActiveSpreadsheet();
+
+  // ── 教練名單同步 ──
+  if (data.type === 'coaches') {
+    const s = ss.getSheetByName('教練名單') || ss.insertSheet('教練名單');
+    s.clearContents();
+    s.appendRow(['教練姓名']);
+    (data.coaches || []).forEach(n => s.appendRow([n]));
+    return ok();
+  }
+
+  // ── 所有回報 → 「教練回報」分頁（完整主記錄）──
+  const s = getSheet(ss, '教練回報',
+    ['送出時間','教練','學員/購買者','後五碼','金額','日期',
+     '付款方式','類型','課程/商品名稱','發票抬頭','統一編號','備註']);
+  const methodLabel = m => m==='cash'?'現金':m==='linepay'?'LINE Pay':'匯款轉帳';
+  s.appendRow([
+    data.ts, data.coach, data.student, data.last5||'', data.amount, data.date,
+    methodLabel(data.method),
+    data.sheetType==='product' ? '商品' : '課程',
+    data.sheetType==='product' ? data.productName||'' : data.course||'',
+    data.invoiceTitle||'', data.invoiceTax||'',
+    data.sheetType==='product' ? data.productNote||'' : data.note||''
+  ]);
+
+  return ok();
+}
+
+function doGet(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (e.parameter.type === 'coaches') {
+    const s = ss.getSheetByName('教練名單');
+    const coaches = s && s.getLastRow()>1
+      ? s.getRange(2,1,s.getLastRow()-1,1).getValues().flat().filter(Boolean) : [];
+    return json({ status:'ok', coaches });
+  }
+  const s = ss.getSheetByName('教練回報');
+  if (!s || s.getLastRow()<2) return json({ status:'ok', data:[] });
+  const [h,...rows] = s.getDataRange().getValues();
+  return json({ status:'ok', data: rows.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]??'']))) });
+}
+
+function getSheet(ss, name, headers) {
+  const s = ss.getSheetByName(name) || ss.insertSheet(name);
+  if (s.getLastRow() === 0) s.appendRow(headers);
+  return s;
+}
+function ok()   { return json({ status:'ok' }); }
+function json(o){ return ContentService.createTextOutput(JSON.stringify(o))
+                                       .setMimeType(ContentService.MimeType.JSON); }</pre>
+
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;">② 現金備份表 GAS（獨立 Sheets，所有現金付款都記錄，含課程和商品）</div>
+      <pre style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.7;font-family:'DM Mono',monospace;margin-bottom:20px;">function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  // 只接受現金付款
+  if (data.method !== 'cash') return ok();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const s  = ss.getSheetByName('現金回報') || ss.insertSheet('現金回報');
+  if (s.getLastRow() === 0)
+    s.appendRow(['送出時間','教練','學員/購買者','金額','付款日期',
+                 '類型','課程/商品名稱','發票抬頭','統一編號','備註']);
+  s.appendRow([
+    data.ts, data.coach, data.student,
+    data.amount, data.date,
+    data.sheetType==='product' ? '商品' : '課程',
+    data.sheetType==='product' ? data.productName||'' : data.course||'',
+    data.invoiceTitle||'', data.invoiceTax||'',
+    data.sheetType==='product' ? data.productNote||'' : data.note||''
+  ]);
+  return ok();
+}
+function doGet(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const s  = ss.getSheetByName('現金回報');
+  if (!s || s.getLastRow()<2) return json({ status:'ok', data:[] });
+  const [h,...rows] = s.getDataRange().getValues();
+  return json({ status:'ok', data: rows.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]??'']))) });
+}
+function ok()   { return json({ status:'ok' }); }
+function json(o){ return ContentService.createTextOutput(JSON.stringify(o))
+                                       .setMimeType(ContentService.MimeType.JSON); }</pre>
+
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;">③ 商品備份表 GAS（獨立 Sheets，只記錄商品）</div>
+      <pre style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.7;font-family:'DM Mono',monospace;">function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  // 只接受商品
+  if (data.sheetType !== 'product') return ok();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const s  = ss.getSheetByName('商品回報') || ss.insertSheet('商品回報');
+  if (s.getLastRow() === 0)
+    s.appendRow(['送出時間','教練','購買者','後五碼','金額','付款日期','付款方式',
+                 '商品名稱','發票種類','發票抬頭','統一編號','載具條碼','Email','備註']);
+  const invLabel = t => t==='digital'?'電子發票':t==='paper'?'紙本發票':'不需要';
+  const methodLabel = m => m==='cash'?'現金':m==='linepay'?'LINE Pay':'匯款轉帳';
+  s.appendRow([data.ts, data.coach, data.student, data.last5||'',
+               data.amount, data.date, methodLabel(data.method),
+               data.productName||'', invLabel(data.invoiceType),
+               data.invoiceTitle||'', data.invoiceTax||'',
+               data.invoiceCarrier||'', data.invoiceEmail||'', data.productNote||'']);
+  return ok();
+}
+function doGet(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const s  = ss.getSheetByName('商品回報');
+  if (!s || s.getLastRow()<2) return json({ status:'ok', data:[] });
+  const [h,...rows] = s.getDataRange().getValues();
+  return json({ status:'ok', data: rows.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]??'']))) });
+}
+function ok()   { return json({ status:'ok' }); }
+function json(o){ return ContentService.createTextOutput(JSON.stringify(o))
+                                       .setMimeType(ContentService.MimeType.JSON); }</pre>
+    </div>
   </div>
 </div>
 
-<!-- URL Setting Modal -->
-<div class="modal-overlay" id="url-modal">
-  <div class="modal-box" style="max-width:500px">
-    <div class="modal-title">⚙ 設定 Google Sheets 連線</div>
-    <p style="font-size:13px;color:#666;margin-bottom:1rem">請將 Google Apps Script 部署後的 Web App URL 貼入下方。</p>
-    <div style="background:#F0FDF4;border:1px solid #A7F3D0;border-radius:8px;padding:12px;font-size:12px;color:#065F46;margin-bottom:1rem">
-      <strong>步驟：</strong><br>
-      1. 開啟 Google Apps Script → 貼入程式碼<br>
-      2. 點「部署 > 新增部署」，類型選「網頁應用程式」<br>
-      3. 存取權選「所有人」→ 複製 Web App URL<br>
-      4. 貼到下方欄位
-    </div>
-    <div class="fg" style="margin-bottom:1rem">
-      <label>Web App URL</label>
-      <input type="text" id="gas-url-input" placeholder="https://script.google.com/macros/s/..." style="font-size:12px">
-    </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-primary" onclick="saveGasUrl()">連線並載入資料</button>
-      <button class="btn" onclick="document.getElementById('url-modal').classList.remove('show')">取消</button>
-    </div>
-  </div>
-</div>
+<div id="toast"></div>
 
 <script>
-// ===== GOOGLE SHEETS API CONFIG =====
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwz47KEU8iWvcIHA-aiNltQBFEk1uXGV_RJXtMRC9ku4FFGBzMZQekl7mwN8Bj-UTtISA/exec';
-let isOnline = false;
-let syncStatus = 'init';
+const DEFAULT_ADMIN_PW = 'hope2026';
+let currentUser = null;
+let coaches = JSON.parse(localStorage.getItem('hope_coaches') || JSON.stringify([
+  'Adam 林元騁','Carol 葉欣萍','Kenny 蔡岷宏','Joanne 蔡喬安',
+  'Kevin 江侑學','Vis 方建雄','Allen 張瀚元','Sean 黃郁翔',
+  'Ava 林冠妤','Howard 鄧庭皓','Ella 吳雨樵','Elly 吳以勤','●行政：Elaine'
+]));
+let adminPw = localStorage.getItem('hope_admin_pw') || DEFAULT_ADMIN_PW;
+let sheetsUrl   = localStorage.getItem('hope_sheets_url')    || 'https://script.google.com/macros/s/AKfycbyWoxzmtfNyZcFchTZDlKgH0JWBNH5bkjkGo_3D4E7EPH4ph1QsgBiAxJeE64wOfOlkug/exec';
+let cashUrl     = localStorage.getItem('hope_cash_url')     || '';
+let productUrl  = localStorage.getItem('hope_product_url')  || '';
+let submissions = JSON.parse(localStorage.getItem('hope_submissions') || '[]');
+let allReports = [];
+let orderData = [], bankData = [], resultRows = [];
+let currentReportType = 'course';
+let coachFilterMode = 'period', reportsFilterMode = 'period';
 
-// ---- JSONP 單次呼叫(timeout 12秒)----
-function gasCall(params) {
-  // 先嘗試 JSONP，失敗再用 fetch（雙保險，解決 Safari ITP 擋第三方 script 的問題）
-  return gasCallJSONP(params).then(result => {
-    if (result !== null) return result;
-    return gasCallFetch(params);
-  });
-}
+// === 類型切換 ===
+function onReportTypeChange(type) {
+  currentReportType = type;
+  document.getElementById('section-course').style.display  = type === 'course'  ? 'block' : 'none';
+  document.getElementById('section-product').style.display = type === 'product' ? 'block' : 'none';
 
-// 方法1：JSONP（相容性高，但 Safari ITP 可能擋）
-function gasCallJSONP(params) {
-  return new Promise((resolve) => {
-    if (!GAS_URL) { resolve(null); return; }
-    try {
-      const cbName = 'gcb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
-      const allParams = Object.assign({}, params, { callback: cbName, _t: Date.now() + '_' + Math.floor(Math.random()*100000) });
-      const url = GAS_URL + '?' + new URLSearchParams(allParams).toString();
-      const script = document.createElement('script');
-      const timer = setTimeout(() => { cleanup(); resolve(null); }, 15000);
-      function cleanup() {
-        clearTimeout(timer);
-        delete window[cbName];
-        if (script.parentNode) script.parentNode.removeChild(script);
-      }
-      window[cbName] = function(json) {
-        cleanup();
-        resolve((json && json.ok) ? json.data : null);
-      };
-      script.onerror = function() { cleanup(); resolve(null); };
-      script.src = url;
-      document.head.appendChild(script);
-    } catch(e) { resolve(null); }
-  });
-}
-
-// 方法2：fetch（GAS 支援 CORS，Safari 較可靠）
-function gasCallFetch(params) {
-  return new Promise((resolve) => {
-    if (!GAS_URL) { resolve(null); return; }
-    try {
-      const p = Object.assign({}, params, { _t: Date.now() + '_' + Math.floor(Math.random()*100000) });
-      const url = GAS_URL + '?' + new URLSearchParams(p).toString();
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 20000);
-      fetch(url, { method: 'GET', signal: controller.signal, redirect: 'follow' })
-        .then(r => r.text())
-        .then(text => {
-          clearTimeout(timer);
-          // 回應可能是 JSONP 包裝 cb(...) 或純 JSON，兩種都處理
-          let jsonStr = text.trim();
-          const m = jsonStr.match(/^[a-zA-Z0-9_]+\((.*)\)[;\s]*$/s);
-          if (m) jsonStr = m[1];
-          try {
-            const json = JSON.parse(jsonStr);
-            resolve((json && json.ok) ? json.data : null);
-          } catch(e) { resolve(null); }
-        })
-        .catch(() => { clearTimeout(timer); resolve(null); });
-    } catch(e) { resolve(null); }
-  });
-}
-
-// ---- Save Queue:序列化所有儲存請求,避免並發互蓋 ----
-let _saveQueue = Promise.resolve();
-let _pendingSave = {}; // 去重:同一 type 只保留最新一筆
-// 記錄本機剛新增/修改、Sheets 尚未確認的 id，避免同步時被舊資料洗掉
-let _pendingIds = { regs: new Set(), shortRegs: new Set(), students: new Set() };
-// 標記某筆資料為「儲存中」
-function markPending(type){
-  if(!_pendingIds[type]) return;
-  if(type==='regs')      registrations.forEach(r=>_pendingIds.regs.add(r.id));
-  if(type==='shortRegs') shortRegs.forEach(r=>_pendingIds.shortRegs.add(r.id));
-  if(type==='students')  students.forEach(r=>_pendingIds.students.add(r.id));
-}
-
-function saveToSheets(type) {
-  // 記錄最新要存的 type(去重複排程)
-  _pendingSave[type] = true;
-  markPending(type); // 標記這批資料為儲存中，同步時不被洗掉
-  _saveQueue = _saveQueue.then(() => _flushSave(type));
-}
-
-async function _flushSave(type) {
-  if (!GAS_URL || !isOnline) return;
-  if (!_pendingSave[type]) return; // 已被更新的請求取代,跳過
-  delete _pendingSave[type];
-  setSyncStatus('saving');
-  let payload;
-  if (type === 'regs')      payload = { action: 'saveRegs',      data: JSON.stringify(registrations) };
-  if (type === 'shortRegs') payload = { action: 'saveShortRegs', data: JSON.stringify(shortRegs) };
-  if (type === 'students')  payload = { action: 'saveStudents',  data: JSON.stringify(students) };
-  if (type === 'rosters')   payload = { action: 'saveRosters',   data: JSON.stringify(rosters) };
-  if (type === 'closed')    payload = { action: 'saveClosed',    data: JSON.stringify(closedDates) };
-  if (type === 'settings')  payload = { action: 'saveSettings',  data: JSON.stringify({
-    coaches: JSON.stringify(coaches), feeTypes: JSON.stringify(feeTypes),
-    coachFees: JSON.stringify(coachFees), khRate, shortRate, shortHourlyRate
-  })};
-  if (!payload) return;
-  // 最多重試 2 次
-  let result = null;
-  for (let i = 0; i < 2; i++) {
-    result = await gasCall(payload);
-    if (result) break;
-    await new Promise(r => setTimeout(r, 1500)); // 等 1.5 秒再重試
-  }
-  // 儲存成功 → Sheets 已寫入，清除該類型的 pending 標記
-  if (result && _pendingIds[type]) {
-    _pendingIds[type].clear();
-  }
-  setSyncStatus(result ? 'ok' : 'error');
-}
-
-function normalizeDate(val) {
-  if (!val) return '';
-  // Google Sheets 序列數字（數字型態，如 46000）→ 轉回日期
-  if (typeof val === 'number') {
-    // Excel/Sheets epoch: 1899-12-30
-    var d = new Date(Math.round((val - 25569) * 86400 * 1000));
-    if (!isNaN(d.getTime())) {
-      var y=d.getUTCFullYear(),m=String(d.getUTCMonth()+1).padStart(2,'0'),day=String(d.getUTCDate()).padStart(2,'0');
-      return y+'-'+m+'-'+day;
-    }
-  }
-  if (val instanceof Date) {
-    if (isNaN(val.getTime())) return '';
-    var y=val.getFullYear(),m=String(val.getMonth()+1).padStart(2,'0'),day=String(val.getDate()).padStart(2,'0');
-    return y+'-'+m+'-'+day;
-  }
-  if (typeof val === 'string') {
-    // 純數字字串也可能是序列數
-    if (/^\d{5}$/.test(val.trim())) {
-      var n = parseInt(val);
-      var d2 = new Date(Math.round((n - 25569) * 86400 * 1000));
-      if (!isNaN(d2.getTime()) && d2.getUTCFullYear() > 1990) {
-        var y2=d2.getUTCFullYear(),m2=String(d2.getUTCMonth()+1).padStart(2,'0'),day2=String(d2.getUTCDate()).padStart(2,'0');
-        return y2+'-'+m2+'-'+day2;
-      }
-    }
-    // 已是 YYYY-MM-DD 開頭就直接取前10碼（最常見，優先處理）
-    if (/^\d{4}-\d{2}-\d{2}/.test(val)) return val.slice(0, 10);
-    // 斜線格式 YYYY/MM/DD
-    if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(val)) {
-      var p=val.split('/');
-      return p[0]+'-'+String(p[1]).padStart(2,'0')+'-'+String(p[2]).padStart(2,'0');
-    }
-    // GAS Date 字串格式
-    var monthMap={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
-    // 含年份："Wed Jun 10 2026 ..."
-    var m4=val.match(/\b([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{4})\b/);
-    if (m4 && monthMap[m4[1]]) {
-      return m4[3]+'-'+monthMap[m4[1]]+'-'+String(m4[2]).padStart(2,'0');
-    }
-    // 無年份（被截斷）："Fri May 22" → 用第二參數 fallbackYear 補年份
-    var m5=val.match(/\b([A-Z][a-z]{2})\s+(\d{1,2})\b/);
-    if (m5 && monthMap[m5[1]]) {
-      var yr = (arguments.length>1 && arguments[1]) ? arguments[1] : new Date().getFullYear();
-      return yr+'-'+monthMap[m5[1]]+'-'+String(m5[2]).padStart(2,'0');
-    }
-    // 其他格式交給 Date 解析（用 UTC 避免偏移）
-    var d3 = new Date(val);
-    if (!isNaN(d3.getTime())) {
-      var y3=d3.getUTCFullYear(),mm3=String(d3.getUTCMonth()+1).padStart(2,'0'),day3=String(d3.getUTCDate()).padStart(2,'0');
-      return y3+'-'+mm3+'-'+day3;
-    }
-    return val.slice(0, 10);
-  }
-  return String(val).slice(0, 10);
-}
-
-async function loadFromSheets() {
-  setSyncStatus('loading');
-  const data = await gasCall({ action: 'loadAll' });
-  if (!data) { setSyncStatus('error'); return false; }
-
-  // 日期驗證：年份必須 >= 2020
-  function validDate(d) {
-    return typeof d === 'string' && d.length === 10 && parseInt(d.slice(0,4)) >= 2020;
-  }
-
-  // 同步策略：Sheets 是所有裝置的共同資料庫，以 Sheets 為唯一真相來源。
-  // 但「剛在本機 save、Sheets 還沒寫完」的資料要短暫保留，避免被舊版蓋掉。
-  // 用 _pendingIds 記錄本機正在儲存中、Sheets 還沒確認的 id。
-  function mergeRemoteFirst(localArr, remoteArr, pendingSet) {
-    if (!Array.isArray(remoteArr)) return localArr;
-    // 以 Sheets 資料為主
-    const result = [...remoteArr];
-    const remoteIds = new Set(remoteArr.map(r => r.id));
-    // 本機有、但 Sheets 還沒有，且正在儲存中的，保留（避免剛存的被洗掉）
-    localArr.forEach(r => {
-      if (!remoteIds.has(r.id) && pendingSet.has(r.id)) {
-        result.push(r);
-      }
-    });
-    return result;
-  }
-
-  // 用 createdAt 時間戳推算年份，補在被截斷的日期上
-  function yearFromCreatedAt(ts){
-    var n=Number(ts);
-    if(!n||isNaN(n)) return new Date().getFullYear();
-    var d=new Date(n);
-    return isNaN(d.getTime()) ? new Date().getFullYear() : d.getFullYear();
-  }
-
-  // 下場班報名 — 以 Sheets 為主
-  if (Array.isArray(data.regs)) {
-    const remote = data.regs
-      .map(r => ({ ...r, date: normalizeDate(r.date, yearFromCreatedAt(r.createdAt)) }))
-      .filter(r => validDate(r.date));
-    registrations = mergeRemoteFirst(registrations, remote, _pendingIds.regs);
-  }
-
-  // 短桿果嶺報名 — 以 Sheets 為主
-  if (Array.isArray(data.shortRegs)) {
-    const remote = data.shortRegs
-      .map(r => ({ ...r, date: normalizeDate(r.date, yearFromCreatedAt(r.createdAt)) }))
-      .filter(r => validDate(r.date));
-    shortRegs = mergeRemoteFirst(shortRegs, remote, _pendingIds.shortRegs);
-  }
-
-  // 學員 — 以 Sheets 為主
-  if (Array.isArray(data.students)) {
-    students = mergeRemoteFirst(students, data.students, _pendingIds.students);
-  }
-
-  // 排班：Sheets 為主（行政端設定），normalizeDate 後去重，丟掉年份錯的
-  if (data.rosters && typeof data.rosters === 'object') {
-    const merged = {};
-    // 先放本機
-    Object.entries(rosters).forEach(([k, v]) => {
-      const d = normalizeDate(k);
-      if (validDate(d)) merged[d] = v;
-    });
-    // Sheets 蓋過本機（排班以行政 Sheets 為準）
-    Object.entries(data.rosters).forEach(([k, v]) => {
-      const d = normalizeDate(k);
-      if (validDate(d)) merged[d] = v;
-    });
-    rosters = merged;
-  }
-
-  // 封場：同上，Sheets 為主
-  if (data.closed && typeof data.closed === 'object') {
-    const merged = {};
-    Object.entries(closedDates).forEach(([k, v]) => {
-      const d = normalizeDate(k);
-      if (validDate(d)) merged[d] = v;
-    });
-    Object.entries(data.closed).forEach(([k, v]) => {
-      const d = normalizeDate(k);
-      if (validDate(d)) merged[d] = v;
-    });
-    closedDates = merged;
-  }
-
-  // 系統設定：永遠以 Sheets 為主
-  if (data.settings) {
-    const s = data.settings;
-    if (s.coaches)   { try { const p=JSON.parse(s.coaches);   if(Array.isArray(p))   coaches   = p; } catch(e) {} }
-    if (s.feeTypes)  { try { const p=JSON.parse(s.feeTypes);  if(Array.isArray(p))   feeTypes  = p; } catch(e) {} }
-    if (s.coachFees) { try { const p=JSON.parse(s.coachFees); if(p&&typeof p==='object') coachFees = p; } catch(e) {} }
-    if (s.khRate)    { const n=Number(s.khRate);    if(!isNaN(n)&&n>0) khRate    = n; }
-    if (s.shortRate) { const n=Number(s.shortRate); if(!isNaN(n)&&n>0) shortRate = n; }
-    if (s.shortHourlyRate) { const n=Number(s.shortHourlyRate); if(!isNaN(n)&&n>0) shortHourlyRate = n; }
-  }
-
-  sv('v3_regs', registrations); sv('v3_shortRegs', shortRegs);
-  sv('v3_students', students);  sv('v3_rosters', rosters);
-  sv('v3_closed', closedDates); sv('v3_coaches', coaches);
-  sv('v3_feeTypes', feeTypes);  sv('v3_coachFees', coachFees);
-  sv('v3_khRate', khRate);      sv('v3_shortRate', shortRate);
-  sv('v3_shortHourlyRate', shortHourlyRate);
-
-  isOnline = true;
-  // 記錄載入統計，方便診斷
-  window._loadStats = {
-    rosters: Object.keys(rosters).length,
-    regs: registrations.length,
-    shortRegs: shortRegs.length,
-    students: students.length,
-    rawRosters: data.rosters ? Object.keys(data.rosters).length : 0,
-    rawRegs: Array.isArray(data.regs) ? data.regs.length : 0
-  };
-  setSyncStatus('ok');
-  return true;
-}
-
-
-
-function setSyncStatus(status) {
-  syncStatus = status;
-  const el = document.getElementById('sync-status');
-  if (!el) return;
-  const map = {
-    init:    { text: '未連線',    color: '#9CA3AF' },
-    loading: { text: '⟳ 載入中...', color: '#F59E0B' },
-    saving:  { text: '⟳ 儲存中...', color: '#F59E0B' },
-    ok:      { text: '✓ 已同步',  color: '#10B981' },
-    error:   { text: '⚠ 連線失敗', color: '#EF4444' },
-    offline: { text: '本機模式',  color: '#9CA3AF' },
-  };
-  const s = map[status] || map.init;
-  el.textContent = s.text; el.style.color = s.color;
-}
-
-function openUrlModal() {
-  document.getElementById('gas-url-input').value = GAS_URL;
-  document.getElementById('url-modal').classList.add('show');
-}
-async function saveGasUrl() {
-  const url = document.getElementById('gas-url-input').value.trim();
-  if (!url) return;
-  localStorage.setItem('gas_url', url);
-  document.getElementById('url-modal').classList.remove('show');
-  const ok = await loadFromSheets();
-  if (ok) { refreshCurrentPage(); alert('✓ 連線成功！資料已從 Google Sheets 載入'); }
-  else alert('⚠ 連線失敗，請確認 URL 是否正確');
-}
-function refreshCurrentPage() {
-  const activePage = document.querySelector('.page.active');
-  if (!activePage) return;
-  const id = activePage.id.replace('page-', '');
-  goPage(id);
-}
-
-// ===== DATA =====
-const DEF_COACHES=['Carol','Adam','Kenny','Joanne','Vis','Kevin','Allen','Sean','Ava','Howard','Ella','Elly','Gary','Foin','William'];
-const DEF_FEES=[{name:'單堂',amount:3000},{name:'個人套組 第一堂',amount:2800},{name:'個人套組 第二堂',amount:2800},{name:'2人套組',amount:2500},{name:'3人套組',amount:2200},{name:'週週下場班（4堂）',amount:10000}];
-const DEF_COACH_FEE=1000,DEF_KH=1100,DEF_SHORT=500,DEF_SHORT_HOURLY=600;
-const DOWS=['日','一','二','三','四','五','六'];
-
-function ld(k,d){
-  try{
-    const v=localStorage.getItem(k);
-    if(v===null||v===undefined)return d;
-    const p=JSON.parse(v);
-    // 型態保護：期望陣列就要是陣列，期望數字就要是數字
-    if(Array.isArray(d)&&!Array.isArray(p))return d;
-    if(typeof d==='number'&&isNaN(Number(p)))return d;
-    return p;
-  }catch(e){return d}
-}
-function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-
-let coaches=Array.isArray(ld('v3_coaches',DEF_COACHES))?ld('v3_coaches',DEF_COACHES):DEF_COACHES,feeTypes=ld('v3_feeTypes',DEF_FEES),coachFees=ld('v3_coachFees',{});
-let khRate=ld('v3_khRate',DEF_KH),shortRate=ld('v3_shortRate',DEF_SHORT),shortHourlyRate=ld('v3_shortHourlyRate',DEF_SHORT_HOURLY);
-let registrations=ld('v3_regs',[]),students=ld('v3_students',[]);
-let shortRegs=ld('v3_shortRegs',[]);
-let rosters=ld('v3_rosters',{}),closedDates=ld('v3_closed',{});
-let selectedStudentId=null,isNewStudent=false;
-let shortSelectedStudentId=null,shortIsNewStudent=false;
-let currentWeekStart=null;
-let rescheduleTargetId=null,exportMode='month';
-let currentRole=null;
-
-// ===== ROLES =====
-const ROLE_LABELS={coach:'教練',admin:'行政',finance:'財務會計'};
-const ROLE_BADGE_CLASS={coach:'role-coach',admin:'role-admin',finance:'role-finance'};
-const NAV_ITEMS=[
-  ['schedule','課表總覽','ti-calendar',['coach','admin']],
-  ['register','下場班報名','ti-golf',['coach','admin']],
-  ['short','短桿果嶺報名','ti-flag',['coach','admin']],
-  ['students','學員管理','ti-users',['admin']],
-  ['roster','教練排班','ti-clipboard-list',['admin']],
-  ['finance','財務報表','ti-chart-bar',['admin','finance']],
-  ['settings','系統設定','ti-settings',['admin']],
-];
-const TOP_PAGES=['schedule','register','short'];
-const BOTTOM_PAGES=['students','roster','finance','settings'];
-const ROLE_PASSWORDS={admin:'hope2026',finance:'hopehope2026',coach:null};
-
-function selectRole(role,btn){
-  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
-  currentRole=role;
-  document.getElementById('login-btn').disabled=false;
-  document.getElementById('password-error').style.display='none';
-  document.getElementById('login-password').value='';
-  const needsPw=ROLE_PASSWORDS[role]!==null;
-  document.getElementById('password-field').style.display=needsPw?'block':'none';
-}
-
-function doLogin(){
-  const requiredPw=ROLE_PASSWORDS[currentRole];
-  if(requiredPw!==null){
-    const inputPw=document.getElementById('login-password').value;
-    if(inputPw!==requiredPw){
-      document.getElementById('password-error').style.display='block';
-      document.getElementById('login-password').focus();
-      return;
-    }
-  }
-  document.getElementById('password-error').style.display='none';
-  _doLoginContinue();
-}
-function _doLoginContinue(){
-  if(!currentRole)return;
-
-  // 先切換畫面,設定身份,讓使用者立刻看到系統
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='block';
-  const badge=document.getElementById('role-badge');
-  badge.textContent=ROLE_LABELS[currentRole];
-  badge.className='topbar-role '+ROLE_BADGE_CLASS[currentRole];
-  const urlBtn=document.getElementById('sheets-url-btn');
-  if(urlBtn)urlBtn.style.display=currentRole==='admin'?'inline-flex':'none';
-  document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'});
-  buildNav();
-
-  // 先用 localStorage 快取渲染,讓頁面立刻有內容
-  const firstPage=getAllowedPages()[0];
-  if(firstPage)goPage(firstPage);
-
-  // 背景同步 Sheets(不阻擋操作)
-  if(GAS_URL){
-    setSyncStatus('loading');
-    loadFromSheets().then(ok=>{
-      isOnline=!!ok;
-      if(!ok){setSyncStatus('error');return;}
-      // 資料載入完成,重新渲染當前頁面
-      const activePage=document.querySelector('.page.active');
-      if(activePage){
-        const id=activePage.id.replace('page-','');
-        goPage(id);
-      }
-      startAutoSync(); // 啟動自動同步
-    });
-  }else{
-    setSyncStatus('offline');
+  if (type === 'product') {
+    document.getElementById('label-student').textContent   = '購買者姓名 *';
+    document.getElementById('label-date').textContent      = '付款日期 *';
+    document.getElementById('label-amount').textContent    = '金額（元）*';
+    document.getElementById('wrap-last5').style.display    = 'none';
+    document.getElementById('wrap-method').style.display   = 'none';
+    document.getElementById('alert-course-info').style.display = 'none';
+    document.getElementById('c-last5').value = '';
+  } else {
+    document.getElementById('label-student').textContent   = '學員姓名 *';
+    document.getElementById('label-date').textContent      = '匯款日期 *';
+    document.getElementById('label-amount').textContent    = '匯款金額（元）*';
+    document.getElementById('wrap-last5').style.display    = 'flex';
+    document.getElementById('wrap-method').style.display   = 'flex';
+    document.getElementById('alert-course-info').style.display = 'flex';
   }
 }
 
-// ===== 自動同步：每 20 秒背景拉一次 Sheets 最新資料 =====
-let _autoSyncTimer=null;
-function startAutoSync(){
-  if(_autoSyncTimer) clearInterval(_autoSyncTimer);
-  _autoSyncTimer=setInterval(function(){
-    // 分頁在背景時不同步，省流量；切回前景會立刻同步（見 visibilitychange）
-    if(document.hidden) return;
-    if(!GAS_URL||!isOnline) return;
-    loadFromSheets().then(function(ok){
-      if(!ok) return;
-      // 只重繪當前頁面，不打斷使用者正在填寫的表單
-      var activePage=document.querySelector('.page.active');
-      if(!activePage) return;
-      var id=activePage.id.replace('page-','');
-      // 只刷新「檢視型」頁面，避免洗掉正在輸入的報名表單
-      if(id==='schedule'){fillSel('sch-coach',true);renderSchedule();}
-      else if(id==='students'){renderStudents();}
-      else if(id==='roster'){renderRosterTable();renderClosedList();}
-      else if(id==='finance'){renderFinance();}
-    });
-  }, 20000); // 20 秒
+// === 課程付款方式切換（只有匯款/現金）===
+function onMethodChange(val) {
+  const last5input = document.getElementById('c-last5');
+  if (!last5input) return;
+  if (val === 'cash') {
+    last5input.placeholder = '現金不需填寫';
+    last5input.value = '';
+    last5input.disabled = true;
+    last5input.style.background = 'var(--surface2)';
+  } else {
+    last5input.placeholder = '例：07079';
+    last5input.disabled = false;
+    last5input.style.background = '';
+  }
 }
 
-// 切回分頁（從背景變前景）時立刻同步一次
-document.addEventListener('visibilitychange', function(){
-  if(document.hidden) return;
-  if(!GAS_URL||!isOnline) return;
-  loadFromSheets().then(function(ok){
-    if(!ok) return;
-    var activePage=document.querySelector('.page.active');
-    if(!activePage) return;
-    var id=activePage.id.replace('page-','');
-    if(id==='schedule'){fillSel('sch-coach',true);renderSchedule();}
-    else if(id==='students'){renderStudents();}
-    else if(id==='roster'){renderRosterTable();renderClosedList();}
-    else if(id==='finance'){renderFinance();}
-  });
+// === 商品付款方式切換（含 LINE Pay）===
+function onProductMethodChange(val) {
+  const wrap  = document.getElementById('p-last5-wrap');
+  const input = document.getElementById('p-last5');
+  if (val === 'cash') {
+    input.placeholder = '現金不需填寫';
+    input.value = '';
+    input.disabled = true;
+    input.style.background = 'var(--surface2)';
+  } else if (val === 'linepay') {
+    input.placeholder = '交易序號後五碼（選填）';
+    input.disabled = false;
+    input.style.background = '';
+  } else {
+    input.placeholder = '例：07079';
+    input.disabled = false;
+    input.style.background = '';
+  }
+}
+
+// === 發票種類切換 ===
+function onInvoiceTypeChange(scope) {
+  const prefix = scope === 'course' ? 'c' : 'p';
+  const typeEl = document.getElementById(scope === 'course' ? 'c-invoice-type' : 'p-invoice-type');
+  const val = typeEl.value;
+  const titleWrap   = document.getElementById(`invoice-title-wrap-${scope}`);
+  const digitalWrap = document.getElementById(`invoice-digital-wrap-${scope}`);
+  titleWrap.style.display   = (val === 'paper' || val === 'digital') ? 'block' : 'none';
+  digitalWrap.style.display = val === 'digital' ? 'block' : 'none';
+}
+
+// === 篩選 ===
+function setCoachFilter(mode, el) {
+  coachFilterMode = mode;
+  document.querySelectorAll('#coach-filter-period,#coach-filter-all,#coach-filter-course,#coach-filter-product').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderMySubmissions();
+}
+function setReportsFilter(mode, el) {
+  reportsFilterMode = mode;
+  document.querySelectorAll('#reports-filter-period,#reports-filter-all,#reports-filter-course-tab,#reports-filter-product-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderReportsList();
+}
+
+// === 本期 ===
+function getCurrentPeriod() {
+  const today = new Date();
+  let start, end;
+  if (today.getDate() >= 21) {
+    start = new Date(today.getFullYear(), today.getMonth(), 21);
+    end   = new Date(today.getFullYear(), today.getMonth() + 1, 20, 23, 59, 59);
+  } else {
+    start = new Date(today.getFullYear(), today.getMonth() - 1, 21);
+    end   = new Date(today.getFullYear(), today.getMonth(), 20, 23, 59, 59);
+  }
+  return { start, end };
+}
+function isInCurrentPeriod(dateStr, tsStr) {
+  const { start, end } = getCurrentPeriod();
+  const checkStr = tsStr || dateStr;
+  if (!checkStr) return false;
+  const d = new Date(checkStr);
+  return !isNaN(d) && d >= start && d <= end;
+}
+function getPeriodLabel() {
+  const { start, end } = getCurrentPeriod();
+  const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+  return `本期：${fmt(start)} ~ ${fmt(end)}`;
+}
+
+// === Init ===
+document.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('c-date').valueAsDate = new Date();
+
+  // 先用本機快取立刻顯示選單（不卡頓）
+  renderLoginCoachSelect();
+
+  // 自動登入也不等網路
+  const savedUser = localStorage.getItem('hope_current_user');
+  if (savedUser) {
+    try { currentUser = JSON.parse(savedUser); enterApp(); } catch(e) { localStorage.removeItem('hope_current_user'); }
+  }
+
+  // 背景靜默更新教練名單（不擋畫面）
+  loadCoachesFromSheets();
 });
-function doLogout(){
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  currentRole=null;
-  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('login-btn').disabled=true;
-}
-function getAllowedPages(){return NAV_ITEMS.filter(n=>n[3].includes(currentRole)).map(n=>n[0]);}
-function buildNav(){
-  const wrap=document.getElementById('nav-wrap');wrap.innerHTML='';
-  const allowed=getAllowedPages();
-  const topAllowed=TOP_PAGES.filter(p=>allowed.includes(p));
-  const botAllowed=BOTTOM_PAGES.filter(p=>allowed.includes(p));
-  if(topAllowed.length){const row=document.createElement('div');row.className='nav-row';topAllowed.forEach(p=>{const item=NAV_ITEMS.find(n=>n[0]===p);row.innerHTML+=`<button class="nav-btn" id="nb-${p}" onclick="goPage('${p}')"><i class="ti ${item[2]}"></i> ${item[1]}</button>`;});wrap.appendChild(row);}
-  if(botAllowed.length){const row=document.createElement('div');row.className='nav-row';botAllowed.forEach(p=>{const item=NAV_ITEMS.find(n=>n[0]===p);row.innerHTML+=`<button class="nav-btn" id="nb-${p}" onclick="goPage('${p}')"><i class="ti ${item[2]}"></i> ${item[1]}</button>`;});wrap.appendChild(row);}
-}
-function goPage(name){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const pg=document.getElementById('page-'+name);if(pg)pg.classList.add('active');
-  const nb=document.getElementById('nb-'+name);if(nb)nb.classList.add('active');
-  if(name==='schedule'){
-    initSchedulePage();
-    if(GAS_URL&&isOnline){
-      loadFromSheets().then(ok=>{ if(ok){fillSel('sch-coach',true);renderSchedule();} });
+
+async function loadCoachesFromSheets() {
+  if (!sheetsUrl) return;
+  try {
+    const res = await fetch(sheetsUrl + '?type=coaches&t=' + Date.now());
+    const json = await res.json();
+    if (json.status === 'ok' && json.coaches.length > 0) {
+      coaches = json.coaches;
+      localStorage.setItem('hope_coaches', JSON.stringify(coaches));
+      // 只在登入畫面還顯示時才更新選單
+      if (document.getElementById('login-screen').style.display !== 'none') {
+        renderLoginCoachSelect();
+      }
     }
+  } catch(e) {}
+}
+
+function renderLoginCoachSelect() {
+  const sel = document.getElementById('login-coach-select');
+  sel.innerHTML = '<option value="">— 請選擇你的名字 —</option>';
+  coaches.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; sel.appendChild(opt); });
+}
+
+function loginAsCoach() {
+  const name = document.getElementById('login-coach-select').value;
+  if (!name) { showToast('請選擇你的名字'); return; }
+  currentUser = { role: 'coach', name };
+  enterApp();
+}
+function toggleAdminLogin() {
+  const wrap = document.getElementById('admin-pw-wrap');
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+  if (wrap.style.display === 'block') document.getElementById('admin-pw').focus();
+}
+function loginAsAdmin() {
+  const pw = document.getElementById('admin-pw').value;
+  if (pw !== adminPw) { showToast('密碼錯誤'); return; }
+  currentUser = { role: 'admin', name: '管理員' };
+  enterApp();
+}
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('hope_current_user');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-pw').value = '';
+  document.getElementById('admin-pw-wrap').style.display = 'none';
+  renderLoginCoachSelect();
+}
+
+function enterApp() {
+  localStorage.setItem('hope_current_user', JSON.stringify(currentUser));
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('header-username').textContent = currentUser.name;
+  const nav = document.getElementById('main-nav');
+  if (currentUser.role === 'coach') {
+    nav.innerHTML = `<button class="tab-btn active" onclick="switchTab('coach')">📱 回報匯款</button>`;
+    document.getElementById('c-coach').value = currentUser.name;
+    renderMySubmissions();
+    setTimeout(() => { const el = document.getElementById('coach-period-label'); if(el) el.textContent = getPeriodLabel(); }, 100);
+  } else {
+    nav.innerHTML = `
+      <button class="tab-btn active" onclick="switchTab('reports')">📋 教練回報</button>
+      <button class="tab-btn" onclick="switchTab('admin')">🏠 對帳後台</button>
+      <button class="tab-btn" onclick="switchTab('result')">📊 對帳結果</button>
+      <button class="tab-btn" onclick="switchTab('settings')">⚙️ 系統設定</button>`;
+    document.getElementById('sheets-url').value = sheetsUrl;
+    renderCoachList();
+    loadAllReports();
+    setTimeout(() => { const el = document.getElementById('period-label'); if(el) el.textContent = getPeriodLabel(); }, 100);
   }
-  if(name==='register')initRegPage();
-  if(name==='short')initShortPage();
-  if(name==='students')renderStudents();
-  if(name==='roster')initRoster();
-  if(name==='finance')renderFinance();
-  if(name==='settings'){
-    if(GAS_URL&&isOnline){
-      setSyncStatus('loading');
-      loadFromSheets().then(ok=>{
-        if(ok) setSyncStatus('ok');
-        renderSettings();
+  switchTab(currentUser.role === 'coach' ? 'coach' : 'reports');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`);
+  if (btn) btn.classList.add('active');
+  const page = document.getElementById('page-' + tab);
+  if (page) page.classList.add('active');
+}
+
+// === 送出 ===
+async function submitCoach() {
+  const coach   = document.getElementById('c-coach').value.trim();
+  const student = document.getElementById('c-student').value.trim();
+  const date    = document.getElementById('c-date').value;
+
+  if (!student) { showToast('請填寫學員 / 購買者姓名'); return; }
+  if (!date)    { showToast('請選擇匯款日期'); return; }
+
+  let entry;
+  if (currentReportType === 'course') {
+    const method  = document.getElementById('c-method').value;
+    const last5El = document.getElementById('c-last5');
+    const last5   = last5El.disabled ? '' : last5El.value.trim();
+    const amount  = document.getElementById('c-amount').value.trim();
+    const course  = document.getElementById('c-course').value.trim();
+    const note    = document.getElementById('c-note').value.trim();
+    const invoiceTitle = document.getElementById('c-invoice-title')?.value.trim() || '';
+    const invoiceTax   = document.getElementById('c-invoice-tax')?.value.trim()   || '';
+    if (method !== 'cash' && !last5)                        { showToast('請填寫匯款後五碼'); return; }
+    if (method !== 'cash' && last5 && !/^\d{5}$/.test(last5)) { showToast('後五碼請填寫5位數字'); return; }
+    if (!amount) { showToast('請填寫匯款金額'); return; }
+    if (!course)  { showToast('請填寫課程名稱'); return; }
+    entry = {
+      id: Date.now(), entryType: 'course', coach, student,
+      last5: method === 'cash' ? 'CASH' : last5,
+      amount: parseInt(amount), date, method, course, note,
+      invoiceTitle, invoiceTax,
+      ts: new Date().toISOString()
+    };
+  } else {
+    const method  = document.getElementById('p-method').value;
+    const last5El = document.getElementById('p-last5');
+    const last5   = last5El.disabled ? '' : last5El.value.trim();
+    const amount      = document.getElementById('c-amount').value.trim();
+    const productName = document.getElementById('c-product-name').value.trim();
+    const productNote = document.getElementById('c-product-note').value.trim();
+    const invTypeEl   = document.getElementById('p-invoice-type');
+    const invoiceType     = invTypeEl ? invTypeEl.value : 'none';
+    const invoiceTitle    = document.getElementById('p-invoice-title')?.value.trim()   || '';
+    const invoiceTax      = document.getElementById('p-invoice-tax')?.value.trim()     || '';
+    const invoiceCarrier  = document.getElementById('p-invoice-carrier')?.value.trim() || '';
+    const invoiceEmail    = document.getElementById('p-invoice-email')?.value.trim()   || '';
+    if (!productName) { showToast('請填寫商品名稱'); return; }
+    if (!amount)      { showToast('請填寫匯款金額'); return; }
+    if (method === 'transfer' && !last5)                        { showToast('匯款轉帳請填寫後五碼'); return; }
+    if (method === 'transfer' && last5 && !/^\d{5}$/.test(last5)) { showToast('後五碼請填寫5位數字'); return; }
+    if (invoiceType === 'digital') {
+      if (!invoiceCarrier) { showToast('電子發票請填寫載具條碼'); return; }
+      if (!invoiceEmail)   { showToast('電子發票請填寫 Email'); return; }
+    }
+    entry = {
+      id: Date.now(), entryType: 'product', coach, student,
+      last5: method === 'cash' ? 'CASH' : (last5 || ''),
+      amount: parseInt(amount), date, method, productName, productNote,
+      invoiceType, invoiceTitle, invoiceTax, invoiceCarrier, invoiceEmail,
+      ts: new Date().toISOString()
+    };
+  }
+
+  submissions.unshift(entry);
+  localStorage.setItem('hope_submissions', JSON.stringify(submissions));
+
+  if (sheetsUrl) {
+    const btn = document.getElementById('submit-btn');
+    btn.innerHTML = '<span class="spinner"></span> 送出中...';
+    btn.disabled = true;
+    const payload = { ...entry, totalAmount: entry.amount,
+      sheetType: currentReportType === 'product' ? 'product'
+               : entry.method === 'cash' ? 'course_cash'
+               : 'course_transfer' };
+    try {
+      await fetch(sheetsUrl, { method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+      showToast(currentReportType === 'course' ? '✓ 課程回報成功！已同步到雲端' : '✓ 商品回報成功！已同步到雲端');
+    } catch(e) { showToast('✓ 已儲存本機（網路異常，請稍後重試）'); }
+    btn.innerHTML = '✓ 送出回報';
+    btn.disabled = false;
+  } else {
+    showToast('✓ 回報成功！');
+  }
+  clearCoachForm();
+  renderMySubmissions();
+}
+
+function clearCoachForm() {
+  ['c-student','c-last5','c-amount','c-course','c-note',
+   'c-invoice-title','c-invoice-tax',
+   'c-product-name','c-product-note','p-last5',
+   'p-invoice-title','p-invoice-tax','p-invoice-carrier','p-invoice-email']
+    .forEach(id => { const el = document.getElementById(id); if(el) { el.value = ''; el.disabled = false; el.style.background = ''; } });
+  document.getElementById('c-date').valueAsDate = new Date();
+  document.getElementById('c-method').value = 'transfer';
+  onMethodChange('transfer');
+  const pm = document.getElementById('p-method'); if(pm) { pm.value = 'transfer'; onProductMethodChange('transfer'); }
+  const pt = document.getElementById('p-invoice-type'); if(pt) { pt.value = 'none'; onInvoiceTypeChange('product'); }
+}
+
+function renderMySubmissions() {
+  let myRecords = submissions.filter(s => s.coach === currentUser?.name);
+  if (coachFilterMode === 'period')  myRecords = myRecords.filter(s => isInCurrentPeriod(s.date, s.ts));
+  else if (coachFilterMode === 'course')  myRecords = myRecords.filter(s => s.entryType !== 'product');
+  else if (coachFilterMode === 'product') myRecords = myRecords.filter(s => s.entryType === 'product');
+  const el = document.getElementById('submission-list');
+  if (!myRecords.length) { el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>尚無回報資料</p></div>`; return; }
+
+  const methodLabel = m => m === 'cash' ? '💵 現金' : m === 'linepay' ? '💚 LINE Pay' : `後五碼：${m}`;
+  const invLabel    = type => type === 'paper' ? '📄 紙本發票' : type === 'digital' ? '📱 電子發票' : '';
+
+  el.innerHTML = myRecords.map(s => {
+    const isProduct = s.entryType === 'product';
+    const last5show = s.method === 'cash' ? '💵 現金' : s.method === 'linepay' ? `💚 LINE Pay${s.last5 ? '・'+s.last5 : ''}` : `後五碼：${s.last5}`;
+    const invBadge  = s.invoiceType && s.invoiceType !== 'none' ? ` ｜ ${invLabel(s.invoiceType)}` : '';
+    return `<div class="submission-item ${isProduct ? 'product-entry' : 'course-entry'}">
+      <div class="submission-main">
+        <div class="submission-name">${isProduct ? '🛍️ ' : '🏌️ '}${s.student}${isProduct && s.productName ? `<span style="font-size:12px;font-weight:400;color:var(--text2);margin-left:6px;">${s.productName}</span>` : ''}</div>
+        <div class="submission-detail">
+          ${last5show} ｜ $${(s.amount||0).toLocaleString()} ｜ ${s.date}
+          ${!isProduct && s.course ? ` ｜ ${s.course}` : ''}
+          ${invBadge}
+          ${s.invoiceType === 'digital' && s.invoiceEmail ? ` ｜ ${s.invoiceEmail}` : ''}
+          ${isProduct && s.productNote ? ` ｜ ${s.productNote}` : ''}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <span class="badge ${isProduct ? 'badge-purple' : 'badge-green'}">${isProduct ? '商品' : '課程'}</span>
+        <span class="badge ${s.method==='cash' ? 'badge-blue' : s.method==='linepay' ? 'badge-green' : 'badge-gray'}">${s.method==='cash' ? '現金' : s.method==='linepay' ? 'LINE Pay' : '轉帳'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// === Admin reports ===
+async function loadAllReports() {
+  const el = document.getElementById('reports-list');
+  el.innerHTML = `<div class="empty-state"><div class="empty-icon">⏳</div><p>載入中...</p></div>`;
+  if (!sheetsUrl) { allReports = submissions; renderReportsList(); return; }
+  try {
+    const res  = await fetch(sheetsUrl + '?t=' + Date.now());
+    const json = await res.json();
+    if (json.status === 'ok') {
+      const methodMap = m => m==='現金'?'cash':m==='LINE Pay'?'linepay':'transfer';
+      allReports = (json.data || []).map(row => {
+        const isProduct = (row['類型']||'') === '商品';
+        return {
+          entryType:    isProduct ? 'product' : 'course',
+          coach:        row['教練姓名']          || '',
+          student:      row['學員/購買者']        || '',
+          last5: (() => {
+            const r = String(row['後五碼']||'').replace(/^'+/,'').trim();
+            // Google Sheets 可能把 "09522" 存成數字 9522（掉了前導零），這裡補回來
+            if (r && /^\d{1,4}$/.test(r)) return r.padStart(5, '0');
+            return r;
+          })(),
+          amount:       parseFloat(String(row['金額']||0).toString().replace(/,/g,'')) || 0,
+          date:         row['日期']              || '',
+          method:       methodMap(row['付款方式']),
+          course:       isProduct ? '' : (row['課程/商品名稱'] || ''),
+          productName:  isProduct ? (row['課程/商品名稱'] || '') : '',
+          invoiceType:  row['發票種類']==='電子發票'?'digital':row['發票種類']==='紙本發票'?'paper':'',
+          invoiceTitle: row['發票抬頭']          || '',
+          invoiceTax:   row['統一編號']          || '',
+          invoiceCarrier: row['載具條碼']        || '',
+          invoiceEmail: row['Email']             || '',
+          note:         isProduct ? '' : (row['備註'] || ''),
+          productNote:  isProduct ? (row['備註'] || '') : '',
+          ts:           row['送出時間']          || ''
+        };
       });
-    } else {
-      renderSettings();
+      renderReportsList();
+      showToast(`✓ 已載入 ${allReports.length} 筆回報`);
     }
-  }
+  } catch(e) { allReports = submissions; renderReportsList(); showToast('無法連線，顯示本機資料'); }
 }
 
-// ===== HELPERS =====
-function getWeekStart(d){const dt=new Date(d);dt.setHours(0,0,0,0);const day=dt.getDay();dt.setDate(dt.getDate()+(day===0?-6:1-day));return dt}
-function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r}
-function toISO(d){
-  const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,'0');
-  const day=String(d.getDate()).padStart(2,'0');
-  return y+'-'+m+'-'+day;
-}
-function todayISO(){
-  const d=new Date();
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-}
-function isClosed(d){return!!closedDates[d]}
-function isPast(date){return date<todayISO()}
-function getCoachFee(c){return coachFees[c]!==undefined?coachFees[c]:DEF_COACH_FEE}
-function calcLockedCoachFee(cn,count){const f=getCoachFee(cn);return Math.max(f*count,f*2)}
-function isClassOpen(date,coach){return registrations.filter(r=>r.date===date&&r.coach===coach).reduce((s,r)=>s+r.count,0)>=2}
-function getUsedGolf(sid){return registrations.filter(r=>r.studentId===sid&&isClassOpen(r.date,r.coach)).reduce((s,r)=>s+(r.sessions||r.count),0)}
-function getRemain(s){return s.totalSessions-getUsedGolf(s.id)}
-function getUsedShort(sid){return shortRegs.filter(r=>r.studentId===sid).reduce((s,r)=>s+r.count,0)}
-function similarity(a,b){a=a.toLowerCase();b=b.toLowerCase();if(a===b)return 1;if(a.includes(b)||b.includes(a))return 0.8;let m=0;for(const c of a)if(b.includes(c))m++;return m/Math.max(a.length,b.length)}
-function findSimilar(name){return students.filter(s=>similarity(s.name,name)>0.4&&s.name!==name)}
-function fmtTime(ts){if(!ts)return '';const d=new Date(Number(ts));if(isNaN(d.getTime()))return '';return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
-function fillSel(id,withAll){const el=document.getElementById(id);if(!el)return;const cur=el.value;el.innerHTML=withAll?'<option value="">全部</option>':'<option value="">— 請選擇 —</option>';const list=(Array.isArray(coaches)&&coaches.length>0)?coaches:DEF_COACHES;list.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;el.appendChild(o)});if(cur)el.value=cur;}
-function ensureArrays(){
-  if(!Array.isArray(coaches))   coaches   = DEF_COACHES;
-  if(!Array.isArray(feeTypes))  feeTypes  = DEF_FEES;
-  if(!coachFees||typeof coachFees!=='object'||Array.isArray(coachFees)) coachFees = {};
-}
-function syncCoachHours(){const c=parseInt((document.getElementById('reg-count')||{}).value||1);document.getElementById('preview-coach-hours').value=c+' 人次'}
-function onSoloClassChange(){
-  const cb=document.getElementById('reg-solo-class');
-  const box=document.getElementById('solo-class-box');
-  const chk=document.getElementById('solo-class-check');
-  const lbl=document.getElementById('solo-class-label');
-  const banner=document.getElementById('solo-class-banner');
-  if(cb.checked){
-    box.style.background='#6B9E8F';box.style.borderColor='#6B9E8F';
-    chk.style.display='';
-    lbl.style.borderColor='#6B9E8F';lbl.style.background='#EAF2EF';
-    banner.style.display='flex';
-  }else{
-    box.style.background='#fff';box.style.borderColor='#D1D5DB';
-    chk.style.display='none';
-    lbl.style.borderColor='#E0E0E0';lbl.style.background='#fff';
-    banner.style.display='none';
-  }
-}
-function isSoloClass(date,coach){
-  // 檢查某教練某日是否已被標記為一人開班
-  return registrations.some(r=>r.date===date&&r.coach===coach&&r.soloClass===true);
+function renderReportsList() {
+  const el = document.getElementById('reports-list');
+  let filtered = allReports;
+  if (reportsFilterMode === 'period')  filtered = filtered.filter(r => isInCurrentPeriod(r.date, r.ts));
+  else if (reportsFilterMode === 'course')  filtered = filtered.filter(r => r.entryType !== 'product');
+  else if (reportsFilterMode === 'product') filtered = filtered.filter(r => r.entryType === 'product');
+  if (!filtered.length) { el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>目前篩選條件下無資料</p></div>`; return; }
+  const byCoach = {};
+  filtered.forEach(r => { if (!byCoach[r.coach]) byCoach[r.coach] = []; byCoach[r.coach].push(r); });
+  const invLabel = type => type === 'paper' ? '📄 紙本' : type === 'digital' ? '📱 電子' : '';
+  el.innerHTML = Object.entries(byCoach).map(([coach, records]) => `
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;padding:0 4px;">
+        ${coach} <span style="font-weight:400;color:var(--text3)">（${records.length} 筆）</span>
+      </div>
+      ${records.map(s => {
+        const isProduct = s.entryType === 'product';
+        const last5show = s.method==='cash' ? '💵 現金' : s.method==='linepay' ? `💚 LINE Pay${s.last5?'・'+s.last5:''}` : `後五碼：${s.last5}`;
+        const invBadge  = s.invoiceType && s.invoiceType !== 'none' ? ` ｜ ${invLabel(s.invoiceType)}` : '';
+        return `<div class="submission-item ${isProduct ? 'product-entry' : 'course-entry'}" style="padding:10px 12px;">
+          <div class="submission-main">
+            <div class="submission-name" style="font-size:13px;">${isProduct ? '🛍️ ' : '🏌️ '}${s.student}${isProduct && s.productName ? `<span style="font-size:11px;font-weight:400;color:var(--text2);margin-left:6px;">${s.productName}</span>` : ''}</div>
+            <div class="submission-detail">
+              ${last5show} ｜ $${(s.amount||0).toLocaleString()} ｜ ${s.date}
+              ${!isProduct && s.course ? ` ｜ ${s.course}` : ''}
+              ${invBadge}
+              ${s.invoiceType === 'digital' && s.invoiceEmail ? ` ｜ ${s.invoiceEmail}` : ''}
+              ${isProduct && s.productNote ? ` ｜ ${s.productNote}` : ''}
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            <span class="badge ${isProduct ? 'badge-purple' : 'badge-green'}" style="font-size:11px;">${isProduct ? '商品' : '課程'}</span>
+            <span class="badge ${s.method==='cash' ? 'badge-blue' : s.method==='linepay' ? 'badge-green' : 'badge-gray'}" style="font-size:11px;">${s.method==='cash' ? '現金' : s.method==='linepay' ? 'LINE Pay' : '轉帳'}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`
+  ).join('<hr style="border:none;border-top:1px solid var(--border);margin:4px 0 20px;">');
 }
 
-// ===== SCHEDULE =====
-function shiftWeek(n){currentWeekStart=addDays(currentWeekStart,n*7);renderSchedule()}
-function goThisWeek(){currentWeekStart=getWeekStart(new Date());renderSchedule()}
-function initSchedulePage(){fillSel('sch-coach',true);renderSchedule();}
-function renderSchedule(){
-  fillSel('sch-coach',true);
-  const fc=(document.getElementById('sch-coach')||{}).value||'';
-  const days=Array.from({length:7},(_,i)=>addDays(currentWeekStart,i));
-  document.getElementById('week-label').textContent=toISO(days[0]).slice(5).replace('-','/')+' 一 — '+toISO(days[6]).slice(5).replace('-','/')+' 日';
-  const todayStr=todayISO();
-  document.getElementById('schedule-content').innerHTML=days.map(d=>{
-    const date=toISO(d),dow=DOWS[d.getDay()],isToday=date===todayStr,closed=isClosed(date),past=isPast(date),isWknd=d.getDay()===0||d.getDay()===6;
-    let dcs=rosters[date]||[];if(fc)dcs=dcs.filter(c=>c===fc);
-    const shortDay=shortRegs.filter(r=>r.date===date);
-    let dowCls='dow-badge';if(isToday)dowCls+=' today-b';else if(closed)dowCls+=' closed-b';else if(isWknd)dowCls+=' wkend-b';
-    const hdrCls='day-hdr'+(isToday?' today-hdr':closed?' closed-hdr':'');
-    const dateCls='day-date-info'+(closed?' closed-lbl':'');
-    const cardCls='day-card'+(isToday?' today-card':closed?' closed-card':'');
-    const hdr=`<div class="${hdrCls}"><div class="${dowCls}">${dow}</div>
-      <div class="${dateCls}"><strong>${date.slice(5).replace('-','/')}${isToday?' <span style="font-size:11px;color:#3B82F6;font-weight:400">今天</span>':''}</strong><span style="font-size:12px">15:00–17:00 國華球場</span></div>
-      ${closed?'<span class="tag tag-red" style="margin-left:auto"><i class="ti ti-ban"></i> 封場</span>':''}</div>`;
-    let body='';
-    if(closed){body=`<div class="day-body"><div style="font-size:13px;color:#DC2626;padding:8px 0;display:flex;align-items:center;gap:6px"><i class="ti ti-ban"></i> 封場日${(closedDates[date]&&closedDates[date].reason)?' — '+closedDates[date].reason:''}</div></div>`}
+function exportReports() {
+  if (!allReports.length) { showToast('沒有資料可匯出'); return; }
+  const methodLabel = m => m === 'cash' ? '現金' : m === 'linepay' ? 'LINE Pay' : '匯款轉帳';
+  const invLabel    = t => t === 'paper' ? '紙本發票' : t === 'digital' ? '電子發票' : '不需要';
+
+  const transferData = allReports.filter(r => r.entryType !== 'product' && r.method !== 'cash').map(r => ({
+    '送出時間':r.ts||'','教練':r.coach,'學員':r.student,'後五碼':r.last5,'金額':r.amount,
+    '匯款日期':r.date,'課程':r.course,'發票抬頭':r.invoiceTitle||'','統一編號':r.invoiceTax||'','備註':r.note||''
+  }));
+  const cashData = allReports.filter(r => r.entryType !== 'product' && r.method === 'cash').map(r => ({
+    '送出時間':r.ts||'','教練':r.coach,'學員':r.student,'金額':r.amount,
+    '付款日期':r.date,'課程':r.course,'發票抬頭':r.invoiceTitle||'','統一編號':r.invoiceTax||'','備註':r.note||''
+  }));
+  const productData = allReports.filter(r => r.entryType === 'product').map(r => ({
+    '送出時間':r.ts||'','教練':r.coach,'購買者':r.student,'後五碼':r.last5||'','金額':r.amount,
+    '付款日期':r.date,'付款方式':methodLabel(r.method),'商品名稱':r.productName||'',
+    '發票種類':invLabel(r.invoiceType),'發票抬頭':r.invoiceTitle||'','統一編號':r.invoiceTax||'',
+    '載具條碼':r.invoiceCarrier||'','Email':r.invoiceEmail||'','備註':r.productNote||''
+  }));
+
+  const wb = XLSX.utils.book_new();
+  if (transferData.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(transferData), '教練回報');
+  if (cashData.length)     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(cashData),     '現金回報');
+  if (productData.length)  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(productData),  '商品回報');
+  XLSX.writeFile(wb, `教練回報_${new Date().toLocaleDateString('zh-TW').replace(/\//g,'-')}.xlsx`);
+  showToast('✅ 已匯出（教練回報、現金回報、商品回報 三個分頁）');
+}
+
+// === File upload ===
+function handleDrag(e,zoneId){e.preventDefault();document.getElementById(zoneId).classList.add('dragover');}
+function handleDragLeave(e,zoneId){document.getElementById(zoneId).classList.remove('dragover');}
+function handleDrop(e,zoneId,type){e.preventDefault();document.getElementById(zoneId).classList.remove('dragover');const f=e.dataTransfer.files[0];if(f)processFile(f,type);}
+function handleFileChange(e,type){const f=e.target.files[0];if(f)processFile(f,type);}
+
+function processFile(file,type){
+  if(type==='bank'&&file.name.toLowerCase().endsWith('.pdf')){processBankPDF(file);return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const wb=XLSX.read(e.target.result,{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const raw=XLSX.utils.sheet_to_json(ws,{header:1,raw:false});
+    if(type==='order'){orderData=parseOrderData(raw);showUploadSuccess('zone-order',`訂單明細：已載入 ${orderData.length} 筆`);}
+    else{bankData=parseBankData(raw);showUploadSuccess('zone-bank',`銀行對帳單：已載入 ${bankData.length} 筆入帳`);}
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function processBankPDF(file){
+  showUploadSuccess('zone-bank','⏳ 解析 PDF 中...');
+  try{
+    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const ab=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+    let allText='';
+    for(let i=1;i<=pdf.numPages;i++){
+      const page=await pdf.getPage(i);
+      const content=await page.getTextContent();
+      const items=content.items.map(it=>({x:Math.round(it.transform[4]),y:Math.round(it.transform[5]),str:it.str}));
+      const lineMap={};
+      items.forEach(it=>{if(!lineMap[it.y])lineMap[it.y]=[];lineMap[it.y].push(it);});
+      const lines=Object.keys(lineMap).sort((a,b)=>b-a).map(y=>lineMap[y].sort((a,b)=>a.x-b.x).map(it=>it.str).join(' '));
+      allText+=lines.join('\n')+'\n';
+    }
+    bankData=parseBankPDFText(allText);
+    showUploadSuccess('zone-bank',`銀行對帳單（PDF）：已載入 ${bankData.length} 筆入帳`);
+  }catch(e){showUploadSuccess('zone-bank','❌ PDF 解析失敗，請改用 Excel 格式');console.error(e);}
+}
+
+function parseBankPDFText(text){
+  const rows=[];const allLines=text.split('\n');
+  for(let i=0;i<allLines.length;i++){
+    const line=allLines[i].trim();
+    if(!/0\d{2,3}\/\d{2}\/\d{2}/.test(line))continue;
+    const amountMatches=line.match(/[\d,]+\.\d{2}/g)||[];
+    if(amountMatches.length<2)continue;
+    const nums=amountMatches.map(n=>parseFloat(n.replace(/,/g,'')));
+    const balance=nums[nums.length-1],txAmount=nums[nums.length-2];
+    if(balance<=txAmount)continue;
+    const dateMatch=line.match(/(0\d{2,3}\/\d{2}\/\d{2})/);
+    let dateStr='';
+    if(dateMatch){const parts=dateMatch[1].split('/');dateStr=(parseInt(parts[0])+1911)+'/'+parts[1]+'/'+parts[2];}
+    let cleaned=line.replace(/[\d,]+\.\d{2}/g,' ').replace(/0\d{2,3}\/\d{2}\/\d{2}/g,' ')
+      .replace(/\d{6}\s+\d{2}:\d{2}:\d{2}/g,' ').replace(/\b115\d{4}\b/g,' ').replace(/TWD.*/g,'');
+    const digitBlocks=cleaned.match(/\d+(?:\s+\d+)*/g)||[];
+    const codes=digitBlocks.map(b=>b.replace(/\s/g,'')).filter(b=>b.length>=8);
+    const longestCode=codes.length>0?codes.reduce((a,b)=>a.length>=b.length?a:b):'';
+    const last5=longestCode?longestCode.slice(-5):'';
+    const nextLine=i+1<allLines.length?allLines[i+1]:'';
+    const rawLine=(line+' '+nextLine).replace(/\s/g,'');
+    rows.push({dateStr,amount:txAmount,last5,remark:rawLine,rawLine});
+  }
+  return rows;
+}
+
+function showUploadSuccess(zoneId,msg){
+  const zone=document.getElementById(zoneId);
+  zone.classList.add('upload-success');
+  zone.querySelector('.upload-icon').textContent='✅';
+  zone.querySelector('.upload-text').innerHTML=msg;
+  zone.querySelector('.upload-hint').textContent='點擊重新上傳';
+}
+
+function parseOrderData(raw){
+  if(!raw.length)return[];
+  let headerRow=0;
+  for(let i=0;i<Math.min(5,raw.length);i++){
+    const row=raw[i].map(c=>String(c||''));
+    if(row.some(c=>c.includes('消費者')||c.includes('課程'))){headerRow=i;break;}
+  }
+  const headers=raw[headerRow].map(c=>String(c||'').trim());
+  const rows=[];
+  for(let i=headerRow+1;i<raw.length;i++){
+    const row=raw[i];if(!row||row.every(c=>!c))continue;
+    const obj={};headers.forEach((h,idx)=>obj[h]=String(row[idx]||'').trim());
+    const note=obj['備註']||'';
+    const last5Match=note.match(/(\d{5})/);const last5=last5Match?last5Match[1]:'';
+    const isCash=note.toLowerCase().includes('cash');
+    const fee=parseFloat(obj['費用']||'0')||0;
+    let dateStr='';const rawDate=obj['訂單日期']||'';
+    if(/^\d{4,5}$/.test(rawDate)){const d=new Date(Math.round((parseFloat(rawDate)-25569)*86400*1000));dateStr=d.toLocaleDateString('zh-TW');}
+    else dateStr=rawDate;
+    const student=obj['消費者']||'',course=obj['課程']||'';
+    if(!student&&!course)continue;if(fee===0&&!last5&&!isCash)continue;
+    rows.push({student,course,fee,note,last5,isCash,dateStr,status:'',matchedBank:'',matchedDate:'',invoiceTitle:'',invoiceTax:''});
+  }
+  return rows;
+}
+
+function parseBankData(raw){
+  let headerRow=-1;
+  for(let i=0;i<Math.min(15,raw.length);i++){
+    const rowStr=(raw[i]||[]).join('|');
+    if(rowStr.includes('存入')||rowStr.includes('交易日期')){headerRow=i;break;}
+  }
+  if(headerRow<0)headerRow=0;
+  const headers=(raw[headerRow]||[]).map(c=>String(c||'').trim());
+  const rows=[];
+  for(let i=headerRow+1;i<raw.length;i++){
+    const row=raw[i];if(!row||row.every(c=>!c))continue;
+    const obj={};headers.forEach((h,idx)=>obj[h]=String(row[idx]||'').trim());
+    const amountKeys=['存入','存入金額','入帳'];let amount=0;
+    for(const k of amountKeys){const n=parseFloat((obj[k]||'').replace(/,/g,''));if(!isNaN(n)&&n>0){amount=n;break;}}
+    if(amount<=0)continue;
+    const codeKeys=['存款人代號','存款人','帳號'];let last5='';
+    for(const k of codeKeys){const val=(obj[k]||'').replace(/\*/g,'').replace(/\s/g,'');if(val.length>=5){last5=val.slice(-5);break;}}
+    const dateKeys=['交易日期','日期'];let dateStr='';
+    for(const k of dateKeys){if(obj[k]){dateStr=obj[k];break;}}
+    rows.push({dateStr,amount,last5,remark:obj['收付款說明']||obj['備註']||''});
+  }
+  return rows;
+}
+
+// === Reconciliation ===
+function runReconciliation(){
+  if(!orderData.length){showToast('請先上傳訂單明細！');return;}
+  const paymentSource=allReports.length?allReports.filter(r=>r.entryType!=='product'):submissions.filter(s=>s.entryType!=='product');
+  const bankMapUsed={};
+  bankData.forEach(b=>{if(!b.last5)return;if(!bankMapUsed[b.last5])bankMapUsed[b.last5]=[];bankMapUsed[b.last5].push(b);});
+  function findPayment(order){
+    if(order.last5&&order.last5!=='CASH')return{last5:order.last5,method:'transfer',source:null};
+    if(order.isCash)return{last5:'CASH',method:'cash',source:null};
+    const studentCN=order.student.replace(/[a-zA-Z\s]/g,'').trim();
+    const studentKey=studentCN.length>=2?studentCN:order.student.trim();
+    const matches=paymentSource.filter(s=>{
+      if(!s.student)return false;
+      const sCN=s.student.replace(/[a-zA-Z\s]/g,'').trim();
+      const sKey=sCN.length>=2?sCN:s.student.trim();
+      return studentKey&&sKey&&(studentKey.includes(sKey.slice(0,2))||sKey.includes(studentKey.slice(0,2)));
+    });
+    if(!matches.length)return null;
+    const exactMatch=matches.find(s=>s.method!=='cash'&&Math.abs((s.amount||0)-order.fee)<1);
+    const cashMatch=matches.find(s=>s.method==='cash');
+    const best=exactMatch||cashMatch||matches[0];
+    return best?{last5:best.last5,method:best.method,source:best}:null;
+  }
+  const preMatched={};
+  orderData.forEach((order,idx)=>{
+    if(order.isCash)return;
+    const payment=findPayment(order);
+    if(!payment||payment.method==='cash'||!payment.last5||payment.last5==='CASH')return;
+    const matches=bankMapUsed[payment.last5];if(!matches?.length)return;
+    const exactIdx=matches.findIndex(b=>Math.abs(b.amount-order.fee)<1);
+    if(exactIdx>=0){preMatched[idx]={bank:matches[exactIdx],payment};matches.splice(exactIdx,1);}
+  });
+  resultRows=orderData.map((order,orderIdx)=>{
+    const row={...order};const payment=findPayment(order);const subInfo=payment?.source;
+    if(subInfo){row.invoiceTitle=subInfo.invoiceTitle||'';row.invoiceTax=subInfo.invoiceTax||'';}
+    const isCashOrder=order.isCash||(payment?.method==='cash')||(payment?.last5==='CASH');
+    if(isCashOrder){row.status='cash';row.matchedBank='現金收款';row.last5='';return row;}
+    const last5=payment?.last5;row.last5=last5||order.last5||'';
+    if(!last5){row.status='pending';row.matchedBank='—';return row;}
+    const pre=preMatched[orderIdx],bankMatches=bankMapUsed[last5];
+    let best=null;
+    if(pre){best=pre.bank;}
+    else if(bankMatches?.length){
+      const exactIdx=bankMatches.findIndex(b=>Math.abs(b.amount-order.fee)<1);
+      const bestIdx=exactIdx>=0?exactIdx:0;
+      best=bankMatches[bestIdx];bankMapUsed[last5].splice(bestIdx,1);
+    }
+    if(!best){
+      if(!bankData.length&&payment){row.status='coach_reported';row.matchedBank='教練已回報（待對帳）';}
+      else{
+        const studentCN=order.student.replace(/[a-zA-Z\s]/g,'').trim();
+        const nameToSearch=studentCN.length>=2?studentCN.slice(0,2):order.student.slice(0,2);
+        const remarkMatch=bankData.find(b=>{
+          const searchIn=(b.remark||'')+' '+(b.rawLine||'');
+          return nameToSearch&&searchIn.replace(/\s/g,'').includes(nameToSearch.replace(/\s/g,''))&&Math.abs(b.amount-order.fee)<2000;
+        });
+        if(remarkMatch){row.status='suspected';row.matchedBank=`📌 備註含「${nameToSearch}」`;row.matchedDate=remarkMatch.dateStr;row.suspectedAmount=remarkMatch.amount;row.suspectedLast5=remarkMatch.last5;}
+        else{row.status='missing';row.matchedBank=bankData.length?'銀行找不到':'—';}
+      }
+      return row;
+    }
+    const amountMismatch=Math.abs(best.amount-order.fee)>=1;
+    row.matchedBank=`$${best.amount.toLocaleString()}`;row.matchedDate=best.dateStr;
+    if(amountMismatch){row.status='mismatch';row.mismatchReason=`金額不符（銀行$${best.amount.toLocaleString()}）`;}
     else{
-      let rows=dcs.length?dcs.map(coach=>{
-        const rs=registrations.filter(r=>r.date===date&&r.coach===coach);
-        const total=rs.reduce((s,r)=>s+r.count,0);
-        const slots=[1,2,3,4].map(i=>`<span class="slot-dot ${i<=total?'dot-filled':'dot-empty'}"></span>`).join('');
-        const names=rs.map(r=>r.studentName+(r.count>1?'×'+r.count:'')).join('、');
-        let tag='';
-        if(total>=4)tag='<span class="tag tag-red">額滿</span>';
-        else if(isSoloClass(date,coach))tag='<span class="tag tag-reschedule"><i class="ti ti-lock"></i> 一人開班</span>';
-        else if(total>=2)tag='<span class="tag tag-green">開班</span>';
-        else if(total===1&&past)tag='<span class="tag tag-reschedule"><i class="ti ti-alert-triangle"></i> 待改期</span>';
-        else tag='<span class="tag tag-amber">待確認</span>';
-        return `<div class="coach-row${total===1&&past?' reschedule-row':''}"><div class="coach-info"><span class="avatar">${coach.slice(0,2)}</span><strong style="font-size:13px">${coach}</strong></div>
-          <div class="coach-status"><div class="slot-bar">${slots}<span style="font-size:12px;color:#9CA3AF;margin-left:4px">${total}/4</span></div>${tag}</div>
-          <div class="coach-students">${names||'—'}</div></div>`;
-      }).join(''):'<div style="font-size:13px;color:#9CA3AF;padding:8px 0">無排班教練</div>';
-      let shortHtml='';
-      if(shortDay.length)shortHtml=`<div style="margin-top:8px;padding-top:8px;border-top:1px solid #F5F5F5"><div style="font-size:11px;color:#888;margin-bottom:4px"><span class="tag tag-purple" style="font-size:10px">短桿果嶺</span></div>${shortDay.map(r=>`<div style="font-size:12px;color:#9CA3AF;padding:2px 0">${r.time} <span class="avatar" style="width:18px;height:18px;font-size:9px">${r.coach.slice(0,2)}</span>${r.coach} — ${r.studentName} ×${r.count}</div>`).join('')}</div>`;
-      body=`<div class="day-body">${rows}${shortHtml}</div>`;
+      row.status='confirmed';
+      if(order.date&&best.dateStr){
+        const coachDate=new Date(order.date),bankDate=new Date(best.dateStr);
+        if(!isNaN(coachDate)&&!isNaN(bankDate)){const diffDays=Math.abs((coachDate-bankDate)/(1000*60*60*24));if(diffDays>5)row.mismatchReason=`日期差${Math.round(diffDays)}天（銀行${best.dateStr}）`;}
+      }
     }
-    return `<div class="${cardCls}">${hdr}${body}</div>`;
-  }).join('');
+    return row;
+  });
+  renderResult();switchTab('result');showToast('✅ 對帳完成！');
 }
 
-// ===== REGISTER =====
-function initRegPage(){
-  ensureArrays();
-  fillSel('reg-self-coach',false);fillSel('sch-coach',true);fillSel('fin-coach',true);
-  const fe=document.getElementById('reg-fee-type');fe.innerHTML='';
-  feeTypes.forEach(ft=>{const o=document.createElement('option');o.value=ft.name;o.textContent=ft.name;fe.appendChild(o)});
-  const dateEl=document.getElementById('reg-date');
-  const notice=document.getElementById('reg-admin-notice');
-  if(currentRole==='admin'){dateEl.removeAttribute('min');notice.style.display='none';}
-  else{dateEl.min=todayISO();notice.style.display='flex';}
-  syncCoachHours();renderRegTable();resetStudentFields();
-}
-function onRegDateChange(){
-  const date=document.getElementById('reg-date').value,al=document.getElementById('reg-alert'),sel=document.getElementById('reg-coach');
-  sel.innerHTML='<option value="">— 選擇教練 —</option>';if(!date)return;
-  if(currentRole!=='admin'&&date<todayISO()){al.className='alert alert-danger';al.textContent='⛔ 不可選擇過去日期';document.getElementById('reg-date').value='';sel.innerHTML='<option value="">— 請先選日期 —</option>';return}
-  if(isClosed(date)){al.className='alert alert-danger';al.textContent='⛔ '+date+' 為封場日，無法報名';sel.innerHTML='<option value="">此日封場</option>';return}
-  al.className='alert';al.textContent='';
-  const dc=rosters[date]||[];if(!dc.length){sel.innerHTML='<option value="">此日無排班教練</option>';return}
-  dc.forEach(c=>{const taken=registrations.filter(r=>r.date===date&&r.coach===c).reduce((s,r)=>s+r.count,0);const solo=isSoloClass(date,c);const o=document.createElement('option');o.value=c;o.textContent=c+(taken>=4?' 【額滿】':solo?' 【一人開班】':' ('+taken+'/4)');if(taken>=4||solo)o.disabled=true;sel.appendChild(o)});
-}
-function checkCoachSlots(){
-  const date=document.getElementById('reg-date').value,coach=document.getElementById('reg-coach').value;if(!date||!coach)return;
-  const taken=registrations.filter(r=>r.date===date&&r.coach===coach).reduce((s,r)=>s+r.count,0);
-  const solo=isSoloClass(date,coach);
-  const al=document.getElementById('reg-alert');
-  if(solo){al.className='alert alert-warn';al.textContent='⛔ '+coach+' 在 '+date+' 已設定一人開班，不開放其他學員報名'}
-  else if(taken>=4){al.className='alert alert-warn';al.textContent='⚠️ '+coach+' 在 '+date+' 已額滿'}
-  else{al.className='alert';al.textContent=''}
-}
-function onStuNameInput(){
-  const name=document.getElementById('reg-stu-name').value.trim();
-  selectedStudentId=null;isNewStudent=false;
-  document.getElementById('existing-stu-info').style.display='none';
-  document.getElementById('new-student-box').classList.remove('show');
-  document.getElementById('similar-box').classList.remove('show');
-  if(!name.length)return;
-  const exact=students.find(s=>s.name===name);
-  if(exact){selectedStudentId=exact.id;const info=document.getElementById('existing-stu-info');info.style.display='block';info.innerHTML=`<span class="tag tag-blue" style="margin-right:8px">找到學員</span><strong>${exact.name}</strong>`;return}
-  const similar=findSimilar(name);
-  if(similar.length){document.getElementById('similar-box').classList.add('show');document.getElementById('similar-list').innerHTML=similar.map(s=>`<div class="similar-item"><span><strong>${s.name}</strong> — ${s.plan}</span><button class="btn btn-sm" onclick="selectExistingStu(${s.id},'${s.name}')">就是這位</button></div>`).join('');}
-  else showNewStuBox();
-}
-function selectExistingStu(id,name){selectedStudentId=id;isNewStudent=false;document.getElementById('reg-stu-name').value=name;document.getElementById('similar-box').classList.remove('show');document.getElementById('new-student-box').classList.remove('show');const s=students.find(st=>st.id===id);const info=document.getElementById('existing-stu-info');info.style.display='block';info.innerHTML=`<span class="tag tag-blue" style="margin-right:8px">已選擇</span><strong>${s.name}</strong>`}
-function confirmNewStudent(){document.getElementById('similar-box').classList.remove('show');showNewStuBox()}
-function showNewStuBox(){isNewStudent=true;document.getElementById('new-student-box').classList.add('show')}
-function resetStudentFields(){selectedStudentId=null;isNewStudent=false;document.getElementById('reg-stu-name').value='';document.getElementById('similar-box').classList.remove('show');document.getElementById('new-student-box').classList.remove('show');document.getElementById('existing-stu-info').style.display='none'}
-function submitReg(){
-  const selfCoach=document.getElementById('reg-self-coach').value,date=document.getElementById('reg-date').value,coach=document.getElementById('reg-coach').value,stuName=document.getElementById('reg-stu-name').value.trim();
-  const count=parseInt(document.getElementById('reg-count').value),level=document.getElementById('reg-level').value,feeType=document.getElementById('reg-fee-type').value,note=document.getElementById('reg-note').value.trim();
-  const sessions=parseInt(document.getElementById('reg-sessions').value)||1;
-  const al=document.getElementById('reg-alert');
-  if(currentRole!=='admin'&&date<todayISO()){al.className='alert alert-danger';al.textContent='⛔ 不可選擇過去日期';return}
-  if(isClosed(date)){al.className='alert alert-danger';al.textContent='⛔ 此日為封場日，無法報名';return}
-  if(!selfCoach||!date||!coach||!stuName){al.className='alert alert-warn';al.textContent='請填寫所有必填欄位';return}
-  if(!selectedStudentId&&!isNewStudent){const exactStu=students.find(s=>s.name===stuName);if(exactStu){selectedStudentId=exactStu.id;}else{isNewStudent=true;}}
-  let stuId=selectedStudentId;
-  if(isNewStudent){const sess=parseInt(document.getElementById('new-stu-sessions').value)||1;const ns={id:Date.now(),name:stuName,plan:'單堂',totalSessions:sess,source:'auto'};students.push(ns);sv('v3_students',students);saveToSheets('students');stuId=ns.id}
-  const taken=registrations.filter(r=>r.date===date&&r.coach===coach).reduce((s,r)=>s+r.count,0);
-  if(taken+count>4){al.className='alert alert-warn';al.textContent='⚠️ 加入後超過4人上限';return}
-  if(isSoloClass(date,coach)){al.className='alert alert-danger';al.textContent='⛔ '+coach+' 在 '+date+' 已設定一人開班，無法再加入其他學員';return}
-  // 如果此次勾選一人開班，但該教練此日已有其他學員報名，也要擋
-  const soloClass=document.getElementById('reg-solo-class').checked;
-  if(soloClass&&taken>0){al.className='alert alert-warn';al.textContent='⚠️ 該教練此日已有其他學員報名，無法設定一人開班';return}
-  const stu=students.find(s=>s.id===stuId);
-  const remain=getRemain(stu);
-  // 堂數不足時自動補入，不擋報名（學員購買新堂次）
-  if(remain<sessions){
-    stu.totalSessions+=(sessions-remain);
-    sv('v3_students',students);
-    saveToSheets('students');
-  }
-  const ft=feeTypes.find(f=>f.name===feeType),now=Date.now();
-  registrations.push({id:now,createdAt:now,date,selfCoach,coach,studentId:stuId,studentName:stu.name,count,sessions,level,feeType,note,soloClass,amount:ft?ft.amount:0,khFee:count*khRate,coachFee:calcLockedCoachFee(coach,count)});
-  sv('v3_regs',registrations);saveToSheets('regs');
-  al.className='alert alert-success';al.textContent='✓ 報名成功：'+stu.name+(isNewStudent?' （已自動建檔）':'')+' ／ '+date+' ／ 教練：'+coach+(soloClass?' ／ 一人開班':'');
-  resetStudentFields();document.getElementById('reg-sessions').value=1;syncCoachHours();
-  // 重置一人開班
-  const soloCb=document.getElementById('reg-solo-class');if(soloCb.checked){soloCb.checked=false;onSoloClassChange();}
-  renderRegTable();setTimeout(()=>{al.className='alert'},5000);
-}
-function clearReg(){
-  resetStudentFields();
-  document.getElementById('reg-note').value='';
-  document.getElementById('reg-sessions').value=1;
-  syncCoachHours();
-  // 重置一人開班
-  const cb=document.getElementById('reg-solo-class');
-  if(cb.checked){cb.checked=false;onSoloClassChange();}
-}
-function deleteReg(id){if(!confirm('確定刪除此筆報名？'))return;registrations=registrations.filter(r=>r.id!==id);sv('v3_regs',registrations);saveToSheets('regs');renderRegTable();renderSchedule();renderStudents()}
-function renderRegTable(){
-  const tbody=document.getElementById('reg-tbody');if(!tbody)return;
-  if(!registrations.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:#9CA3AF;padding:2rem">尚無報名記錄</td></tr>';return}
-  tbody.innerHTML=[...registrations].sort((a,b)=>a.id-b.id).map(r=>{
-    const hasLog=r.rescheduleLog&&r.rescheduleLog.length>0,lastLog=hasLog?r.rescheduleLog[r.rescheduleLog.length-1]:null;
-    const noteCell=hasLog?`<span class="tag tag-amber" style="font-size:10px;margin-right:4px">改期</span><span style="font-size:12px;color:#9CA3AF">原 ${lastLog.from}${lastLog.reason&&lastLog.reason!=='未填寫'?' — '+lastLog.reason:''}</span>`:`<span style="font-size:12px;color:#9CA3AF">${r.note||'—'}</span>`;
-    const soloTag=r.soloClass?'<span class="tag tag-reschedule" style="font-size:10px;margin-left:4px"><i class="ti ti-lock"></i> 一人開班</span>':'';
-    const sessions=r.sessions||r.count;
-    return `<tr><td><span style="font-weight:600">${r.date}</span><span class="time-sub">登記 ${fmtTime(r.createdAt||r.id)}</span></td>
-      <td><span class="avatar">${(r.selfCoach||'?').slice(0,2)}</span>${r.selfCoach||'—'}</td>
-      <td style="font-weight:500">${r.studentName}</td><td>${r.count}${soloTag}</td>
-      <td><span class="avatar">${r.coach.slice(0,2)}</span>${r.coach}</td>
-      <td>${r.feeType}</td><td>${sessions} 堂</td><td>${r.count} 人次</td>
-      <td>${noteCell}</td>
-      <td><div style="display:flex;gap:4px"><button class="btn btn-info btn-sm" onclick="openReschedule(${r.id})">改期</button><button class="btn btn-danger btn-sm" onclick="deleteReg(${r.id})">刪除</button></div></td></tr>`;
-  }).join('');
+function renderResult(filter='all'){
+  const confirmed=resultRows.filter(r=>r.status==='confirmed'||r.status==='cash');
+  const missing=resultRows.filter(r=>r.status==='missing'||r.status==='mismatch');
+  const pending=resultRows.filter(r=>r.status==='pending'||r.status==='coach_reported'||r.status==='suspected');
+  document.getElementById('stat-confirmed').textContent=confirmed.length;
+  document.getElementById('stat-missing').textContent=missing.length;
+  document.getElementById('stat-pending').textContent=pending.length;
+  let rows=resultRows;
+  if(filter==='confirmed')rows=confirmed;
+  if(filter==='missing')rows=resultRows.filter(r=>r.status==='missing'||r.status==='mismatch');
+  if(filter==='pending')rows=resultRows.filter(r=>r.status==='pending'||r.status==='coach_reported'||r.status==='suspected');
+  if(filter==='cash')rows=resultRows.filter(r=>r.status==='cash');
+  const badgeMap={confirmed:'<span class="badge badge-green">✅ 已收款</span>',mismatch:'<span class="badge badge-red">⚠️ 金額異常</span>',suspected:'<span class="badge badge-amber">📌 疑似符合</span>',cash:'<span class="badge badge-blue">💵 現金</span>',missing:'<span class="badge badge-red">❌ 未收款</span>',pending:'<span class="badge badge-amber">⚠️ 待確認</span>',coach_reported:'<span class="badge badge-amber">📋 教練已回報</span>'};
+  const tbody=document.getElementById('result-tbody');
+  tbody.innerHTML=rows.length?rows.map(r=>`<tr>
+    <td>${badgeMap[r.status]||''}</td><td style="font-weight:500">${r.student}</td>
+    <td style="color:var(--text2);font-size:12px">${r.course.length>28?r.course.slice(0,28)+'…':r.course}</td>
+    <td class="mono">$${r.fee?r.fee.toLocaleString():'—'}</td>
+    <td class="mono">${r.status==='cash'?'—':r.last5||'—'}</td>
+    <td style="font-size:12px">${r.status==='suspected'?`${r.matchedBank}（$${r.suspectedAmount?.toLocaleString()}，後五碼${r.suspectedLast5}）`:r.status==='mismatch'&&r.mismatchReason?`⚠️ ${r.mismatchReason}`:r.matchedBank||'—'}</td>
+    <td style="font-size:12px;color:var(--text2)">${r.matchedDate||r.dateStr||'—'}</td>
+    <td style="font-size:12px">${r.invoiceTitle?`🧾 ${r.invoiceTitle}`:'—'}</td>
+  </tr>`).join(''):`<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:32px">無資料</td></tr>`;
+  document.getElementById('result-empty').style.display='none';
+  document.getElementById('result-content').style.display='block';
 }
 
-// ===== SHORT =====
-function initShortPage(){
-  fillSel('short-coach',false);
-  document.getElementById('short-rate-display').textContent=shortRate.toLocaleString();
-  const dateEl=document.getElementById('short-date'),notice=document.getElementById('short-admin-notice');
-  if(currentRole==='admin'){dateEl.removeAttribute('min');notice.style.display='none';dateEl.value=todayISO();}
-  else{dateEl.min=todayISO();dateEl.value=todayISO();notice.style.display='flex';}
-  // 重置時段欄位
-  document.getElementById('short-time-select').value='';
-  document.getElementById('short-time-other').value='';
-  document.getElementById('short-time-other-wrap').classList.remove('show');
-  // 重置計價方式為每人固定
-  document.getElementById('short-price-mode').value='fixed';
-  document.getElementById('short-hours').value='1';
-  document.getElementById('short-hours-wrap').classList.remove('show');
-  calcShortFee();renderShortTable();resetShortFields();
+function showResultTab(filter,el){
+  document.querySelectorAll('.inner-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');renderResult(filter);
 }
 
-// ★ 時段下拉切換
-function onShortTimeChange(){
-  const val=document.getElementById('short-time-select').value;
-  const wrap=document.getElementById('short-time-other-wrap');
-  if(val==='other'){
-    wrap.classList.add('show');
-    document.getElementById('short-time-other').focus();
-  }else{
-    wrap.classList.remove('show');
-    document.getElementById('short-time-other').value='';
-  }
+function exportResult(){
+  if(!resultRows.length){showToast('沒有對帳結果可匯出');return;}
+  const statusMap={confirmed:'已收款',mismatch:'金額異常',cash:'現金',missing:'未收款',pending:'待確認',coach_reported:'教練已回報',suspected:'疑似符合(請確認)'};
+  const data=resultRows.map(r=>({'狀態':statusMap[r.status]||'','學員':r.student,'課程':r.course,'費用':r.fee,'後五碼':r.last5||'','銀行核對金額':r.matchedBank||'','異常原因':r.mismatchReason||'','匯款日期':r.matchedDate||'','訂單日期':r.dateStr,'發票抬頭':r.invoiceTitle||'','統一編號':r.invoiceTax||'','備註':r.note||''}));
+  const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'對帳結果');
+  XLSX.writeFile(wb,`HOPE對帳_${new Date().toLocaleDateString('zh-TW').replace(/\//g,'-')}.xlsx`);
+  showToast('✅ 已匯出 Excel');
 }
 
-// ★ 取得最終時段值
-function getShortTime(){
-  const sel=document.getElementById('short-time-select').value;
-  if(sel==='other')return document.getElementById('short-time-other').value.trim();
-  return sel;
+// === Settings ===
+function saveSheetUrl(){
+  const url = document.getElementById('sheets-url').value.trim();
+  if (!url) { showToast('請輸入主表網址'); return; }
+  sheetsUrl = url;
+  localStorage.setItem('hope_sheets_url', url);
+  document.getElementById('config-banner').style.display = 'none';
+  showToast('✅ 已儲存連結');
+}
+async function testSheetUrl(inputId){
+  const url = document.getElementById(inputId).value.trim();
+  if (!url) { showToast('請先輸入網址'); return; }
+  try {
+    const res  = await fetch(url + '?t=' + Date.now());
+    const json = await res.json();
+    if (json.status === 'ok') showToast(`✅ 連線成功！`);
+    else showToast('⚠️ 連線有誤：' + json.message);
+  } catch(e) { showToast('❌ 連線失敗，請確認網址是否正確'); }
+}
+async function addCoach(){
+  const input=document.getElementById('new-coach-input');const name=input.value.trim();
+  if(!name){showToast('請輸入教練姓名');return;}if(coaches.includes(name)){showToast('此教練已存在');return;}
+  coaches.push(name);await syncCoachesToSheets();input.value='';renderCoachList();showToast(`✓ 已新增：${name}`);
+}
+async function deleteCoach(idx){coaches.splice(idx,1);await syncCoachesToSheets();renderCoachList();}
+async function syncCoachesToSheets(){
+  localStorage.setItem('hope_coaches',JSON.stringify(coaches));
+  if(!sheetsUrl)return;
+  try{await fetch(sheetsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'coaches',coaches})});}catch(e){}
+}
+function renderCoachList(){
+  const tbody=document.getElementById('coach-list-tbody');
+  if(!coaches.length){tbody.innerHTML=`<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:20px">尚未新增任何教練</td></tr>`;return;}
+  tbody.innerHTML=coaches.map((name,i)=>`<tr><td style="color:var(--text3)">${i+1}</td><td style="font-weight:500">${name}</td><td><button class="btn btn-danger btn-sm" onclick="deleteCoach(${i})">刪除</button></td></tr>`).join('');
+}
+function changePassword(){
+  const np=document.getElementById('new-pw').value;const cp=document.getElementById('confirm-pw').value;
+  if(!np){showToast('請輸入新密碼');return;}if(np!==cp){showToast('兩次密碼不一致');return;}if(np.length<4){showToast('密碼至少 4 個字元');return;}
+  adminPw=np;localStorage.setItem('hope_admin_pw',np);
+  document.getElementById('new-pw').value='';document.getElementById('confirm-pw').value='';showToast('✅ 密碼已更新');
 }
 
-function calcShortFee(){
-  const count=parseInt((document.getElementById('short-count')||{}).value||1);
-  const mode=(document.getElementById('short-price-mode')||{}).value||'fixed';
-  let fee;
-  if(mode==='hourly'){
-    const hours=parseFloat((document.getElementById('short-hours')||{}).value||1)||1;
-    fee=shortHourlyRate*hours*count;
-  }else{
-    fee=shortRate*count;
-  }
-  document.getElementById('short-fee-display').value='NT$ '+Math.round(fee).toLocaleString();
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
-function onShortPriceModeChange(){
-  const mode=(document.getElementById('short-price-mode')||{}).value||'fixed';
-  const wrap=document.getElementById('short-hours-wrap');
-  if(mode==='hourly'){wrap.classList.add('show');}
-  else{wrap.classList.remove('show');}
-  calcShortFee();
-}
-function onShortStuNameInput(){
-  const name=document.getElementById('short-stu-name').value.trim();
-  shortSelectedStudentId=null;shortIsNewStudent=false;
-  document.getElementById('short-existing-stu-info').style.display='none';
-  document.getElementById('short-new-student-box').classList.remove('show');
-  document.getElementById('short-similar-box').classList.remove('show');
-  if(!name.length)return;
-  const exact=students.find(s=>s.name===name);
-  if(exact){shortSelectedStudentId=exact.id;const info=document.getElementById('short-existing-stu-info');info.style.display='block';info.innerHTML=`<span class="tag tag-blue" style="margin-right:8px">找到學員</span><strong>${exact.name}</strong>`;return;}
-  const similar=findSimilar(name);
-  if(similar.length){document.getElementById('short-similar-box').classList.add('show');document.getElementById('short-similar-list').innerHTML=similar.map(s=>`<div class="similar-item"><span><strong>${s.name}</strong> — ${s.plan}</span><button class="btn btn-sm" onclick="selectShortExistingStu(${s.id},'${s.name}')">就是這位</button></div>`).join('');}
-  shortIsNewStudent=true;
-}
-function selectShortExistingStu(id,name){shortSelectedStudentId=id;shortIsNewStudent=false;document.getElementById('short-stu-name').value=name;document.getElementById('short-similar-box').classList.remove('show');document.getElementById('short-new-student-box').classList.remove('show');const s=students.find(st=>st.id===id);const info=document.getElementById('short-existing-stu-info');info.style.display='block';info.innerHTML=`<span class="tag tag-blue" style="margin-right:8px">已選擇</span><strong>${s.name}</strong>`}
-function confirmShortNewStudent(){document.getElementById('short-similar-box').classList.remove('show');shortIsNewStudent=true;document.getElementById('short-new-student-box').classList.add('show')}
-function resetShortFields(){shortSelectedStudentId=null;shortIsNewStudent=false;document.getElementById('short-stu-name').value='';document.getElementById('short-similar-box').classList.remove('show');document.getElementById('short-new-student-box').classList.remove('show');document.getElementById('short-existing-stu-info').style.display='none'}
-
-function submitShort(){
-  const coach=document.getElementById('short-coach').value,
-        date=document.getElementById('short-date').value,
-        time=getShortTime(),  // ★ 使用新函式取得時段
-        stuName=document.getElementById('short-stu-name').value.trim();
-  const count=parseInt(document.getElementById('short-count').value),note=document.getElementById('short-note').value.trim();
-  const al=document.getElementById('short-alert');
-  if(currentRole!=='admin'&&date<todayISO()){al.className='alert alert-danger';al.textContent='⛔ 不可選擇過去日期';return}
-  if(!coach||!date||!time||!stuName){al.className='alert alert-warn';al.textContent='請填寫教練、日期、時段及學員姓名';return}
-  if(!shortSelectedStudentId&&!shortIsNewStudent){const exact=students.find(s=>s.name===stuName);if(exact){shortSelectedStudentId=exact.id;}else{shortIsNewStudent=true;}}
-  let stuId=shortSelectedStudentId;
-  if(shortIsNewStudent){const sess=parseInt(document.getElementById('short-new-stu-sessions').value)||1;const ns={id:Date.now(),name:stuName,plan:'單堂',totalSessions:sess,source:'auto'};students.push(ns);sv('v3_students',students);saveToSheets('students');stuId=ns.id}
-  const stu=students.find(s=>s.id===stuId),now=Date.now();
-  const priceMode=(document.getElementById('short-price-mode')||{}).value||'fixed';
-  const hours=priceMode==='hourly'?(parseFloat((document.getElementById('short-hours')||{}).value||1)||1):0;
-  const shortAmount=priceMode==='hourly'?Math.round(shortHourlyRate*hours*count):shortRate*count;
-  shortRegs.push({id:now,createdAt:now,date,time,coach,studentId:stuId,studentName:stu.name,count,note,priceMode,hours,amount:shortAmount});
-  sv('v3_shortRegs',shortRegs);saveToSheets('shortRegs');
-  al.className='alert alert-success';al.textContent='✓ 短桿果嶺報名成功：'+stu.name+' ／ '+date+' ／ 教練：'+coach;
-  resetShortFields();document.getElementById('short-note').value='';renderShortTable();renderSchedule();renderStudents();
-  setTimeout(()=>{al.className='alert'},4000);
-}
-
-// ★ clearShort 加入時段重置
-function clearShort(){
-  resetShortFields();
-  document.getElementById('short-note').value='';
-  document.getElementById('short-time-select').value='';
-  document.getElementById('short-time-other').value='';
-  document.getElementById('short-time-other-wrap').classList.remove('show');
-  document.getElementById('short-price-mode').value='fixed';
-  document.getElementById('short-hours').value='1';
-  document.getElementById('short-hours-wrap').classList.remove('show');
-  calcShortFee();
-}
-
-function deleteShort(id){if(!confirm('確定刪除？'))return;shortRegs=shortRegs.filter(r=>r.id!==id);sv('v3_shortRegs',shortRegs);saveToSheets('shortRegs');renderShortTable();renderSchedule();renderStudents()}
-function renderShortTable(){
-  const tbody=document.getElementById('short-tbody');if(!tbody)return;
-  if(!shortRegs.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:#9CA3AF;padding:2rem">尚無短桿果嶺報名記錄</td></tr>';return}
-  tbody.innerHTML=[...shortRegs].sort((a,b)=>a.id-b.id).map(r=>`<tr>
-    <td><span style="font-weight:600">${r.date}</span><span class="time-sub">登記 ${fmtTime(r.createdAt||r.id)}</span></td>
-    <td>${r.time}</td><td><span class="avatar">${r.coach.slice(0,2)}</span>${r.coach}</td>
-    <td style="font-weight:500">${r.studentName}</td><td>${r.count}</td>
-    <td style="font-weight:600">NT$ ${r.amount.toLocaleString()}${r.priceMode==='hourly'?'<span class="time-sub">'+r.hours+'小時/人</span>':''}</td>
-    <td style="color:#9CA3AF">${r.note||'—'}</td>
-    <td><button class="btn btn-danger btn-sm" onclick="deleteShort(${r.id})">刪除</button></td></tr>`).join('');
-}
-
-// ===== RESCHEDULE =====
-function openReschedule(id){
-  rescheduleTargetId=id;const r=registrations.find(x=>x.id===id);if(!r)return;
-  document.getElementById('modal-reg-info').innerHTML=`<strong>${r.studentName}</strong> &nbsp;${r.date} &nbsp;<span class="avatar" style="display:inline-flex">${r.coach.slice(0,2)}</span> ${r.coach} &nbsp;人數：${r.count}`;
-  document.getElementById('modal-alert').className='alert';document.getElementById('modal-reason').value='';
-  const dateSel=document.getElementById('modal-new-date');dateSel.innerHTML='<option value="">— 選擇新日期 —</option>';
-  Object.keys(rosters).filter(d=>!isClosed(d)&&d!==r.date&&(rosters[d]||[]).length>0).sort().forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d+' ('+DOWS[new Date(d+'T00:00:00').getDay()]+')';dateSel.appendChild(o)});
-  document.getElementById('modal-new-coach').innerHTML='<option value="">— 請先選日期 —</option>';
-  document.getElementById('reschedule-modal').classList.add('show');
-}
-function onModalDateChange(){
-  const date=document.getElementById('modal-new-date').value,r=registrations.find(x=>x.id===rescheduleTargetId);
-  const sel=document.getElementById('modal-new-coach');sel.innerHTML='<option value="">— 選擇教練 —</option>';if(!date)return;
-  (rosters[date]||[]).forEach(c=>{const taken=registrations.filter(x=>x.date===date&&x.coach===c&&x.id!==rescheduleTargetId).reduce((s,x)=>s+x.count,0);const remaining=4-taken;const o=document.createElement('option');o.value=c;o.textContent=c+(remaining<((r&&r.count||1))?' 【名額不足】':' (剩'+remaining+'位)');if(remaining<((r&&r.count||1)))o.disabled=true;sel.appendChild(o)});
-}
-function confirmReschedule(){
-  const newDate=document.getElementById('modal-new-date').value,newCoach=document.getElementById('modal-new-coach').value,reason=document.getElementById('modal-reason').value.trim(),al=document.getElementById('modal-alert');
-  if(!newDate||!newCoach){al.className='alert alert-warn';al.textContent='請選擇新日期與教練';return}
-  const r=registrations.find(x=>x.id===rescheduleTargetId);if(!r)return;
-  const taken=registrations.filter(x=>x.date===newDate&&x.coach===newCoach&&x.id!==rescheduleTargetId).reduce((s,x)=>s+x.count,0);
-  if(taken+r.count>4){al.className='alert alert-warn';al.textContent='⚠️ 該教練此日名額不足';return}
-  const oldDate=r.date,oldCoach=r.coach;r.date=newDate;r.coach=newCoach;
-  r.rescheduleLog=(r.rescheduleLog||[]);r.rescheduleLog.push({from:oldDate,fromCoach:oldCoach,to:newDate,toCoach:newCoach,reason:reason||'未填寫'});
-  sv('v3_regs',registrations);saveToSheets('regs');closeModal();renderRegTable();renderSchedule();
-}
-function closeModal(){document.getElementById('reschedule-modal').classList.remove('show');rescheduleTargetId=null}
-
-// ===== STUDENTS =====
-function addStudent(){const name=document.getElementById('stu-name').value.trim(),plan=document.getElementById('stu-plan').value,total=parseInt(document.getElementById('stu-total').value)||1;if(!name)return;students.push({id:Date.now(),name,plan,totalSessions:total,source:'manual'});sv('v3_students',students);saveToSheets('students');document.getElementById('stu-name').value='';document.getElementById('stu-total').value='1';renderStudents()}
-function deleteStudent(id){students=students.filter(s=>s.id!==id);sv('v3_students',students);saveToSheets('students');renderStudents()}
-function renderStudents(){
-  const search=(document.getElementById('stu-search')||{value:''}).value.toLowerCase()||'',planF=(document.getElementById('stu-filter-plan')||{}).value||'';
-  let list=students;if(search)list=list.filter(s=>s.name.toLowerCase().includes(search));if(planF)list=list.filter(s=>s.plan===planF);
-  const golfIds=new Set(registrations.map(r=>r.studentId));
-  const golfList=list.filter(s=>golfIds.has(s.id));
-  const tbody1=document.getElementById('stu-tbody-golf');
-  if(tbody1){if(!golfList.length)tbody1.innerHTML='<tr><td colspan="7" style="text-align:center;color:#9CA3AF;padding:1.5rem">此篩選條件下無下場班學員</td></tr>';
-  else tbody1.innerHTML=golfList.map(s=>{const used=getUsedGolf(s.id),remain=s.totalSessions-used;const src=s.source==='auto'?'<span class="tag tag-blue">報名自動建檔</span>':'<span class="tag tag-gray">手動建檔</span>';
-    return `<tr><td style="font-weight:500">${s.name}</td><td>${s.plan}</td><td>${s.totalSessions}</td><td>${used}</td><td style="font-weight:600">${remain}</td><td>${src}</td><td><button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">刪除</button></td></tr>`}).join('');}
-  const shortIds=new Set(shortRegs.map(r=>r.studentId));
-  const shortList=list.filter(s=>shortIds.has(s.id));
-  const tbody2=document.getElementById('stu-tbody-short');
-  if(tbody2){if(!shortList.length)tbody2.innerHTML='<tr><td colspan="5" style="text-align:center;color:#9CA3AF;padding:1.5rem">此篩選條件下無短桿果嶺學員</td></tr>';
-  else tbody2.innerHTML=shortList.map(s=>{const usedS=getUsedShort(s.id);const lastReg=[...shortRegs].filter(r=>r.studentId===s.id).sort((a,b)=>b.id-a.id)[0];const src=s.source==='auto'?'<span class="tag tag-blue">報名自動建檔</span>':'<span class="tag tag-gray">手動建檔</span>';
-    return `<tr><td style="font-weight:500">${s.name}</td><td>${usedS} 次</td><td>${lastReg?lastReg.date:'—'}</td><td>${src}</td><td><button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">刪除</button></td></tr>`}).join('');}
-}
-
-// ===== ROSTER =====
-function initRoster(){
-  document.getElementById('roster-coach-grid').innerHTML=coaches.map(c=>`<label class="coach-cb" id="cb-${CSS.escape(c)}"><input type="checkbox" value="${c}" onchange="updateCbStyle('${c}')"> ${c}</label>`).join('');
-  const today=todayISO();document.getElementById('roster-date').value=today;document.getElementById('closed-date').value=today;
-  onRosterDateChange(today);renderClosedList();renderRosterTable();
-}
-function updateCbStyle(c){const cb=document.querySelector(`#cb-${CSS.escape(c)} input`);if(cb)document.getElementById('cb-'+CSS.escape(c)).classList.toggle('checked',cb.checked)}
-function onRosterDateChange(date){
-  const warn=document.getElementById('roster-closed-warn'),saveBtn=document.getElementById('roster-save-btn');
-  if(isClosed(date)){warn.classList.add('show');saveBtn.disabled=true;saveBtn.style.opacity='.4';document.querySelectorAll('.coach-cb').forEach(el=>el.classList.add('disabled'))}
-  else{warn.classList.remove('show');saveBtn.disabled=false;saveBtn.style.opacity='1';document.querySelectorAll('.coach-cb').forEach(el=>el.classList.remove('disabled'));const existing=rosters[date]||[];document.querySelectorAll('.coach-cb input').forEach(cb=>{cb.checked=existing.includes(cb.value);updateCbStyle(cb.value)})}
-}
-function saveRoster(){const date=document.getElementById('roster-date').value;if(!date||isClosed(date))return;rosters[date]=Array.from(document.querySelectorAll('.coach-cb input:checked')).map(cb=>cb.value);sv('v3_rosters',rosters);saveToSheets('rosters');const msg=document.getElementById('roster-saved');msg.style.display='inline';setTimeout(()=>msg.style.display='none',2000);renderRosterTable();renderSchedule();}
-function addClosedDate(){const date=document.getElementById('closed-date').value,reason=document.getElementById('closed-reason').value.trim();if(!date)return;closedDates[date]={reason};sv('v3_closed',closedDates);saveToSheets('closed');document.getElementById('closed-reason').value='';renderClosedList();renderRosterTable();if(document.getElementById('roster-date').value===date)onRosterDateChange(date)}
-function removeClosedDate(date){delete closedDates[date];sv('v3_closed',closedDates);saveToSheets('closed');renderClosedList();renderRosterTable();if(document.getElementById('roster-date').value===date)onRosterDateChange(date)}
-function renderClosedList(){const el=document.getElementById('closed-list'),dates=Object.keys(closedDates).sort();if(!dates.length){el.innerHTML='<div style="font-size:13px;color:#9CA3AF">尚無封場日期</div>';return}el.innerHTML=dates.map(d=>`<div class="si" style="padding:6px 0"><div><span class="tag tag-red" style="margin-right:6px">${d}</span><span style="font-size:12px;color:#888">${closedDates[d].reason||'—'}</span></div><button class="btn btn-danger btn-sm" onclick="removeClosedDate('${d}')">刪除</button></div>`).join('')}
-function deleteRoster(date){delete rosters[date];sv('v3_rosters',rosters);saveToSheets('rosters');renderRosterTable()}
-function renderRosterTable(){const tbody=document.getElementById('roster-tbody');if(!tbody)return;const allDates=[...new Set([...Object.keys(rosters),...Object.keys(closedDates)])].sort();if(!allDates.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:#9CA3AF;padding:1.5rem">尚無排班資料</td></tr>';return}tbody.innerHTML=allDates.map(d=>{if(isClosed(d))return `<tr style="background:#FEF2F2"><td>${d}</td><td><span class="tag tag-red"><i class="ti ti-ban"></i> 封場</span>${closedDates[d].reason?' <span style="font-size:12px;color:#DC2626">'+closedDates[d].reason+'</span>':''}</td><td>—</td><td><button class="btn btn-danger btn-sm" onclick="removeClosedDate('${d}')">刪除</button></td></tr>`;return `<tr><td>${d}</td><td><span class="tag tag-green">開放排班</span></td><td>${(rosters[d]||[]).join('、')||'—'}</td><td><button class="btn btn-danger btn-sm" onclick="deleteRoster('${d}')">刪除</button></td></tr>`}).join('')}
-
-// ===== FINANCE =====
-function switchExportMode(mode){exportMode=mode;document.getElementById('export-month-ui').style.display=mode==='month'?'block':'none';document.getElementById('export-range-ui').style.display=mode==='range'?'block':'none';document.getElementById('mode-month-btn').classList.toggle('active',mode==='month');document.getElementById('mode-range-btn').classList.toggle('active',mode==='range')}
-function downloadExcel(mode){
-  let start,end,label;
-  if(mode==='month'){const m=document.getElementById('export-month').value;if(!m){alert('請選擇月份');return}start=m+'-01';const d=new Date(m+'-01');d.setMonth(d.getMonth()+1);d.setDate(0);end=toISO(d);label=m}
-  else{start=document.getElementById('export-start').value;end=document.getElementById('export-end').value;if(!start||!end){alert('請選擇日期');return}if(start>end){alert('開始日期不能晚於結束日期');return}label=start+'_to_'+end}
-  const regs=registrations.filter(r=>r.date>=start&&r.date<=end).sort((a,b)=>a.id-b.id);
-  const sRegs=shortRegs.filter(r=>r.date>=start&&r.date<=end).sort((a,b)=>a.id-b.id);
-  const openRegs=regs.filter(r=>isClassOpen(r.date,r.coach));
-  const detailRows=regs.map(r=>{const open=isClassOpen(r.date,r.coach);const hasLog=r.rescheduleLog&&r.rescheduleLog.length>0;const lastLog=hasLog?r.rescheduleLog[r.rescheduleLog.length-1]:null;const sessions=r.sessions||r.count;
-    return{'下場日期':r.date,'登記時間':fmtTime(r.createdAt||r.id),'學員姓名':r.studentName,'登記教練':r.selfCoach||'','指定教練':r.coach,'人數（教練上課時數）':r.count,'系統已購課訂單':r.feeType,'課堂數':sessions,'開班狀態':open?'開班':'未開班','一人開班':r.soloClass?'是':'否','是否改期':hasLog?'是':'否','改期原因':lastLog?lastLog.reason:'','備註':r.note||''}});
-  const byCoach={};regs.forEach(r=>{const open=isClassOpen(r.date,r.coach);const sessions=r.sessions||r.count;if(!byCoach[r.coach])byCoach[r.coach]={openDays:new Set(),students:0,sessions:0,coachHours:0,fee:0};if(open){byCoach[r.coach].openDays.add(r.date);byCoach[r.coach].students+=r.count;byCoach[r.coach].sessions+=sessions;byCoach[r.coach].coachHours+=r.count;byCoach[r.coach].fee+=(r.coachFee||0)}});
-  const coachRows=Object.entries(byCoach).map(([c,d])=>({'教練':c,'開班堂數':d.openDays.size,'學員總人次':d.students,'課堂數':d.sessions,'教練上課時數':d.coachHours,'教練費合計':Math.round(d.fee)}));
-  const shortRows=sRegs.map(r=>({'日期':r.date,'登記時間':fmtTime(r.createdAt||r.id),'時段':r.time,'教練':r.coach,'學員姓名':r.studentName,'人數':r.count,'計價方式':r.priceMode==='hourly'?'每小時':'每人固定','時數':r.priceMode==='hourly'?r.hours:'','收款':r.amount,'備註':r.note||''}));
-  const summaryRows=[{'項目':'區間','數值':start+' 至 '+end},{'項目':'下場班總人次（開班）','數值':openRegs.reduce((s,r)=>s+r.count,0)},{'項目':'已開班課堂數','數值':openRegs.reduce((s,r)=>s+(r.sessions||r.count),0)},{'項目':'已開班教練上課時數','數值':openRegs.reduce((s,r)=>s+r.count,0)},{'項目':'應付國華費用（NT$）','數值':openRegs.reduce((s,r)=>s+(r.khFee||0),0)},{'項目':'教練費合計（僅開班）','數值':Math.round(openRegs.reduce((s,r)=>s+(r.coachFee||0),0))},{'項目':'短桿果嶺總收款','數值':sRegs.reduce((s,r)=>s+r.amount,0)},{'項目':'短桿果嶺人次','數值':sRegs.reduce((s,r)=>s+r.count,0)}];
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(detailRows.length?detailRows:[{提示:'此區間無資料'}]),'下場班明細');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(coachRows.length?coachRows:[{提示:'此區間無資料'}]),'教練費彙總');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(shortRows.length?shortRows:[{提示:'此區間無資料'}]),'短桿果嶺明細');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summaryRows),'整體摘要');
-  XLSX.writeFile(wb,'國華報名_'+label+'.xlsx');
-}
-function renderFinance(){
-  ensureArrays();
-  fillSel('fin-coach',true);
-  const month=(document.getElementById('fin-month')||{}).value||'',fc=(document.getElementById('fin-coach')||{}).value||'';
-  let regs=registrations;if(month)regs=regs.filter(r=>r.date.startsWith(month));if(fc)regs=regs.filter(r=>r.coach===fc);
-  let sRegs=shortRegs;if(month)sRegs=sRegs.filter(r=>r.date.startsWith(month));
-  const openRegs=regs.filter(r=>isClassOpen(r.date,r.coach));
-  const totalStu=openRegs.reduce((s,r)=>s+r.count,0),totalKH=openRegs.reduce((s,r)=>s+(r.khFee!==undefined?r.khFee:r.count*khRate),0);
-  const totalCF=openRegs.reduce((s,r)=>s+(r.coachFee||0),0),totalSessions=openRegs.reduce((s,r)=>s+(r.sessions||r.count),0),totalCoachHours=openRegs.reduce((s,r)=>s+r.count,0);
-  const totalShortRev=sRegs.reduce((s,r)=>s+r.amount,0),totalShortStu=sRegs.reduce((s,r)=>s+r.count,0);
-  document.getElementById('fin-metrics').innerHTML=`
-    <div class="metric"><div class="m-label">下場人次</div><div class="m-value">${totalStu}</div><div class="m-sub">人次</div></div>
-    <div class="metric"><div class="m-label">課堂數（開班）</div><div class="m-value">${totalSessions}</div><div class="m-sub">堂</div></div>
-    <div class="metric"><div class="m-label">教練上課時數</div><div class="m-value">${totalCoachHours}</div><div class="m-sub">人次（開班）</div></div>
-    <div class="metric"><div class="m-label">下場班應付國華</div><div class="m-value">$${Math.round(totalKH).toLocaleString()}</div><div class="m-sub">NT$（僅開班）</div></div>
-    <div class="metric"><div class="m-label">短桿果嶺應付國華</div><div class="m-value">$${Math.round(totalShortRev).toLocaleString()}</div><div class="m-sub">NT$ / ${totalShortStu}人（代收代付）</div></div>
-    <div class="metric"><div class="m-label">教練費合計</div><div class="m-value">$${Math.round(totalCF).toLocaleString()}</div><div class="m-sub">NT$（僅開班）</div></div>`;
-  const byCoach={};regs.forEach(r=>{const open=isClassOpen(r.date,r.coach);const sessions=r.sessions||r.count;if(!byCoach[r.coach])byCoach[r.coach]={openDays:new Set(),students:0,sessions:0,coachHours:0,fee:0};if(open){byCoach[r.coach].openDays.add(r.date);byCoach[r.coach].students+=r.count;byCoach[r.coach].sessions+=sessions;byCoach[r.coach].coachHours+=r.count;byCoach[r.coach].fee+=(r.coachFee||0)}});
-  const ct=document.getElementById('fin-coach-tbody');
-  const entries=Object.entries(byCoach).filter(([,d])=>d.openDays.size>0);
-  ct.innerHTML=entries.length?entries.map(([c,d])=>`<tr><td><span class="avatar">${c.slice(0,2)}</span><strong>${c}</strong></td><td>${d.openDays.size}</td><td>${d.students}</td><td>${d.sessions} 堂</td><td>${d.coachHours} 人次</td><td style="font-weight:600">NT$ ${Math.round(d.fee).toLocaleString()}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:#9CA3AF;padding:1.5rem">此期間無開班記錄</td></tr>';
-  const dt=document.getElementById('fin-daily-tbody');
-  dt.innerHTML=regs.length?[...regs].sort((a,b)=>a.id-b.id).map(r=>{const open=isClassOpen(r.date,r.coach);const sessions=r.sessions||r.count;const openTag=open?'<span class="tag tag-green" style="font-size:10px">開班</span>':'<span class="tag tag-reschedule" style="font-size:10px">未開班</span>';const soloTag=r.soloClass?'<span class="tag tag-amber" style="font-size:10px;margin-left:4px"><i class="ti ti-lock"></i> 一人開班</span>':'';
-    return `<tr${r.soloClass?' style="background:#FFFBEB"':open?'':' style="opacity:.6"'}><td>${r.date}</td><td>${r.studentName}</td><td>${r.coach}</td><td>${r.feeType}</td><td>${r.count}${soloTag}</td><td>${open?sessions+' 堂':'—'}</td><td>${open?r.count+' 人次':'—'}</td><td>${openTag}</td></tr>`}).join(''):'<tr><td colspan="8" style="text-align:center;color:#9CA3AF;padding:1.5rem">此期間無資料</td></tr>';
-  const st=document.getElementById('fin-short-tbody');
-  st.innerHTML=sRegs.length?[...sRegs].sort((a,b)=>a.id-b.id).map(r=>`<tr><td>${r.date}</td><td>${r.time}</td><td>${r.coach}</td><td>${r.studentName}</td><td>${r.count}</td><td style="font-weight:600">NT$ ${r.amount.toLocaleString()}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:#9CA3AF;padding:1.5rem">此期間無資料</td></tr>';
-}
-
-// ===== SETTINGS =====
-function renderSettings(){
-  ensureArrays();
-  document.getElementById('kh-rate').value=khRate;document.getElementById('short-rate').value=shortRate;document.getElementById('short-hourly-rate').value=shortHourlyRate;
-  document.getElementById('coach-list-ui').innerHTML=coaches.map((c,i)=>`<div class="si"><div class="ilfx"><span class="avatar">${c.slice(0,2)}</span><span>${c}</span></div><button class="btn btn-danger btn-sm" onclick="removeCoach(${i})">移除</button></div>`).join('');
-  document.getElementById('fee-types-ui').innerHTML=feeTypes.length
-    ? feeTypes.map((ft,i)=>`<div class="si"><span>${ft.name}</span><div class="ilfx"><input type="number" value="${ft.amount}" onchange="updateFeeAmt(${i},this.value)" style="width:90px;text-align:right;padding:5px 8px;border:1px solid #E0E0E0;border-radius:6px;font-family:'Noto Sans TC',sans-serif"><button class="btn btn-danger btn-sm" onclick="removeFeeType(${i})">刪除</button></div></div>`).join('')
-    : '<div style="font-size:13px;color:#9CA3AF;padding:8px 0">載入中…</div>';
-  document.getElementById('coach-fee-ui').innerHTML=coaches.map(c=>`<div class="si"><div class="ilfx"><span class="avatar">${c.slice(0,2)}</span><span>${c}</span></div><div class="ilfx"><span style="font-size:12px;color:#888">NT$/人</span><input type="number" value="${getCoachFee(c)}" onchange="updateCoachFee('${c}',this.value)" style="width:90px;text-align:right;padding:5px 8px;border:1px solid #E0E0E0;border-radius:6px;font-family:'Noto Sans TC',sans-serif"></div></div>`).join('');
-}
-function addCoach(){const n=document.getElementById('new-coach').value.trim();if(!n||coaches.includes(n))return;coaches.push(n);sv('v3_coaches',coaches);saveToSheets('settings');document.getElementById('new-coach').value='';renderSettings()}
-function removeCoach(i){coaches.splice(i,1);sv('v3_coaches',coaches);saveToSheets('settings');renderSettings()}
-function addFeeType(){
-  const nameEl=document.getElementById('new-fee-name');
-  const amtEl=document.getElementById('new-fee-amt');
-  const n=nameEl.value.trim();
-  const a=parseInt(amtEl.value);
-  if(!n){
-    nameEl.style.borderColor='#EF4444';
-    nameEl.placeholder='請輸入訂單名稱';
-    nameEl.focus();
-    setTimeout(()=>{nameEl.style.borderColor='';},2000);
-    return;
-  }
-  if(isNaN(a)||a<0){
-    amtEl.style.borderColor='#EF4444';
-    amtEl.focus();
-    setTimeout(()=>{amtEl.style.borderColor='';},2000);
-    return;
-  }
-  feeTypes.push({name:n,amount:a});
-  sv('v3_feeTypes',feeTypes);
-  saveToSheets('settings');
-  nameEl.value='';
-  amtEl.value='';
-  renderSettings();
-}
-function removeFeeType(i){feeTypes.splice(i,1);sv('v3_feeTypes',feeTypes);saveToSheets('settings');renderSettings()}
-function updateFeeAmt(i,v){feeTypes[i].amount=parseInt(v)||0;sv('v3_feeTypes',feeTypes)}
-function updateCoachFee(c,v){coachFees[c]=parseInt(v)||0;sv('v3_coachFees',coachFees)}
-function saveKhRate(v){khRate=parseInt(v)||DEF_KH;sv('v3_khRate',khRate)}
-function saveShortRate(v){shortRate=parseInt(v)||DEF_SHORT;sv('v3_shortRate',shortRate);saveToSheets('settings')}
-function saveShortHourlyRate(v){shortHourlyRate=parseInt(v)||DEF_SHORT_HOURLY;sv('v3_shortHourlyRate',shortHourlyRate);saveToSheets('settings')}
-
-// ===== INIT =====
-currentWeekStart=getWeekStart(new Date());
-const today=todayISO();
-document.getElementById('export-month').value=today.slice(0,7);
-document.getElementById('export-start').value=today.slice(0,8)+'01';
-document.getElementById('export-end').value=today;
-document.getElementById('fin-month').value=today.slice(0,7);
-localStorage.setItem('gas_url','https://script.google.com/macros/s/AKfycbwz47KEU8iWvcIHA-aiNltQBFEk1uXGV_RJXtMRC9ku4FFGBzMZQekl7mwN8Bj-UTtISA/exec');
 </script>
 </body>
 </html>
