@@ -253,6 +253,7 @@
           <div class="form-grid">
             <div class="form-group"><label>發票抬頭（選填）</label><input type="text" id="c-invoice-title" placeholder="例：元木運動行銷有限公司" style="background:white;"></div>
             <div class="form-group"><label>統一編號（選填）</label><input type="text" id="c-invoice-tax" placeholder="例：12345678" maxlength="8" style="font-family:'DM Mono',monospace;letter-spacing:2px;background:white;"></div>
+            <div class="form-group full"><label>欲開發票項目（選填）</label><input type="text" id="c-invoice-item" placeholder="例：課程、訓練課程、教育訓練等" style="background:white;"></div>
           </div>
         </div>
         <div class="form-grid" style="margin-top:14px;">
@@ -832,6 +833,7 @@ async function submitCoach() {
     const note    = document.getElementById('c-note').value.trim();
     const invoiceTitle = document.getElementById('c-invoice-title')?.value.trim() || '';
     const invoiceTax   = document.getElementById('c-invoice-tax')?.value.trim()   || '';
+    const invoiceItem  = document.getElementById('c-invoice-item')?.value.trim()  || '';
     if (method !== 'cash' && !last5)                        { showToast('請填寫匯款後五碼'); return; }
     if (method !== 'cash' && last5 && !/^\d{5}$/.test(last5)) { showToast('後五碼請填寫5位數字'); return; }
     if (!amount) { showToast('請填寫匯款金額'); return; }
@@ -840,7 +842,7 @@ async function submitCoach() {
       id: Date.now(), entryType: 'course', coach, student,
       last5: method === 'cash' ? 'CASH' : last5,
       amount: parseInt(amount), date, method, course, note,
-      invoiceTitle, invoiceTax,
+      invoiceTitle, invoiceTax, invoiceItem,
       ts: new Date().toISOString()
     };
   } else {
@@ -900,7 +902,7 @@ async function submitCoach() {
 
 function clearCoachForm() {
   ['c-student','c-last5','c-amount','c-course','c-note',
-   'c-invoice-title','c-invoice-tax',
+   'c-invoice-title','c-invoice-tax','c-invoice-item',
    'c-product-name','c-product-note','p-last5',
    'p-invoice-title','p-invoice-tax','p-invoice-carrier','p-invoice-email']
     .forEach(id => { const el = document.getElementById(id); if(el) { el.value = ''; el.disabled = false; el.style.background = ''; } });
@@ -975,6 +977,7 @@ async function loadAllReports() {
           invoiceType:  row['發票種類']==='電子發票'?'digital':row['發票種類']==='紙本發票'?'paper':'',
           invoiceTitle: row['發票抬頭']          || '',
           invoiceTax:   row['統一編號']          || '',
+          invoiceItem:  row['欲開發票項目']      || '',
           invoiceCarrier: row['載具條碼']        || '',
           invoiceEmail: row['Email']             || '',
           note:         isProduct ? '' : (row['備註'] || ''),
