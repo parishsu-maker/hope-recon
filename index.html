@@ -937,6 +937,9 @@ function renderMySubmissions() {
           ${invBadge}
           ${s.invoiceType === 'digital' && s.invoiceEmail ? ` ｜ ${s.invoiceEmail}` : ''}
           ${isProduct && s.productNote ? ` ｜ ${s.productNote}` : ''}
+          ${s.invoiceTitle ? ` ｜ 🧾 ${s.invoiceTitle}` : ''}
+          ${s.invoiceTax   ? ` ｜ 統編：${s.invoiceTax}` : ''}
+          ${!isProduct && s.invoiceItem ? ` ｜ 發票項目：${s.invoiceItem}` : ''}
         </div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
@@ -1019,6 +1022,9 @@ function renderReportsList() {
               ${invBadge}
               ${s.invoiceType === 'digital' && s.invoiceEmail ? ` ｜ ${s.invoiceEmail}` : ''}
               ${isProduct && s.productNote ? ` ｜ ${s.productNote}` : ''}
+              ${s.invoiceTitle ? ` ｜ 🧾 ${s.invoiceTitle}` : ''}
+              ${s.invoiceTax   ? ` ｜ 統編：${s.invoiceTax}` : ''}
+              ${!isProduct && s.invoiceItem ? ` ｜ 發票項目：${s.invoiceItem}` : ''}
             </div>
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
