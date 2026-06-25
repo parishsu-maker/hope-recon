@@ -215,7 +215,7 @@
           <input type="text" id="c-coach" readonly style="background:var(--surface2);color:var(--text2);">
         </div>
         <div class="form-group">
-          <label id="label-student">學員姓名 *</label>
+          <label id="label-student">學員姓名/購課訂單名 *</label>
           <input type="text" id="c-student" placeholder="例：高小苑">
         </div>
         <div class="form-group">
@@ -618,7 +618,7 @@ function onReportTypeChange(type) {
     document.getElementById('alert-course-info').style.display = 'none';
     document.getElementById('c-last5').value = '';
   } else {
-    document.getElementById('label-student').textContent   = '學員姓名 *';
+    document.getElementById('label-student').textContent   = '學員姓名/購課訂單名 *';
     document.getElementById('label-date').textContent      = '匯款日期 *';
     document.getElementById('label-amount').textContent    = '匯款金額（元）*';
     document.getElementById('wrap-last5').style.display    = 'flex';
