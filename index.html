@@ -593,8 +593,14 @@ let coaches = JSON.parse(localStorage.getItem('hope_coaches') || JSON.stringify(
   'Kevin 江侑學','Vis 方建雄','Allen 張瀚元','Sean 黃郁翔',
   'Ava 林冠妤','Howard 鄧庭皓','Ella 吳雨樵','Elly 吳以勤','●行政：Elaine'
 ]));
+// ✅ 正確的 GAS 網址（唯一來源）——日後若重新部署產生新網址，只需改這一行
+const CORRECT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzMUe2lUxA6nZn7yvXpWKoW63HBrfKkwFTaSfMKR323RamxmK3jkLEh6F4UxcVKz3y2nw/exec';
+// 自動校正：如果 localStorage 存的不是正確網址（舊版或不同部署），強制覆寫成正確的
+if (localStorage.getItem('hope_sheets_url') !== CORRECT_SHEETS_URL) {
+  localStorage.setItem('hope_sheets_url', CORRECT_SHEETS_URL);
+}
 let adminPw = localStorage.getItem('hope_admin_pw') || DEFAULT_ADMIN_PW;
-let sheetsUrl   = localStorage.getItem('hope_sheets_url')    || 'https://script.google.com/macros/s/AKfycbyWoxzmtfNyZcFchTZDlKgH0JWBNH5bkjkGo_3D4E7EPH4ph1QsgBiAxJeE64wOfOlkug/exec';
+let sheetsUrl   = CORRECT_SHEETS_URL;
 let cashUrl     = localStorage.getItem('hope_cash_url')     || '';
 let productUrl  = localStorage.getItem('hope_product_url')  || '';
 let submissions = JSON.parse(localStorage.getItem('hope_submissions') || '[]');
